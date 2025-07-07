@@ -11,12 +11,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
-        :root { --primary-color: #6a11cb; --secondary-color: #2575fc; }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: #333; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        :root { 
+            --primary-color: #6a11cb; 
+            --secondary-color: #2575fc; 
+        }
+        
+        /* === PERBAIKAN UTAMA UNTUK MASALAH TUMPANG TINDIH === */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #333;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            /* Solusi: Memberi padding pada body untuk mendorong semua konten ke bawah navbar */
+            padding-top: 75px; 
+        }
+
+        .main-content {
+            /* Menghapus padding-top dari sini untuk menghindari spasi ganda */
+            padding-bottom: 40px;
+        }
+        /* === AKHIR DARI PERBAIKAN === */
+
         .content-wrapper { flex: 1; }
         .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1060; }
         nav.navbar { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .main-content { padding-top: 80px; padding-bottom: 40px; }
         .journal-card, .leaderboard-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 15px; color: white; border: 1px solid rgba(255, 255, 255, 0.2); }
         .journal-card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
         .journal-card .card-footer { background: transparent; border-top: 1px solid rgba(255, 255, 255, 0.2); }
@@ -28,6 +49,8 @@
         .leaderboard-list .list-group-item.highlight { background-color: rgba(255, 193, 7, 0.3); font-weight: bold; border-left: 4px solid #ffc107; }
         .leaderboard-list .rank-badge { font-size: 0.9em; min-width: 30px; height: 30px; line-height: 22px; text-align: center; }
         .footer { background: rgba(0, 0, 0, 0.2); color: rgba(255, 255, 255, 0.7); margin-top: auto; }
+        
+        /* CSS untuk Kartu Share */
         #shareCardContainer { position: fixed; top: -9999px; left: -9999px; width: 450px; height: 800px; }
         #shareCard { width: 100%; height: 100%; color: white; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background-size: 400% 400%; background-image: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); animation: gradientBG 15s ease infinite; position: relative; overflow: hidden; }
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
@@ -42,19 +65,33 @@
 <body>
     <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" role="status"></div></div>
     
+    <!-- Navbar diposisikan sebagai anak langsung dari <body> -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-book-open-reader"></i> Jurnal Baca</a>
+            <div class="d-flex align-items-center">
+                <span class="navbar-text me-3" id="studentName"></span>
+                <button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </nav>
+
     <div class="content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-            <div class="container"><a class="navbar-brand" href="#"><i class="fas fa-book-open-reader"></i> Jurnal Baca</a><div class="d-flex align-items-center"><span class="navbar-text me-3" id="studentName"></span><button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button></div></div>
-        </nav>
         <div class="container main-content">
             <div class="row">
                 <div class="col-lg-8">
-                    <div class="d-flex justify-content-between align-items-center mb-4"><h1 class="text-white">Jurnal Saya</h1><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#journalModal" id="addJournalBtn"><i class="fas fa-plus-circle"></i> Tambah Jurnal</button></div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="text-white">Jurnal Saya</h1>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#journalModal" id="addJournalBtn">
+                            <i class="fas fa-plus-circle"></i> Tambah Jurnal
+                        </button>
+                    </div>
                     <div id="journalList" class="row g-4"></div>
                 </div>
                 <div class="col-lg-4 mt-5 mt-lg-0">
                     <div class="leaderboard-card p-3">
-                        <h4 class="text-white text-center"><i class="fas fa-trophy text-warning"></i> Papan Peringkat</h4><hr class="text-white-50">
+                        <h4 class="text-white text-center"><i class="fas fa-trophy text-warning"></i> Papan Peringkat</h4>
+                        <hr class="text-white-50">
                         <ul class="list-group leaderboard-list" id="leaderboardList"></ul>
                     </div>
                 </div>
@@ -67,57 +104,29 @@
     <!-- TEMPLATE UNTUK GAMBAR SHARE (Disembunyikan) -->
     <div id="shareCardContainer">
         <div id="shareCard">
-            <div class="app-logo">Jurnal Baca TKJ</div><div class="mood-emoji" id="shareMood"></div>
-            <h2 class="book-title" id="shareTitle"></h2><p class="book-author" id="shareAuthor"></p>
-            <blockquote class="summary-quote" id="shareSummary"></blockquote><div class="student-info" id="shareStudentName"></div>
+            <div class="app-logo">Jurnal Baca TKJ</div>
+            <div class="mood-emoji" id="shareMood"></div>
+            <h2 class="book-title" id="shareTitle"></h2>
+            <p class="book-author" id="shareAuthor"></p>
+            <blockquote class="summary-quote" id="shareSummary"></blockquote>
+            <div class="student-info" id="shareStudentName"></div>
         </div>
     </div>
     
     <!-- MODALS -->
     <!-- Modal untuk Tambah/Edit Jurnal -->
-    <div class="modal fade" id="journalModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title" id="journalModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <form id="journalForm">
-                    <input type="hidden" id="journalId">
-                    <div class="mb-3"><label class="form-label">Tanggal Baca</label><input type="date" class="form-control" id="tanggalBaca" required></div>
-                    <div class="mb-3"><label class="form-label">Judul Buku</label><input type="text" class="form-control" id="judulBuku" required></div>
-                    <div class="mb-3"><label class="form-label">Penulis</label><input type="text" class="form-control" id="penulis" required></div>
-                    <div class="mb-3"><label class="form-label">Jumlah Halaman</label><input type="number" class="form-control" id="halaman" required></div>
-                    <div class="mb-3"><label class="form-label">Ringkasan</label><textarea class="form-control" id="ringkasan" rows="4" required></textarea></div>
-                    <div class="mb-3"><label class="form-label">Bagaimana perasaanmu?</label><div id="mood-selector" class="d-flex justify-content-around fs-2"><span class="mood-icon" data-mood="🤩">🤩</span><span class="mood-icon" data-mood="😊">😊</span><span class="mood-icon" data-mood="🤔">🤔</span><span class="mood-icon" data-mood="😭">😭</span><span class="mood-icon" data-mood="🤯">🤯</span></div><input type="hidden" id="mood" required></div>
-                    <button type="submit" class="btn btn-primary w-100">Simpan</button>
-                </form>
-            </div>
-        </div>
-      </div>
-    </div>
+    <div class="modal fade" id="journalModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="journalModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="journalForm"><input type="hidden" id="journalId"><div class="mb-3"><label class="form-label">Tanggal Baca</label><input type="date" class="form-control" id="tanggalBaca" required></div><div class="mb-3"><label class="form-label">Judul Buku</label><input type="text" class="form-control" id="judulBuku" required></div><div class="mb-3"><label class="form-label">Penulis</label><input type="text" class="form-control" id="penulis" required></div><div class="mb-3"><label class="form-label">Jumlah Halaman</label><input type="number" class="form-control" id="halaman" required></div><div class="mb-3"><label class="form-label">Ringkasan</label><textarea class="form-control" id="ringkasan" rows="4" required></textarea></div><div class="mb-3"><label class="form-label">Bagaimana perasaanmu?</label><div id="mood-selector" class="d-flex justify-content-around fs-2"><span class="mood-icon" data-mood="🤩">🤩</span><span class="mood-icon" data-mood="😊">😊</span><span class="mood-icon" data-mood="🤔">🤔</span><span class="mood-icon" data-mood="😭">😭</span><span class="mood-icon" data-mood="🤯">🤯</span></div><input type="hidden" id="mood" required></div><button type="submit" class="btn btn-primary w-100">Simpan</button></form></div></div></div></div>
     
     <!-- Modal untuk Konfirmasi Hapus -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body"><p>Apakah Anda yakin ingin menghapus data ini?</p></div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Apakah Anda yakin ingin menghapus data ini?</p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div></div></div></div>
 
     <!-- Modal untuk Hasil Gambar Share -->
-    <div class="modal fade" id="imageResultModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Gambar Siap Dibagikan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body text-center" id="imageResultContainer"></div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="imageResultModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Gambar Siap Dibagikan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center" id="imageResultContainer"></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Seluruh kode JavaScript dari sebelumnya tetap sama.
+    // Tidak ada perubahan yang diperlukan pada JavaScript untuk perbaikan layout ini.
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
     let currentUser = null, allMyJournals = [], deleteInfo = { type: null, id: null };
     const loader = document.getElementById('loader');

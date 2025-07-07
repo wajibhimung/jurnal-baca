@@ -12,11 +12,17 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         :root { --primary-color: #6a11cb; --secondary-color: #2575fc; }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: #333; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #333;
+            overflow-x: hidden;
+            padding-top: 75px; 
+        }
+        .main-content { padding-bottom: 40px; }
         .content-wrapper { flex: 1; }
         .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1060; }
         nav.navbar { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .main-content { padding-top: 100px; padding-bottom: 40px; }
         .journal-card, .leaderboard-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 15px; color: white; border: 1px solid rgba(255, 255, 255, 0.2); }
         .journal-card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
         .journal-card .card-footer { background: transparent; border-top: 1px solid rgba(255, 255, 255, 0.2); }
@@ -27,7 +33,24 @@
         .leaderboard-list .list-group-item { background-color: rgba(255, 255, 255, 0.1); border: none; color: white; }
         .leaderboard-list .list-group-item.highlight { background-color: rgba(255, 193, 7, 0.3); font-weight: bold; border-left: 4px solid #ffc107; }
         .leaderboard-list .rank-badge { font-size: 0.9em; min-width: 30px; height: 30px; line-height: 22px; text-align: center; }
-        .footer { background: rgba(0, 0, 0, 0.2); color: rgba(255, 255, 255, 0.7); margin-top: auto; }
+        .footer { background: rgba(0, 0, 0, 0.2); color: rgba(255, 255, 255, 0.7); padding: 1rem 0; text-align: center; }
+        
+        /* Style untuk pagination */
+        .pagination .page-link { 
+            background-color: rgba(255,255,255,0.1); 
+            border-color: rgba(255,255,255,0.2); 
+            color: white; 
+            margin: 0 2px;
+            border-radius: 0.25rem;
+        }
+        .pagination .page-item.active .page-link { 
+            background-image: linear-gradient(45deg, #f83292, #ff6b08);
+            color: white; 
+            border-color: rgba(255,255,255,0.2);
+        }
+        .pagination .page-item.disabled .page-link { background-color: rgba(255,255,255,0.05); color: rgba(255,255,255,0.3); }
+
+        /* Style untuk Kartu Share */
         #shareCardContainer { position: fixed; top: -9999px; left: -9999px; width: 450px; height: 800px; }
         #shareCard { width: 100%; height: 100%; color: white; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background-size: 400% 400%; background-image: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); animation: gradientBG 15s ease infinite; position: relative; overflow: hidden; }
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
@@ -42,84 +65,55 @@
 <body>
     <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" role="status"></div></div>
     
-    <div class="content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-            <div class="container"><a class="navbar-brand" href="#"><i class="fas fa-book-open-reader"></i> Jurnal Baca</a><div class="d-flex align-items-center"><span class="navbar-text me-3" id="studentName"></span><button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button></div></div>
-        </nav>
-        <div class="container main-content">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-book-open-reader"></i> Jurnal Baca</a>
+            <div class="d-flex align-items-center">
+                <span class="navbar-text me-3" id="studentName"></span>
+                <button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="d-flex flex-column" style="min-height: calc(100vh - 75px);">
+        <main class="container main-content flex-grow-1">
             <div class="row">
                 <div class="col-lg-8">
                     <div class="d-flex justify-content-between align-items-center mb-4"><h1 class="text-white">Jurnal Saya</h1><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#journalModal" id="addJournalBtn"><i class="fas fa-plus-circle"></i> Tambah Jurnal</button></div>
                     <div id="journalList" class="row g-4"></div>
+                    <!-- Tempat untuk Pagination Jurnal -->
+                    <nav id="journalPagination" class="d-flex justify-content-center mt-4"></nav>
                 </div>
                 <div class="col-lg-4 mt-5 mt-lg-0">
                     <div class="leaderboard-card p-3">
                         <h4 class="text-white text-center"><i class="fas fa-trophy text-warning"></i> Papan Peringkat</h4><hr class="text-white-50">
                         <ul class="list-group leaderboard-list" id="leaderboardList"></ul>
+                        <!-- Tempat untuk Pagination Peringkat -->
+                        <nav id="leaderboardPagination" class="d-flex justify-content-center mt-3"></nav>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <footer class="footer text-center p-3">Aplikasi Jurnal Baca Siswa TKJ © 2024</footer>
-
-    <!-- TEMPLATE UNTUK GAMBAR SHARE (Disembunyikan) -->
-    <div id="shareCardContainer">
-        <div id="shareCard">
-            <div class="app-logo">Jurnal Baca TKJ</div><div class="mood-emoji" id="shareMood"></div>
-            <h2 class="book-title" id="shareTitle"></h2><p class="book-author" id="shareAuthor"></p>
-            <blockquote class="summary-quote" id="shareSummary"></blockquote><div class="student-info" id="shareStudentName"></div>
-        </div>
+        </main>
+        <footer class="footer text-center p-3">Aplikasi Jurnal Baca Siswa TKJ © 2024</footer>
     </div>
     
-    <!-- MODALS -->
-    <!-- Modal untuk Tambah/Edit Jurnal -->
-    <div class="modal fade" id="journalModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title" id="journalModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <form id="journalForm">
-                    <input type="hidden" id="journalId">
-                    <div class="mb-3"><label class="form-label">Tanggal Baca</label><input type="date" class="form-control" id="tanggalBaca" required></div>
-                    <div class="mb-3"><label class="form-label">Judul Buku</label><input type="text" class="form-control" id="judulBuku" required></div>
-                    <div class="mb-3"><label class="form-label">Penulis</label><input type="text" class="form-control" id="penulis" required></div>
-                    <div class="mb-3"><label class="form-label">Jumlah Halaman</label><input type="number" class="form-control" id="halaman" required></div>
-                    <div class="mb-3"><label class="form-label">Ringkasan</label><textarea class="form-control" id="ringkasan" rows="4" required></textarea></div>
-                    <div class="mb-3"><label class="form-label">Bagaimana perasaanmu?</label><div id="mood-selector" class="d-flex justify-content-around fs-2"><span class="mood-icon" data-mood="🤩">🤩</span><span class="mood-icon" data-mood="😊">😊</span><span class="mood-icon" data-mood="🤔">🤔</span><span class="mood-icon" data-mood="😭">😭</span><span class="mood-icon" data-mood="🤯">🤯</span></div><input type="hidden" id="mood" required></div>
-                    <button type="submit" class="btn btn-primary w-100">Simpan</button>
-                </form>
-            </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Modal untuk Konfirmasi Hapus -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body"><p>Apakah Anda yakin ingin menghapus data ini?</p></div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal untuk Hasil Gambar Share -->
-    <div class="modal fade" id="imageResultModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Gambar Siap Dibagikan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body text-center" id="imageResultContainer"></div>
-            </div>
-        </div>
-    </div>
+    <!-- TEMPLATE DAN MODAL -->
+    <div id="shareCardContainer"><div id="shareCard"><div class="app-logo">Jurnal Baca TKJ</div><div class="mood-emoji" id="shareMood"></div><h2 class="book-title" id="shareTitle"></h2><p class="book-author" id="shareAuthor"></p><blockquote class="summary-quote" id="shareSummary"></blockquote><div class="student-info" id="shareStudentName"></div></div></div>
+    <div class="modal fade" id="journalModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="journalModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="journalForm"><input type="hidden" id="journalId"><div class="mb-3"><label class="form-label">Tanggal Baca</label><input type="date" class="form-control" id="tanggalBaca" required></div><div class="mb-3"><label class="form-label">Judul Buku</label><input type="text" class="form-control" id="judulBuku" required></div><div class="mb-3"><label class="form-label">Penulis</label><input type="text" class="form-control" id="penulis" required></div><div class="mb-3"><label class="form-label">Jumlah Halaman</label><input type="number" class="form-control" id="halaman" required></div><div class="mb-3"><label class="form-label">Ringkasan</label><textarea class="form-control" id="ringkasan" rows="4" required></textarea></div><div class="mb-3"><label class="form-label">Bagaimana perasaanmu?</label><div id="mood-selector" class="d-flex justify-content-around fs-2"><span class="mood-icon" data-mood="🤩">🤩</span><span class="mood-icon" data-mood="😊">😊</span><span class="mood-icon" data-mood="🤔">🤔</span><span class="mood-icon" data-mood="😭">😭</span><span class="mood-icon" data-mood="🤯">🤯</span></div><input type="hidden" id="mood" required></div><button type="submit" class="btn btn-primary w-100">Simpan</button></form></div></div></div></div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Apakah Anda yakin ingin menghapus data ini?</p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div></div></div></div>
+    <div class="modal fade" id="imageResultModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Gambar Siap Dibagikan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center" id="imageResultContainer"></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
-    let currentUser = null, allMyJournals = [], deleteInfo = { type: null, id: null };
+    
+    // --- Variabel untuk Pagination ---
+    let currentUser = null, allMyJournals = [], allLeaderboardData = [], deleteInfo = { type: null, id: null };
+    let journalCurrentPage = 1;
+    let leaderboardCurrentPage = 1;
+    const JOURNALS_PER_PAGE = 3; 
+    const LEADERBOARD_ITEMS_PER_PAGE = 10; 
+
     const loader = document.getElementById('loader');
     const myJournalModal = new bootstrap.Modal(document.getElementById('journalModal'));
     const myConfirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
@@ -151,52 +145,63 @@
         } catch (error) { alert("Error: " + error.message); return null; } finally { loader.style.display = 'none'; }
     }
 
-    async function loadStudentJournals() { const journals = await apiCall('getStudentJournals', { emailSiswa: currentUser.user.email }); if (journals) { allMyJournals = journals; renderJournals(journals); } }
-    async function loadLeaderboardData() { const leaderboardData = await apiCall('getLeaderboardData'); if (leaderboardData) { renderLeaderboard(leaderboardData); } }
+    async function loadStudentJournals() { 
+        const journals = await apiCall('getStudentJournals', { emailSiswa: currentUser.user.email }); 
+        if (journals) { 
+            allMyJournals = journals; 
+            journalCurrentPage = 1;
+            renderJournals(); 
+        } 
+    }
+    async function loadLeaderboardData() { 
+        const leaderboardData = await apiCall('getLeaderboardData'); 
+        if (leaderboardData) { 
+            allLeaderboardData = leaderboardData;
+            leaderboardCurrentPage = 1;
+            renderLeaderboard(); 
+        } 
+    }
 
-    function renderJournals(journals) {
+    function renderJournals() {
         const list = document.getElementById('journalList'); list.innerHTML = '';
-        if (journals.length === 0) { list.innerHTML = `<div class="col-12"><div class="text-center p-5 text-white"><h3>Belum ada jurnal.</h3><p>Ayo mulai membaca dan catat di sini!</p></div></div>`; return; }
-        journals.forEach(j => {
-            const card = `<div class="col-md-6 col-lg-12"><div class="journal-card"><div class="card-body"><div class="d-flex justify-content-between align-items-start"><h5 class="card-title">${j.judulBuku}</h5><span class="fs-2">${j.mood}</span></div><h6 class="card-subtitle mb-2 text-white-50">${j.penulis}</h6><p class="card-text mt-3">${j.ringkasan.substring(0, 100)}...</p><p><small>Dibaca: ${j.tanggalBaca} | ${j.halaman} hal.</small></p></div><div class="card-footer d-flex justify-content-end gap-2"><button class="btn btn-sm btn-outline-info" onclick="generateShareImage('${j.idJurnal}')"><i class="fas fa-share-alt"></i></button><button class="btn btn-sm btn-outline-warning" onclick="editJournal('${j.idJurnal}')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}')"><i class="fas fa-trash"></i></button></div></div></div>`;
-            list.innerHTML += card;
-        });
+        if (allMyJournals.length === 0) { list.innerHTML = `<div class="col-12"><div class="text-center p-5 text-white"><h3>Belum ada jurnal.</h3><p>Ayo mulai membaca dan catat di sini!</p></div></div>`; renderPagination('journalPagination', 0, 0, null); return; }
+        const startIndex = (journalCurrentPage - 1) * JOURNALS_PER_PAGE;
+        const endIndex = startIndex + JOURNALS_PER_PAGE;
+        const paginatedJournals = allMyJournals.slice(startIndex, endIndex);
+        paginatedJournals.forEach(j => { const card = `<div class="col-md-6 col-lg-12"><div class="journal-card"><div class="card-body"><div class="d-flex justify-content-between align-items-start"><h5 class="card-title">${j.judulBuku}</h5><span class="fs-2">${j.mood}</span></div><h6 class="card-subtitle mb-2 text-white-50">${j.penulis}</h6><p class="card-text mt-3">${j.ringkasan.substring(0, 100)}...</p><p><small>Dibaca: ${j.tanggalBaca} | ${j.halaman} hal.</small></p></div><div class="card-footer d-flex justify-content-end gap-2"><button class="btn btn-sm btn-outline-info" onclick="generateShareImage('${j.idJurnal}')"><i class="fas fa-share-alt"></i></button><button class="btn btn-sm btn-outline-warning" onclick="editJournal('${j.idJurnal}')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}')"><i class="fas fa-trash"></i></button></div></div></div>`; list.innerHTML += card; });
+        renderPagination('journalPagination', allMyJournals.length, JOURNALS_PER_PAGE, changeJournalPage);
     }
 
-    function renderLeaderboard(data) {
+    function renderLeaderboard() {
         const list = document.getElementById('leaderboardList'); list.innerHTML = '';
-        data.slice(0, 10).forEach((siswa, index) => {
-            const rank = index + 1; const highlightClass = siswa.nama === currentUser.user.nama ? 'highlight' : '';
-            const badgeColor = rank === 1 ? 'bg-warning' : (rank === 2 ? 'bg-secondary' : (rank === 3 ? 'bg-danger' : 'bg-info'));
-            list.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center ${highlightClass}"><div><span class="badge ${badgeColor} rounded-pill me-2 rank-badge">${rank}</span> ${siswa.nama}</div><span class="badge bg-light text-dark">${siswa.totalHalaman} hal.</span></li>`;
-        });
+        if (allLeaderboardData.length === 0) { renderPagination('leaderboardPagination', 0, 0, null); return; }
+        const startIndex = (leaderboardCurrentPage - 1) * LEADERBOARD_ITEMS_PER_PAGE;
+        const endIndex = startIndex + LEADERBOARD_ITEMS_PER_PAGE;
+        const paginatedData = allLeaderboardData.slice(startIndex, endIndex);
+        paginatedData.forEach((siswa, index) => { const rank = startIndex + index + 1; const highlightClass = siswa.nama === currentUser.user.nama ? 'highlight' : ''; const badgeColor = rank === 1 ? 'bg-warning' : (rank === 2 ? 'bg-secondary' : (rank === 3 ? 'bg-danger' : 'bg-info')); list.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center ${highlightClass}"><div><span class="badge ${badgeColor} rounded-pill me-2 rank-badge">${rank}</span> ${siswa.nama}</div><span class="badge bg-light text-dark">${siswa.totalHalaman} hal.</span></li>`; });
+        renderPagination('leaderboardPagination', allLeaderboardData.length, LEADERBOARD_ITEMS_PER_PAGE, changeLeaderboardPage);
     }
+
+    function renderPagination(containerId, totalItems, itemsPerPage, onPageClick) {
+        const container = document.getElementById(containerId);
+        const currentPage = containerId === 'journalPagination' ? journalCurrentPage : leaderboardCurrentPage;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (totalPages <= 1) { container.innerHTML = ''; return; }
+        let html = '<ul class="pagination pagination-sm">';
+        for (let i = 1; i <= totalPages; i++) { html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="${onPageClick.name}(${i})">${i}</a></li>`; }
+        html += '</ul>';
+        container.innerHTML = html;
+    }
+
+    function changeJournalPage(page) { journalCurrentPage = page; renderJournals(); }
+    function changeLeaderboardPage(page) { leaderboardCurrentPage = page; renderLeaderboard(); }
 
     function showConfirmDeleteModal(type, id) { deleteInfo = { type, id }; myConfirmDeleteModal.show(); }
     
     async function executeDelete() {
         myConfirmDeleteModal.hide();
-        if (deleteInfo.type === 'journal') { const result = await apiCall('deleteJournal', { idJurnal: deleteInfo.id }); if (result) { loadStudentJournals(); loadLeaderboardData(); } }
+        if (deleteInfo.type === 'journal') { await apiCall('deleteJournal', { idJurnal: deleteInfo.id }); loadStudentJournals(); loadLeaderboardData(); }
     }
-
-    async function generateShareImage(journalId) {
-        loader.style.display = 'flex';
-        const journal = allMyJournals.find(j => j.idJurnal === journalId);
-        if (!journal) { loader.style.display = 'none'; alert('Jurnal tidak ditemukan!'); return; }
-        document.getElementById('shareTitle').textContent = journal.judulBuku;
-        document.getElementById('shareAuthor').textContent = `oleh ${journal.penulis}`;
-        document.getElementById('shareSummary').textContent = `"${journal.ringkasan.substring(0, 200)}..."`;
-        document.getElementById('shareMood').textContent = journal.mood;
-        document.getElementById('shareStudentName').textContent = `Dibaca oleh ${currentUser.user.nama}`;
-        const cardElement = document.getElementById('shareCardContainer');
-        const canvas = await html2canvas(cardElement, { width: 450, height: 800, scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-        document.getElementById('imageResultContainer').innerHTML = `<img src="${imgData}" class="img-fluid" alt="Jurnal Baca"><p class="mt-2 small text-muted">Klik kanan untuk menyimpan gambar atau screenshot halaman ini.</p>`;
-        loader.style.display = 'none';
-        myImageResultModal.show();
-    }
-
-    function showAddJournalModal() { document.getElementById('journalForm').reset(); document.getElementById('journalId').value = ''; document.getElementById('journalModalTitle').textContent = 'Tambah Jurnal Baca'; document.querySelectorAll('.mood-icon').forEach(i => i.classList.remove('selected')); myJournalModal.show(); }
     
     async function handleJournalForm(e) {
         e.preventDefault();
@@ -207,16 +212,10 @@
         if (result) { myJournalModal.hide(); loadStudentJournals(); loadLeaderboardData(); }
     }
     
-    function editJournal(idJurnal) {
-        const journal = allMyJournals.find(j => j.idJurnal === idJurnal);
-        if(journal) {
-            document.getElementById('journalId').value = journal.idJurnal; const dateParts = journal.tanggalBaca.split('/'); document.getElementById('tanggalBaca').value = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-            document.getElementById('judulBuku').value = journal.judulBuku; document.getElementById('penulis').value = journal.penulis; document.getElementById('halaman').value = journal.halaman;
-            document.getElementById('ringkasan').value = journal.ringkasan; document.getElementById('mood').value = journal.mood;
-            document.querySelectorAll('.mood-icon').forEach(icon => { icon.classList.toggle('selected', icon.dataset.mood === journal.mood); });
-            document.getElementById('journalModalTitle').textContent = 'Edit Jurnal'; myJournalModal.show();
-        }
-    }
+    // Fungsi lain yang tidak berubah:
+    async function generateShareImage(journalId) { loader.style.display = 'flex'; const journal = allMyJournals.find(j => j.idJurnal === journalId); if (!journal) { loader.style.display = 'none'; alert('Jurnal tidak ditemukan!'); return; } document.getElementById('shareTitle').textContent = journal.judulBuku; document.getElementById('shareAuthor').textContent = `oleh ${journal.penulis}`; document.getElementById('shareSummary').textContent = `"${journal.ringkasan.substring(0, 200)}..."`; document.getElementById('shareMood').textContent = journal.mood; document.getElementById('shareStudentName').textContent = `Dibaca oleh ${currentUser.user.nama}`; const cardElement = document.getElementById('shareCardContainer'); const canvas = await html2canvas(cardElement, { width: 450, height: 800, scale: 2 }); const imgData = canvas.toDataURL('image/png'); document.getElementById('imageResultContainer').innerHTML = `<img src="${imgData}" class="img-fluid" alt="Jurnal Baca"><p class="mt-2 small text-muted">Klik kanan untuk menyimpan gambar atau screenshot halaman ini.</p>`; loader.style.display = 'none'; myImageResultModal.show(); }
+    function showAddJournalModal() { document.getElementById('journalForm').reset(); document.getElementById('journalId').value = ''; document.getElementById('journalModalTitle').textContent = 'Tambah Jurnal Baca'; document.querySelectorAll('.mood-icon').forEach(i => i.classList.remove('selected')); myJournalModal.show(); }
+    function editJournal(idJurnal) { const journal = allMyJournals.find(j => j.idJurnal === idJurnal); if(journal) { document.getElementById('journalId').value = journal.idJurnal; const dateParts = journal.tanggalBaca.split('/'); document.getElementById('tanggalBaca').value = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; document.getElementById('judulBuku').value = journal.judulBuku; document.getElementById('penulis').value = journal.penulis; document.getElementById('halaman').value = journal.halaman; document.getElementById('ringkasan').value = journal.ringkasan; document.getElementById('mood').value = journal.mood; document.querySelectorAll('.mood-icon').forEach(icon => { icon.classList.toggle('selected', icon.dataset.mood === journal.mood); }); document.getElementById('journalModalTitle').textContent = 'Edit Jurnal'; myJournalModal.show(); } }
 </script>
 </body>
 </html>

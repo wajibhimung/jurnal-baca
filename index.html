@@ -3,40 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Jurnal Baca TKJ</title>
+    <title>Selamat Datang - Jurnal Baca Siswa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-      :root { --primary-color: #6a11cb; --secondary-color: #2575fc; }
-      body { font-family: 'Poppins', sans-serif; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: #333; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-      .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 9999; }
-      .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; color: white; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); width: 100%; max-width: 450px; }
-      .form-control, .form-select { background-color: rgba(255, 255, 255, 0.2) !important; border: none !important; color: white !important; }
-      .form-control::placeholder { color: #ddd; }
-      .form-floating > label { color: #ddd !important; }
-      .btn-primary { background-image: linear-gradient(45deg, #f83292, #ff6b08); border: none; transition: all 0.3s ease; }
-      .btn-primary:hover { transform: scale(1.05); }
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text-light: #f8f9fa;
+            --text-muted-light: #adb5bd;
+            --input-bg: rgba(255, 255, 255, 0.15);
+            --btn-gradient: linear-gradient(90deg, #ff85b1 0%, #ffc107 100%);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .loader-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); display: none;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .login-hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-right: 2rem;
+        }
+
+        .login-hero img {
+            max-width: 80%;
+            margin-bottom: 1rem;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .input-group-icon {
+            position: relative;
+        }
+
+        .form-icon {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: var(--text-muted-light);
+            pointer-events: none; /* Agar icon tidak menghalangi klik input */
+        }
+        
+        .form-control, .form-select {
+            background-color: var(--input-bg) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: var(--text-light) !important;
+            border-radius: 10px;
+            padding-left: 45px; /* Memberi ruang untuk icon */
+            height: 50px;
+        }
+        
+        .form-control::placeholder { color: var(--text-muted-light); }
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23adb5bd' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        }
+        
+        .btn-login {
+            background-image: var(--btn-gradient);
+            border: none;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .footer {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 1rem 0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 767.98px) {
+            .login-hero {
+                display: none; /* Sembunyikan gambar pada layar mobile agar fokus ke form */
+            }
+            .login-container {
+                padding: 0 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" role="status"></div></div>
-    <div class="card login-card">
-        <div class="card-body p-5">
-            <h2 class="card-title text-center mb-4">Jurnal Baca TKJ</h2>
-            <form id="loginForm">
-                <div class="form-floating mb-3"><input type="email" class="form-control" id="email" placeholder="name@example.com" required><label for="email">Email</label></div>
-                <div class="form-floating mb-3"><input type="password" class="form-control" id="password" placeholder="Password" required><label for="password">Password</label></div>
-                <div class="form-floating mb-4"><select class="form-select" id="role" required><option value="siswa" selected>Siswa</option><option value="guru">Guru</option></select><label for="role">Login sebagai</label></div>
-                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Login</button></div>
-                <div id="login-alert" class="alert alert-danger mt-3 d-none" role="alert"></div>
-            </form>
-        </div>
+
+    <div id="loader" class="loader-wrapper">
+        <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
     </div>
+
+    <main>
+        <div class="container login-container">
+            <div class="row align-items-center">
+                <!-- Kolom Kiri: Ilustrasi & Branding (Hilang di Mobile) -->
+                <div class="col-md-6 login-hero">
+                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/reading-book-3488545-2922432.png" alt="Ilustrasi Membaca Buku" class="img-fluid">
+                    <h1 class="fw-bold">Jurnal Baca Siswa</h1>
+                    <p class="text-white-50">Catat setiap lembar petualanganmu dan jadilah pembaca terbaik!</p>
+                </div>
+                
+                <!-- Kolom Kanan: Form Login -->
+                <div class="col-md-6">
+                    <div class="card login-card">
+                        <div class="card-body p-5">
+                            <h2 class="card-title text-center mb-4 fw-bold">Login Akun Anda</h2>
+                            <form id="loginForm">
+                                <div class="input-group-icon mb-3">
+                                    <i class="fas fa-envelope form-icon"></i>
+                                    <input type="email" class="form-control" id="email" placeholder="Email" required>
+                                </div>
+                                <div class="input-group-icon mb-3">
+                                    <i class="fas fa-lock form-icon"></i>
+                                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                                </div>
+                                <div class="input-group-icon mb-4">
+                                    <i class="fas fa-users form-icon"></i>
+                                    <select class="form-select" id="role" required>
+                                        <option value="siswa" selected>Login sebagai Siswa</option>
+                                        <option value="guru">Login sebagai Guru</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-login text-white btn-lg">LOGIN</button>
+                                </div>
+                                <div id="login-alert" class="alert alert-danger mt-3 d-none" role="alert"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Kelas TKJ SMKN 1 Telagasari © 2025
+    </footer>
+
 <script>
+    // --- JavaScript tidak ada perubahan, sudah benar ---
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
     const loginForm = document.getElementById('loginForm');
     const loader = document.getElementById('loader');
     const loginAlert = document.getElementById('login-alert');
+    
     document.addEventListener('DOMContentLoaded', () => {
         const user = sessionStorage.getItem('currentUser');
         if(user) {
@@ -45,6 +195,7 @@
             if(userData.role === 'guru') window.location.href = 'guru.html';
         }
     });
+
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         loader.style.display = 'flex';
@@ -69,5 +220,6 @@
         }
     });
 </script>
+
 </body>
 </html>

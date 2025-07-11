@@ -43,7 +43,6 @@
 <body>
     <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" role="status"></div></div>
     
-    <!-- Toast Container -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
         <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div>
     </div>
@@ -167,6 +166,16 @@
         }
     }
 
+    // --- DEBOUNCE FUNCTION ---
+    function debounce(func, delay) {
+        let timeout;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+
     function renderLoadingSkeleton(container, tabId) {
         let skeletonHtml = '<div class="card data-card skeleton-card"><div class="skeleton skeleton-title"></div>';
         if (tabId === 'stats-tab') {
@@ -188,11 +197,9 @@
         const iconEl = toastEl.querySelector('.toast-header i');
         const headerEl = toastEl.querySelector('.toast-header');
         const closeBtn = toastEl.querySelector('.btn-close');
-
         headerEl.classList.remove('bg-success', 'bg-danger', 'text-white');
         closeBtn.classList.remove('btn-close-white');
         iconEl.classList.remove('fa-check-circle', 'fa-times-circle');
-        
         if(type === 'success') {
             headerEl.classList.add('bg-success', 'text-white');
             closeBtn.classList.add('btn-close-white');
@@ -202,7 +209,6 @@
             closeBtn.classList.add('btn-close-white');
             iconEl.classList.add('fa-times-circle');
         }
-        
         titleEl.textContent = title;
         bodyEl.textContent = message;
         appToast.show();
@@ -271,60 +277,107 @@
     }
 
     function changePage(tableId, page) { if (paginationState[tableId]) { paginationState[tableId].currentPage = page; const renderFunc = `render${tableId.charAt(0).toUpperCase() + tableId.slice(1)}`; if (typeof window[renderFunc] === 'function') window[renderFunc](); } }
-    function handleSearch(tableId) { if (paginationState[tableId]) { const searchTerm = document.getElementById(`${tableId}Search`).value.toLowerCase(); paginationState[tableId].searchTerm = searchTerm; paginationState[tableId].currentPage = 1; const renderFunc = `render${tableId.charAt(0).toUpperCase() + tableId.slice(1)}`; if (typeof window[renderFunc] === 'function') window[renderFunc](); } }
+    
+    const debouncedSearch = debounce((tableId, searchTerm) => {
+        if (paginationState[tableId]) {
+            paginationState[tableId].searchTerm = searchTerm.toLowerCase();
+            paginationState[tableId].currentPage = 1; 
+            const renderFunc = `render${tableId.charAt(0).toUpperCase() + tableId.slice(1)}`;
+            if (typeof window[renderFunc] === 'function') window[renderFunc]();
+        }
+    }, 300);
 
     function renderGamifikasi() {
         const container = document.getElementById('pills-gamifikasi');
-        container.innerHTML = `<div class="card data-card"><div class="card-body"><div class="row mb-3 justify-content-between align-items-center"><div class="col-md-4"><h5 class="card-title mb-0">Pantau Pencapaian</h5></div><div class="col-md-4"><input type="search" class="form-control form-control-sm" id="gamifikasiSearch" placeholder="Cari nama siswa..." onkeyup="handleSearch('gamifikasi')"></div><div class="col-md-4"><select id="filterKelasGamifikasi" class="form-select form-select-sm" onchange="handleSearch('gamifikasi')"><option value="all">Semua Kelas</option></select></div></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama Siswa</th><th>Kelas</th><th>Lencana</th><th>Target Aktif</th><th>Aksi</th></tr></thead><tbody id="gamifikasiTableBody"></tbody></table></div><nav id="gamifikasiPagination"></nav></div></div>`;
+        container.innerHTML = `<div class="card data-card"><div class="card-body">
+            <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center">
+                <div class="col-md-auto"><h5 class="card-title mb-0">Pantau Pencapaian</h5></div>
+                <div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="gamifikasiSearch" placeholder="Cari nama siswa..." oninput="debouncedSearch('gamifikasi', this.value)"></div>
+                <div class="col-md-4 col-lg-3"><select id="filterKelasGamifikasi" class="form-select form-select-sm"><option value="all">Semua Kelas</option></select></div>
+            </div>
+            <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama Siswa</th><th>Kelas</th><th>Lencana</th><th>Target Aktif</th><th>Aksi</th></tr></thead><tbody id="gamifikasiTableBody"></tbody></table></div>
+            <nav id="gamifikasiPagination"></nav>
+        </div></div>`;
+        
         if (!teacherData) return;
         const filterDropdown = document.getElementById('filterKelasGamifikasi');
         teacherData.classes.forEach(c => { filterDropdown.innerHTML += `<option value="${c}">${c}</option>`; });
-        const selectedClass = filterDropdown.value;
-        const tableData = selectedClass === 'all' ? teacherData.students : teacherData.students.filter(s => s.kelas === selectedClass);
-        renderPaginatedTable({
-            tableId: 'gamifikasi',
-            data: tableData,
-            columns: ['Nama Siswa', 'Kelas', 'Lencana', 'Target Aktif', 'Aksi'],
-            rowGenerator: (student) => {
-                const studentBadges = teacherData.allStudentBadges.filter(b => b.email === student.email);
-                let badgesHtml = studentBadges.map(b => { const badgeInfo = ALL_BADGES[b.badgeId]; return badgeInfo ? `<i class="fas ${badgeInfo.icon} badge-icon-sm me-2" title="${badgeInfo.name}"></i>` : ''; }).join('');
-                const studentActiveTargets = teacherData.allTargets.filter(t => t.email === student.email && t.status === 'Aktif');
-                return `<tr><td>${student.nama}</td><td>${student.kelas}</td><td>${badgesHtml || '<small class="text-muted">-</small>'}</td><td>${studentActiveTargets.length} Target</td><td><button class="btn btn-sm btn-outline-primary py-0" onclick="showStudentGamifikasi('${student.email}')">Lihat</button></td></tr>`;
-            },
-            filterFunction: (item, term) => item.nama.toLowerCase().includes(term),
-            initialSort: (a, b) => a.nama.localeCompare(b.nama)
+        
+        const renderTable = () => {
+            const selectedClass = filterDropdown.value;
+            const tableData = selectedClass === 'all' ? teacherData.students : teacherData.students.filter(s => s.kelas === selectedClass);
+            
+            renderPaginatedTable({
+                tableId: 'gamifikasi', data: tableData, columns: ['Nama Siswa', 'Kelas', 'Lencana', 'Target Aktif', 'Aksi'],
+                rowGenerator: (student) => {
+                    const studentBadges = teacherData.allStudentBadges.filter(b => b.email === student.email);
+                    let badgesHtml = studentBadges.map(b => { const badgeInfo = ALL_BADGES[b.badgeId]; return badgeInfo ? `<i class="fas ${badgeInfo.icon} badge-icon-sm me-2" title="${badgeInfo.name}"></i>` : ''; }).join('');
+                    const studentActiveTargets = teacherData.allTargets.filter(t => t.email === student.email && t.status === 'Aktif');
+                    return `<tr><td>${student.nama}</td><td>${student.kelas}</td><td>${badgesHtml || '<small class="text-muted">-</small>'}</td><td>${studentActiveTargets.length} Target</td><td><button class="btn btn-sm btn-outline-primary py-0" onclick="showStudentGamifikasi('${student.email}')">Lihat</button></td></tr>`;
+                },
+                filterFunction: (item, term) => item.nama.toLowerCase().includes(term),
+                initialSort: (a, b) => a.nama.localeCompare(b.nama)
+            });
+        };
+
+        filterDropdown.addEventListener('change', () => {
+            paginationState['gamifikasi'] = { currentPage: 1, searchTerm: document.getElementById('gamifikasiSearch').value.toLowerCase() };
+            renderTable();
         });
-        filterDropdown.onchange = () => { paginationState['gamifikasi'].currentPage = 1; renderGamifikasi(); };
+        renderTable();
     }
 
     function renderSemuaJurnal() {
         const container = document.getElementById('pills-semua-jurnal');
-        container.innerHTML = `<div class="card data-card"><div class="card-body"><div class="row mb-3 justify-content-between align-items-center"><div class="col-md-4"><h5 class="card-title mb-0">Semua Jurnal</h5></div><div class="col-md-4"><input type="search" class="form-control form-control-sm" id="semuaJurnalSearch" placeholder="Cari judul atau siswa..." onkeyup="handleSearch('semuaJurnal')"></div><div class="col-md-4"><select id="filterKelasJurnal" class="form-select form-select-sm"><option value="all">Semua Kelas</option></select></div></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Judul Buku</th><th>Aksi</th></tr></thead><tbody id="semuaJurnalTableBody"></tbody></table></div><nav id="semuaJurnalPagination"></nav></div></div>`;
+        container.innerHTML = `<div class="card data-card"><div class="card-body">
+            <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center">
+                <div class="col-md-auto"><h5 class="card-title mb-0">Semua Jurnal</h5></div>
+                <div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="semuaJurnalSearch" placeholder="Cari judul atau siswa..." oninput="debouncedSearch('semuaJurnal', this.value)"></div>
+                <div class="col-md-4 col-lg-3"><select id="filterKelasJurnal" class="form-select form-select-sm"><option value="all">Semua Kelas</option></select></div>
+            </div>
+            <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Judul Buku</th><th>Aksi</th></tr></thead><tbody id="semuaJurnalTableBody"></tbody></table></div>
+            <nav id="semuaJurnalPagination"></nav>
+        </div></div>`;
+
         if (!teacherData) return;
         const filterDropdown = document.getElementById('filterKelasJurnal');
         teacherData.classes.forEach(c => { filterDropdown.innerHTML += `<option value="${c}">${c}</option>`; });
-        const selectedClass = filterDropdown.value;
-        const tableData = selectedClass === 'all' ? teacherData.journals : teacherData.journals.filter(j => j.kelasSiswa === selectedClass);
-        renderPaginatedTable({
-            tableId: 'semuaJurnal',
-            data: tableData,
-            columns: ['Tanggal', 'Siswa', 'Kelas', 'Judul Buku', 'Aksi'],
-            rowGenerator: (j) => `<tr><td>${j.tanggalBaca}</td><td>${j.namaSiswa}</td><td>${j.kelasSiswa}</td><td>${j.judulBuku}</td><td><button class="btn btn-sm btn-info" onclick="showJurnalDetail('${j.idJurnal}')"><i class="fas fa-eye"></i></button> <button class="btn btn-sm btn-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}', 'jurnal ini')"><i class="fas fa-trash"></i></button></td></tr>`,
-            filterFunction: (item, term) => (item.namaSiswa || '').toLowerCase().includes(term) || (item.judulBuku || '').toLowerCase().includes(term),
-            initialSort: (a, b) => parseDate(b.tanggalBaca) - parseDate(a.tanggalBaca)
+
+        const renderTable = () => {
+            const selectedClass = filterDropdown.value;
+            const tableData = selectedClass === 'all' ? teacherData.journals : teacherData.journals.filter(j => j.kelasSiswa === selectedClass);
+            
+            renderPaginatedTable({
+                tableId: 'semuaJurnal', data: tableData, columns: ['Tanggal', 'Siswa', 'Kelas', 'Judul Buku', 'Aksi'],
+                rowGenerator: (j) => `<tr><td>${j.tanggalBaca}</td><td>${j.namaSiswa}</td><td>${j.kelasSiswa}</td><td>${j.judulBuku}</td><td><button class="btn btn-sm btn-info" onclick="showJurnalDetail('${j.idJurnal}')"><i class="fas fa-eye"></i></button> <button class="btn btn-sm btn-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}', 'jurnal ini')"><i class="fas fa-trash"></i></button></td></tr>`,
+                filterFunction: (item, term) => (item.namaSiswa || '').toLowerCase().includes(term) || (item.judulBuku || '').toLowerCase().includes(term),
+                initialSort: (a, b) => parseDate(b.tanggalBaca) - parseDate(a.tanggalBaca)
+            });
+        };
+        
+        filterDropdown.addEventListener('change', () => {
+            paginationState['semuaJurnal'] = { currentPage: 1, searchTerm: document.getElementById('semuaJurnalSearch').value.toLowerCase() };
+            renderTable();
         });
-        filterDropdown.onchange = () => { paginationState['semuaJurnal'].currentPage = 1; renderSemuaJurnal(); };
+        renderTable();
     }
     
     function renderStudentList() {
         const container = document.getElementById('pills-siswa');
-        container.innerHTML = `<div class="card data-card"><div class="card-body"><div class="row mb-3 justify-content-between align-items-center"><div class="col-md-4"><h5 class="card-title mb-0">Data Siswa</h5></div><div class="col-md-4"><input type="search" class="form-control form-control-sm" id="studentListSearch" placeholder="Cari nama atau email..." onkeyup="handleSearch('studentList')"></div><div class="col-md-4 text-end"><button class="btn btn-success btn-sm" id="addStudentBtn"><i class="fas fa-user-plus"></i> Tambah Siswa</button></div></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama</th><th>Email</th><th>Kelas</th><th>Aksi</th></tr></thead><tbody id="studentListTableBody"></tbody></table></div><nav id="studentListPagination"></nav></div></div>`;
+        container.innerHTML = `<div class="card data-card"><div class="card-body">
+            <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center">
+                <div class="col-md-auto"><h5 class="card-title mb-0">Data Siswa</h5></div>
+                <div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="studentListSearch" placeholder="Cari nama atau email..." oninput="debouncedSearch('studentList', this.value)"></div>
+                <div class="col-md-auto text-end flex-grow-1"><button class="btn btn-success btn-sm" id="addStudentBtn"><i class="fas fa-user-plus"></i> Tambah Siswa</button></div>
+            </div>
+            <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama</th><th>Email</th><th>Kelas</th><th>Aksi</th></tr></thead><tbody id="studentListTableBody"></tbody></table></div>
+            <nav id="studentListPagination"></nav>
+        </div></div>`;
         if (!teacherData) return;
         document.getElementById('addStudentBtn').addEventListener('click', showAddStudentModal);
+        
         renderPaginatedTable({
-            tableId: 'studentList',
-            data: teacherData.students,
-            columns: ['Nama', 'Email', 'Kelas', 'Aksi'],
+            tableId: 'studentList', data: teacherData.students, columns: ['Nama', 'Email', 'Kelas', 'Aksi'],
             rowGenerator: (s) => `<tr><td>${s.nama}</td><td>${s.email}</td><td>${s.kelas}</td><td><button class="btn btn-sm btn-warning" onclick="editStudent('${s.idSiswa}')"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-danger" onclick="showConfirmDeleteModal('student', '${s.idSiswa}', 'siswa \\'${s.nama}\\'')"><i class="fas fa-trash"></i></button></td></tr>`,
             filterFunction: (item, term) => item.nama.toLowerCase().includes(term) || item.email.toLowerCase().includes(term),
             initialSort: (a, b) => a.nama.localeCompare(b.nama)
@@ -351,19 +404,8 @@
     
     function showStudentGamifikasi(studentEmail) { const student = teacherData.students.find(s => s.email === studentEmail); if (!student) return; const studentJournals = teacherData.journals.filter(j => j.namaSiswa === student.nama && j.kelasSiswa === student.kelas); const totalPages = studentJournals.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); const uniqueBooks = new Set(studentJournals.map(j => (j.judulBuku || "").trim()).filter(Boolean)); let detailHTML = '<h4><i class="fas fa-award me-2 text-warning"></i>Lencana yang Diraih</h4>'; const studentBadges = teacherData.allStudentBadges.filter(b => b.email === studentEmail); if (studentBadges.length > 0) { detailHTML += '<div class="d-flex flex-wrap">'; studentBadges.forEach(b => { const badgeInfo = ALL_BADGES[b.badgeId]; if (badgeInfo) { detailHTML += `<div class="text-center p-2"><i class="fas ${badgeInfo.icon} fa-2x text-warning"></i><br><small>${badgeInfo.name}</small></div>`; } }); detailHTML += '</div>'; } else { detailHTML += '<p class="text-muted">Belum ada lencana yang diraih.</p>'; } detailHTML += '<hr class="my-4">'; detailHTML += '<h4><i class="fas fa-bullseye me-2 text-primary"></i>Target Aktif</h4>'; const activeTargets = teacherData.allTargets.filter(t => t.email === studentEmail && t.status === 'Aktif'); if(activeTargets.length > 0) { detailHTML += '<div class="target-detail-list">'; activeTargets.forEach(target => { let currentProgress = target.type.toLowerCase() === 'halaman' ? totalPages : uniqueBooks.size; const goal = parseInt(target.targetValue) || 1; const progressPercent = Math.min(Math.round((currentProgress / goal) * 100), 100); detailHTML += `<div class="target-card-guru"><div><strong>${target.title || `Target: ${goal} ${target.type}`}</strong></div><small>Progress: ${currentProgress} / ${goal}</small><div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: ${progressPercent}%" aria-valuenow="${progressPercent}">${progressPercent}%</div></div></div>`; }); detailHTML += '</div>'; } else { detailHTML += '<p class="text-muted">Tidak ada target aktif saat ini.</p>'; } detailHTML += '<hr class="my-4">'; detailHTML += '<h4><i class="fas fa-history me-2 text-secondary"></i>Riwayat Target Selesai</h4>'; const completedTargets = teacherData.allTargets.filter(t => t.email === studentEmail && t.status === 'Selesai'); if (completedTargets.length > 0) { detailHTML += '<ul class="list-group list-group-flush">'; completedTargets.forEach(target => { detailHTML += `<li class="list-group-item d-flex justify-content-between align-items-center"><div><strong>${target.title || `Target: ${target.targetValue} ${target.type}`}</strong><br><small class="text-muted">Status: Selesai</small></div><i class="fas fa-check-circle text-success fa-2x"></i></li>`; }); detailHTML += '</ul>'; } else { detailHTML += '<p class="text-muted">Belum ada target yang diselesaikan.</p>'; } document.getElementById('jurnalDetailTitle').textContent = `Progress Gamifikasi: ${student.nama}`; document.getElementById('jurnalDetailBody').innerHTML = detailHTML; myJurnalDetailModal.show(); }
     
-    async function refreshDataAndRerender(successMessage = '') { 
-        paginationState = {};
-        document.querySelectorAll('.tab-pane').forEach(pane => { pane.innerHTML = ''; pane.removeAttribute('data-rendered'); });
-        const activeTabEl = document.querySelector('#pills-tab .nav-link.active');
-        const activePane = document.querySelector(activeTabEl.getAttribute('data-bs-target'));
-        renderLoadingSkeleton(activePane, activeTabEl.id);
-        await loadTeacherData();
-        const renderFunction = window[activeTabEl.getAttribute('data-render-function')];
-        if (typeof renderFunction === 'function') { renderFunction(); }
-        activePane.setAttribute('data-rendered', 'true');
-        if(successMessage) { showToast(successMessage, 'Berhasil', 'success'); }
-    }
-
+    async function refreshDataAndRerender(successMessage = '') { paginationState = {}; document.querySelectorAll('.tab-pane').forEach(pane => { pane.innerHTML = ''; pane.removeAttribute('data-rendered'); }); const activeTabEl = document.querySelector('#pills-tab .nav-link.active'); const activePane = document.querySelector(activeTabEl.getAttribute('data-bs-target')); renderLoadingSkeleton(activePane, activeTabEl.id); await loadTeacherData(); const renderFunction = window[activeTabEl.getAttribute('data-render-function')]; if (typeof renderFunction === 'function') { renderFunction(); } activePane.setAttribute('data-rendered', 'true'); if(successMessage) { showToast(successMessage, 'Berhasil', 'success'); } }
+    
     function showConfirmDeleteModal(type, id, name) { document.getElementById('confirmMessageText').textContent = `Apakah Anda yakin ingin menghapus ${name}? Tindakan ini tidak dapat diurungkan.`; deleteInfo = { type, id }; myConfirmDeleteModal.show(); }
     
     async function executeDelete() { myConfirmDeleteModal.hide(); let action = '', payload = {}; if (deleteInfo.type === 'journal') { action = 'deleteJournal'; payload = { idJurnal: deleteInfo.id }; } else if (deleteInfo.type === 'class') { action = 'deleteClass'; payload = { className: deleteInfo.id }; } else if (deleteInfo.type === 'student') { action = 'deleteStudent'; payload = { idSiswa: deleteInfo.id }; } if (action) { const result = await apiCall(action, payload); if (result !== null) { await refreshDataAndRerender('Data berhasil dihapus.'); } } }
@@ -381,4 +423,4 @@
     function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
 </script>
 </body>
-</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         </html>

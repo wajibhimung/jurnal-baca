@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Kupon - Jurnal Baca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 75px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        
+        .loader-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        nav.navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .saldo-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .saldo-panel .display-1 {
+            font-weight: 700;
+            color: #ffc107;
+            text-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .item-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .item-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .item-card-icon { font-size: 2.5rem; color: #ffc107; opacity: 0.8; }
+        .item-card-title { font-weight: 600; font-size: 1.25rem; }
+        .item-card-description { font-size: 0.9rem; opacity: 0.8; flex-grow: 1; }
+        .item-card-footer { margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .item-cost { font-weight: 700; font-size: 1.5rem; }
+        .item-cost .fa-ticket-alt { color: #ffc107; }
+
+        .disabled-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            display: flex; justify-content: center; align-items: center;
+            color: #fff; font-weight: 600; text-align: center;
+            border-radius: 15px;
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 1rem 0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .toast-container { z-index: 10000; }
+        .modal-content { color: #333; }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
+    
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-cash-register me-2"></i>ATM Kupon</a>
+        </div>
+    </nav>
+        
+    <main class="container main-content">
+        <div id="main-container">
+            <!-- Konten akan dirender oleh JavaScript di sini -->
+        </div>
+    </main>
+
+    <footer class="footer text-center p-3">
+        Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Kelas TKJ SMKN 1 Telagasari © 2025
+    </footer>
+
+    <!-- Modal Konfirmasi Penukaran -->
+    <div class="modal fade" id="confirmRedeemModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmRedeemTitle">Konfirmasi Penukaran</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmRedeemBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" id="confirmRedeemBtn">Ya, Tukar</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
+    let redeemInfo = {};
+    let myConfirmRedeemModal, appToast;
+    const loader = document.getElementById('loader');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        myConfirmRedeemModal = new bootstrap.Modal(document.getElementById('confirmRedeemModal'));
+        appToast = new bootstrap.Toast(document.getElementById('appToast'));
+
+        // Ambil email siswa dari parameter URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentEmail = urlParams.get('e');
+
+        if (!studentEmail) {
+            renderError('Parameter email siswa tidak ditemukan di URL.');
+            return;
+        }
+        
+        loadDataForStudent(studentEmail);
+        document.getElementById('confirmRedeemBtn').addEventListener('click', executeRedeem);
+    });
+
+    function renderError(message) {
+        const container = document.getElementById('main-container');
+        container.innerHTML = `<div class="text-center p-5 saldo-panel"><h2><i class="fas fa-exclamation-triangle text-warning"></i> Error</h2><p class="lead mt-3">${message}</p><p>Pastikan URL Anda memiliki format: <code>tukar-kupon.html?e=email@siswa.com</code></p></div>`;
+        loader.style.display = 'none';
+    }
+
+    async function loadDataForStudent(email) {
+        loader.style.display = 'flex';
+        // Kita gunakan endpoint 'getCouponManagementData' yang sudah ada
+        const data = await apiCall('getCouponManagementData');
+        loader.style.display = 'none';
+        
+        if (data) {
+            const student = data.students.find(s => s.email === email);
+            if (!student) {
+                renderError(`Siswa dengan email '${email}' tidak ditemukan.`);
+                return;
+            }
+
+            const balance = data.studentCoupons.filter(c => c.emailSiswa === email && c.status === 'Tersedia').length;
+            const prizes = data.prizes || [];
+
+            renderPage(student, balance, prizes);
+        }
+    }
+
+    function renderPage(student, balance, prizes) {
+        const container = document.getElementById('main-container');
+
+        let prizesHtml = '';
+        if (prizes.length > 0) {
+             prizes.sort((a,b) => a.kuponDibutuhkan - b.kuponDibutuhkan).forEach(prize => {
+                const canAfford = balance >= prize.kuponDibutuhkan;
+                prizesHtml += `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="item-card">
+                            <div class="item-card-header">
+                                <i class="fas fa-gift item-card-icon"></i>
+                                <h5 class="item-card-title mb-0">${prize.namaHadiah}</h5>
+                            </div>
+                            <p class="item-card-description">${prize.deskripsi || 'Tidak ada deskripsi.'}</p>
+                            <div class="item-card-footer">
+                                <div class="item-cost">${prize.kuponDibutuhkan} <i class="fas fa-ticket-alt"></i></div>
+                                <button class="btn btn-warning" onclick="showRedeemConfirmation('${student.email}', '${prize.idHadiah}', ${prize.kuponDibutuhkan}, '${student.nama}', '${prize.namaHadiah}')" ${canAfford ? '' : 'disabled'}>
+                                    Tukar
+                                </button>
+                            </div>
+                            ${!canAfford ? `<div class="disabled-overlay"><span>Kupon Tidak Cukup</span></div>` : ''}
+                        </div>
+                    </div>`;
+            });
+        } else {
+            prizesHtml = `<div class="col-12 text-center"><p>Belum ada hadiah yang bisa ditukarkan saat ini.</p></div>`;
+        }
+
+        container.innerHTML = `
+            <div class="saldo-panel">
+                <h3 class="fw-light">Selamat Datang, <span id="studentNameDisplay" class="fw-bold">${student.nama}</span>!</h3>
+                <h4 class="fw-light mb-3">Kelas: ${student.kelas}</h4>
+                <p class="lead mb-2">Saldo Kupon Anda Saat Ini:</p>
+                <h1 class="display-1" id="couponBalanceDisplay">${balance}</h1>
+            </div>
+            <h2 class="text-center mb-4">Katalog Hadiah</h2>
+            <div class="row" id="prizeListContainer">
+                ${prizesHtml}
+            </div>
+        `;
+    }
+
+    function showRedeemConfirmation(emailSiswa, idHadiah, kuponDibutuhkan, namaSiswa, namaHadiah) {
+        redeemInfo = { emailSiswa, idHadiah, kuponDibutuhkan, namaSiswa, namaHadiah };
+        document.getElementById('confirmRedeemBody').innerHTML = `Tukarkan <strong>${kuponDibutuhkan} kupon</strong> milik Anda dengan hadiah <strong class="text-primary">${namaHadiah}</strong>?`;
+        myConfirmRedeemModal.show();
+    }
+    
+    async function executeRedeem() {
+        myConfirmRedeemModal.hide();
+        loader.style.display = 'flex';
+        const result = await apiCall('redeemPrize', redeemInfo);
+        if (result) {
+            showToast('Hadiah berhasil ditukarkan!', 'Sukses', 'success');
+            // Muat ulang data untuk menampilkan saldo kupon yang baru
+            await loadDataForStudent(redeemInfo.emailSiswa);
+        }
+        loader.style.display = 'none';
+    }
+
+    // Helper Functions (dicopy dari file lain)
+    async function apiCall(action, data = {}) {
+        try {
+            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" });
+            const result = await response.json();
+            if (result.status === 'success') {
+                return result.data;
+            } else {
+                throw new Error(result.message || 'Terjadi kesalahan server.');
+            }
+        } catch (error) {
+            console.error("API Call Error:", error);
+            loader.style.display = 'none';
+            showToast("Error: " + error.message, 'Gagal', 'danger');
+            return null;
+        }
+    }
+
+    function showToast(message, title = 'Notifikasi', type = 'success') {
+        const headerEl = document.querySelector('#appToast .toast-header');
+        const iconEl = headerEl.querySelector('i');
+        const closeBtn = headerEl.querySelector('.btn-close');
+        
+        headerEl.className = 'toast-header text-white';
+        closeBtn.classList.add('btn-close-white');
+        
+        if (type === 'success') {
+            headerEl.classList.add('bg-success'); iconEl.className = 'fas fa-check-circle rounded me-2';
+        } else {
+            headerEl.classList.add('bg-danger'); iconEl.className = 'fas fa-times-circle rounded me-2';
+        }
+        
+        document.getElementById('toastTitle').textContent = title;
+        document.getElementById('toastBody').textContent = message;
+        appToast.show();
+    }
+</script>
+</body>
+</html>

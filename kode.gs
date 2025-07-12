@@ -1,5 +1,5 @@
 // =================================================================
-//          APLIKASI JURNAL BACA - BACKEND FINAL v4.7 (FIXED & STABLE)
+//          APLIKASI JURNAL BACA - BACKEND FINAL v4.9 (HEADER & MODAL FIX)
 // =================================================================
 
 const SPREADSHEET_ID = "1fjIdB8Px8fZNRMexu_v8iKbAtJKopYprvYD7H8GT8LE"; 
@@ -9,7 +9,6 @@ const SHEET_KELAS = "Kelas";
 const SHEET_JURNAL = "Jurnal"; 
 const SHEET_TARGET = "Target"; 
 const SHEET_LENCANA_SISWA = "LencanaSiswa";
-// ▼▼▼ Konstanta Baru untuk Kupon ▼▼▼
 const SHEET_KUPON = "Kupon";
 const SHEET_HADIAH = "Hadiah";
 const SHEET_KUPON_SISWA = "KuponSiswa";
@@ -54,7 +53,7 @@ function doPost(e) {
       case 'getAllTargets': result = getAllTargets(); break;
       case 'getAllStudentBadges': result = getAllStudentBadges(); break;
 
-      // ▼▼▼ Fungsi Baru untuk Kupon ▼▼▼
+      // ▼▼▼ Fungsi Kupon (Telah Disesuaikan) ▼▼▼
       case 'getCouponManagementData': result = getCouponManagementData(); break;
       case 'addCouponType': result = addCouponType(data); break;
       case 'addPrize': result = addPrize(data); break;
@@ -62,8 +61,9 @@ function doPost(e) {
       case 'deletePrize': result = deleteRowById(SHEET_HADIAH, data.id, 'idHadiah'); break;
       case 'giveCoupons': result = giveCoupons(data.emailSiswa, data.idKuponTipe, data.jumlah); break; 
       case 'redeemPrize': result = redeemPrize(data.emailSiswa, data.idHadiah, data.kuponDibutuhkan); break;
+      // Perhatikan di sini, backend menerima `data.idPenukaran` dari frontend
+      case 'updateRedemptionStatus': result = updateRedemptionStatus(data.idPenukaran, data.status); break;
       case 'getStudentListOnly': result = getStudentListOnly(); break;
-      // ▲▲▲ Akhir Fungsi Kupon ▲▲▲
 
       default: throw new Error("Aksi tidak valid: " + action);
     }
@@ -75,13 +75,11 @@ function doPost(e) {
 }
 
 // =================================================================
-//          FUNGSI ORIGINAL (v4.4 STABLE)
+//          FUNGSI ORIGINAL
 // =================================================================
-
 function login(email, password, role) { const sheetName = (role === 'siswa') ? SHEET_SISWA : SHEET_GURU; const sheet = ss.getSheetByName(sheetName); if (!sheet) return { status: "error", message: `Sheet ${sheetName} tidak ditemukan.`}; const data = sheet.getDataRange().getValues(); for (let i = 1; i < data.length; i++) { const row = data[i]; const userEmail = (role === 'siswa') ? row[2] : row[0]; const userPassword = (role === 'siswa') ? row[3] : row[2]; if (userEmail && userEmail.toLowerCase() === email.toLowerCase() && userPassword == password) { let userData = (role === 'siswa') ? { idSiswa: row[0], nama: row[1], email: row[2], kelas: row[4] } : { nama: row[1], email: row[0] }; return { status: "success", role: role, user: userData }; } } return { status: "error", message: "Email atau password salah." }; }
 function getStudentDashboardData(emailSiswa) { return { journals: getStudentJournals(emailSiswa), leaderboard: getLeaderboardData(), targets: getStudentTargets(emailSiswa), badges: getStudentBadges(emailSiswa) }; }
 function addJournalAndCheck(journalData) { addJournal(journalData); const newBadges = checkAllAchievements(journalData.emailSiswa); updateTargetProgress(journalData.emailSiswa); return { status: "success", message: "Jurnal berhasil ditambahkan.", newBadges: newBadges }; }
-function updateJournalAndCheck(journalData) { updateJournal(journalData); const newBadges = checkAllAchievements(journalData.emailSiswa); updateTargetProgress(journalData.emailSiswa); return { status: "success", message: "Jurnal berhasil diperbarui.", newBadges: newBadges }; }
 function getStudentJournals(emailSiswa) { const sheet = ss.getSheetByName(SHEET_JURNAL); if (!sheet) return []; const data = sheet.getDataRange().getValues(); const journals = []; for (let i = data.length - 1; i > 0; i--) { if (data[i][2] === emailSiswa) { journals.push({ idJurnal: data[i][0], tanggalBaca: new Date(data[i][4]).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }), judulBuku: String(data[i][5] || ''), penulis: data[i][6], halaman: data[i][7], ringkasan: data[i][8], mood: data[i][9] }); } } return journals; }
 function getStudentTargets(emailSiswa) { const sheet = ss.getSheetByName(SHEET_TARGET); if (!sheet) return []; const data = sheet.getDataRange().getValues(); const targets = []; for (let i = 1; i < data.length; i++) { if (data[i][1] === emailSiswa) { targets.push({ idTarget: data[i][0], email: data[i][1], title: data[i][2], type: data[i][3], targetValue: data[i][4], status: data[i][5] }); } } return targets; }
 function addTarget(targetData) { const sheet = ss.getSheetByName(SHEET_TARGET); const newId = `TGT-${new Date().getTime()}`; sheet.appendRow([newId, targetData.email, targetData.title, targetData.type, targetData.targetValue, 'Aktif']); return { status: 'success' }; }
@@ -103,16 +101,11 @@ function deleteClass(className) { const sheet = ss.getSheetByName(SHEET_KELAS); 
 function addStudent(d) { const sheet = ss.getSheetByName(SHEET_SISWA); const newId = `SISWA-${new Date().getTime()}`; sheet.appendRow([newId, d.nama, d.email, d.password, d.kelas, new Date()]); return { status: "success" }; }
 function updateStudent(d) { const sheet = ss.getSheetByName(SHEET_SISWA); const data = sheet.getDataRange().getValues(); for (let i = 1; i < data.length; i++) { if (data[i][0] === d.idSiswa) { let row = data[i]; row[1] = d.nama; row[2] = d.email; if(d.password) row[3] = d.password; row[4] = d.kelas; sheet.getRange(i+1, 1, 1, row.length).setValues([row]); return { status: "success" }; } } }
 function deleteStudent(idSiswa) { const sheet = ss.getSheetByName(SHEET_SISWA); const data = sheet.getDataRange().getValues(); for (let i = data.length - 1; i > 0; i--) { if (data[i][0] === idSiswa) { sheet.deleteRow(i + 1); return { status: "success" }; } } }
-function keepAlive() { Logger.log("Pinged at " + new Date()); }
-
 
 // =================================================================
-//          ▼▼▼ FUNGSI BARU UNTUK KUPON ▼▼▼
+//          ▼▼▼ FUNGSI KUPON ▼▼▼
 // =================================================================
 
-/**
- * Helper function to convert sheet data to JSON array of objects.
- */
 function sheetToJSON(sheet) {
   if (!sheet) return [];
   const data = sheet.getDataRange().getValues();
@@ -130,9 +123,6 @@ function sheetToJSON(sheet) {
   }).filter(item => item !== null);
 }
 
-/**
- * Generic function to delete a row by its ID from any sheet.
- */
 function deleteRowById(sheetName, idToDelete, idColumnName) {
   const sheet = ss.getSheetByName(sheetName);
   if (!sheet) throw new Error(`Sheet '${sheetName}' tidak ditemukan.`);
@@ -162,7 +152,6 @@ function getCouponManagementData() {
   const studentsRaw = ss.getSheetByName(SHEET_SISWA).getDataRange().getValues().slice(1);
   const classesRaw = ss.getSheetByName(SHEET_KELAS).getDataRange().getValues().slice(1);
 
-  // Menggunakan format siswa yang konsisten dengan getTeacherDashboardData
   const students = studentsRaw.map(r => ({ idSiswa: r[0], nama: r[1], email: r[2], password: r[3], kelas: r[4] })).filter(s => s.idSiswa);
   const classes = classesRaw.map(r => r[0]).filter(Boolean);
 
@@ -226,7 +215,8 @@ function redeemPrize(emailSiswa, idHadiah, kuponDibutuhkan) {
 
     const historySheet = ss.getSheetByName(SHEET_RIWAYAT_PENUKARAN);
     const newId = `R-${new Date().getTime()}`;
-    historySheet.appendRow([newId, emailSiswa, idHadiah, kuponDibutuhkan, new Date()]);
+    // Kolom 1 (idPenukaran), 2(email), 3(idHadiah), 4(kupon), 5(tanggal), 6(status)
+    historySheet.appendRow([newId, emailSiswa, idHadiah, kuponDibutuhkan, new Date(), 'Ditukar']);
     
     return { status: 'success', message: 'Kupon berhasil ditukar!' };
   } catch (e) {
@@ -236,19 +226,47 @@ function redeemPrize(emailSiswa, idHadiah, kuponDibutuhkan) {
     lock.releaseLock();
   }
 }
+
 /**
- * FUNGSI BARU UNTUK LAZY LOADING
- * Hanya mengambil daftar siswa (nama, email, kelas) agar pemuatan awal cepat.
+ * FUNGSI UPDATE STATUS HADIAH (DIPERBARUI UNTUK HEADER 'idPenukaran')
  */
+function updateRedemptionStatus(idPenukaran, status) {
+  const sheet = ss.getSheetByName(SHEET_RIWAYAT_PENUKARAN);
+  if (!sheet) throw new Error("Sheet 'RiwayatPenukaran' tidak ditemukan.");
+
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const idColumnName = 'idPenukaran'; // <-- NAMA HEADER YANG BENAR
+  const statusColumnName = 'status';
+
+  const idColumnIndex = headers.indexOf(idColumnName);
+  const statusColumnIndex = headers.indexOf(statusColumnName);
+
+  if (idColumnIndex === -1) {
+    throw new Error(`Kolom '${idColumnName}' tidak ditemukan di sheet 'RiwayatPenukaran'. Pastikan header kolom sudah benar.`);
+  }
+  if (statusColumnIndex === -1) {
+    throw new Error(`Kolom '${statusColumnName}' tidak ditemukan di sheet 'RiwayatPenukaran'. Pastikan header kolom sudah benar.`);
+  }
+
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][idColumnIndex] == idPenukaran) {
+      sheet.getRange(i + 1, statusColumnIndex + 1).setValue(status);
+      return { status: 'success', message: 'Status hadiah berhasil diperbarui.' };
+    }
+  }
+  
+  throw new Error("ID Penukaran tidak ditemukan. Nilai yang dicari: " + idPenukaran);
+}
+
 function getStudentListOnly() {
   const sheet = ss.getSheetByName(SHEET_SISWA);
   if (!sheet) return [];
-  // Mengambil data dari kolom A, B, C, dan E
   const data = sheet.getRange("A2:E" + sheet.getLastRow()).getValues();
   return data.map(row => ({
     idSiswa: row[0],
     nama: row[1],
     email: row[2],
     kelas: row[4]
-  })).filter(s => s.nama); // Filter siswa yang punya nama
+  })).filter(s => s.nama);
 }

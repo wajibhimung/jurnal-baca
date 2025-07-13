@@ -6,334 +6,230 @@
     <title>Project NEXUS - Jurnal Baca</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6a11cb;
-            --secondary-color: #2575fc;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-dark: #333;
-            --text-light: #fff;
+            --dark-bg: #0A0C16;
+            --card-bg: linear-gradient(145deg, #1e223a, #131524);
+            --border-color: rgba(3, 169, 244, 0.3);
             
-            --legendary-color: #ff9800;
-            --epic-color: #9c27b0;
-            --rare-color: #03a9f4;
             --common-color: #9e9e9e;
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --epic-glow: rgba(156, 39, 176, 0.5);
+            --legendary-glow: rgba(255, 152, 0, 0.6);
         }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 30px var(--epic-glow), 0 0 50px var(--rare-glow); transform: scale(1); }
+            50% { box-shadow: 0 0 50px var(--epic-glow), 0 0 80px var(--rare-glow); transform: scale(1.05); }
+        }
+        @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--rare-color); } }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            color: var(--text-light);
-            padding-top: 3rem;
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            overflow-y: hidden; /* Mencegah scroll saat prolog aktif */
+        }
+        .parallax-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
         }
 
-        .loader-wrapper {
+        #prologue-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex; justify-content: center; align-items: center; z-index: 9999;
+            background-color: var(--dark-bg); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 10000;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
         }
+        .story-container {
+            font-family: 'Share Tech Mono', monospace; font-size: 1.1rem;
+            max-width: 800px; text-align: left; padding: 1rem; min-height: 100px;
+        }
+        .typewriter-cursor { border-right: 0.15em solid var(--rare-color); animation: blink 0.75s step-end infinite; }
+        .initiate-button {
+            display: inline-block; padding: 1rem 2.5rem; font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;
+            color: #fff; background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
+            border: none; border-radius: 50px; text-decoration: none;
+            opacity: 0; visibility: hidden; transition: all 0.5s ease;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        .initiate-button:hover { animation-play-state: paused; transform: scale(1.1); }
+        #prologue-screen.hidden { opacity: 0; pointer-events: none; transform: scale(1.5); }
 
-        /* --- Struktur Utama --- */
-        .container {
-            max-width: 960px;
+        #main-hub { opacity: 0; transition: opacity 1s 0.5s ease-out; }
+        .mission-header {
+            padding: 4rem 1rem 3rem; text-align: center;
+            border-bottom: 1px solid var(--border-color); margin-bottom: 4rem;
         }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.8s ease-out;
-        }
-        .page-header .display-4 {
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .page-header .lead {
-            opacity: 0.9;
-        }
-
-        .section {
-            background: var(--card-bg);
-            color: var(--text-dark);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            animation: fadeInUp 0.8s ease-out;
-            animation-fill-mode: backwards;
-        }
-        .section-title {
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 2rem;
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+        .mission-title { font-family: 'Oswald', sans-serif; font-size: 3rem; letter-spacing: 2px; text-transform: uppercase; color: var(--rare-color); text-shadow: 0 0 15px var(--rare-glow); }
+        .mission-lead { max-width: 700px; margin: 1rem auto 0; color: rgba(224, 224, 224, 0.7); }
+        .section-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 2.5rem; text-align: center; margin-bottom: 3rem; }
         
-        /* --- Bagian Cerita --- */
-        .story-block h4 {
-            font-weight: 700;
-            color: var(--secondary-color);
-            margin-top: 1.5rem;
-        }
+        .story-section { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2rem 3rem; margin-bottom: 5rem; box-shadow: 0 0 30px rgba(3, 169, 244, 0.1); }
+        .story-block { margin-bottom: 2.5rem; animation: fadeInUp 0.8s ease-out; }
+        .story-block h3 { font-size: 1.8rem; color: var(--rare-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; text-shadow: 0 0 5px var(--rare-glow); }
+        .story-block h3::after { content: ''; flex-grow: 1; height: 1px; background: linear-gradient(90deg, var(--border-color), transparent); }
+        .story-block p { color: rgba(224, 224, 224, 0.8); line-height: 1.8; }
+        .story-block blockquote { font-family: 'Share Tech Mono', monospace; border: 1px solid var(--legendary-color); border-left-width: 5px; padding: 1.5rem; margin: 1.5rem 0; text-align: center; font-size: 1.2rem; background: linear-gradient(145deg, rgba(255,152,0,0.05), rgba(255,152,0,0.1)); box-shadow: 0 0 15px var(--legendary-glow); }
+        .story-divider { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 3rem 0; }
+        .story-divider::before, .story-divider::after { content: ''; flex-grow: 1; height: 1px; background: var(--border-color); }
+        .story-divider i { font-size: 1rem; color: var(--rare-color); }
         
-        /* --- Bagian Cara Bermain (Protocol) --- */
-        .protocol-card {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        .protocol-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            width: 80px; height: 80px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            color: #fff;
-            border-radius: 50%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .protocol-card h5 { font-weight: 700; }
-        .protocol-card p { font-size: 0.9rem; color: #666; }
-
-        /* --- Bagian Katalog Hadiah & Misi --- */
-        .item-card {
-            border: 1px solid #ddd;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            text-align: center;
-            height: 100%;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        .rarity-border {
-            border-top: 5px solid;
-        }
-        .rarity-common { border-color: var(--common-color); }
-        .rarity-rare { border-color: var(--rare-color); }
-        .rarity-epic { border-color: var(--epic-color); }
-        .rarity-legendary { border-color: var(--legendary-color); }
-
-        .item-icon { font-size: 3rem; margin-bottom: 1rem; }
-        .item-title { font-weight: 700; font-size: 1.2rem; }
-        .item-description { font-size: 0.9rem; color: #666; margin: 0.5rem 0 1.5rem; min-height: 50px; }
-        .item-value { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; }
-
-        /* --- Tombol Melayang --- */
-        .fab-container {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 1000;
-        }
-        .fab-button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            color: #fff;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            text-decoration: none;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
-        }
-        .fab-button:hover {
-            transform: scale(1.1);
-        }
-
+        .guide-card{background:var(--card-bg);border:1px solid var(--border-color);padding:2rem;border-radius:1rem;text-align:center;height:100%;transition:transform .3s ease,box-shadow .3s ease}.guide-card:hover{transform:translateY(-10px);box-shadow:0 10px 30px rgba(0,0,0,.3)}.guide-icon{font-size:3rem;margin-bottom:1rem}.guide-card h4{font-family:'Oswald',sans-serif;letter-spacing:1px;color:#fff}.guide-card p{opacity:.6;font-size:.9rem}.tabs-nav{display:flex;justify-content:center;gap:1rem;margin-top:5rem;margin-bottom:3rem;border-bottom:1px solid var(--border-color)}.tab-btn{font-family:'Oswald',sans-serif;font-size:1.5rem;letter-spacing:1px;text-transform:uppercase;background:0 0;border:none;color:rgba(255,255,255,.5);padding:1rem 1.5rem;position:relative;transition:color .3s ease}.tab-btn:hover{color:#fff}.tab-btn::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:4px;background-color:var(--legendary-color);transform:scaleX(0);transition:transform .3s ease}.tab-btn.active{color:#fff}.tab-btn.active::after{transform:scaleX(1)}.tab-btn.missions.active::after{background-color:var(--epic-color)}.tab-pane{display:none}.tab-pane.active{display:block;animation:fadeInUp .5s ease-out}.promo-card-grid{perspective:1000px}.promo-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:1rem;padding:1.5rem;height:100%;display:flex;flex-direction:column;text-align:center;position:relative;overflow:hidden;transform-style:preserve-3d;transition:transform .1s ease-out}.promo-card::before{content:attr(data-rarity);position:absolute;top:15px;right:-40px;background-color:var(--common-color);color:#000;padding:5px 40px;font-size:.8rem;font-weight:700;text-transform:uppercase;transform:rotate(45deg);box-shadow:0 0 10px rgba(0,0,0,.5)}.promo-card .shine-effect{position:absolute;top:0;left:-150%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .6s ease}.promo-card:hover .shine-effect{left:150%}.rarity-common{border-color:var(--common-color)}.rarity-common::before{background-color:var(--common-color)}.rarity-rare{border-color:var(--rare-color)}.rarity-rare::before{background-color:var(--rare-color)}.rarity-epic{border-color:var(--epic-color)}.rarity-epic::before{background-color:var(--epic-color)}.rarity-legendary{border-color:var(--legendary-color)}.rarity-legendary::before{background-color:var(--legendary-color)}.promo-card-icon{font-size:4rem;margin-bottom:1.5rem;transition:transform .3s ease}.promo-card:hover .promo-card-icon{transform:scale(1.1)}.rarity-legendary .promo-card-icon{color:var(--legendary-color);text-shadow:0 0 20px var(--legendary-glow)}.rarity-epic .promo-card-icon{color:var(--epic-color);text-shadow:0 0 20px var(--epic-glow)}.rarity-rare .promo-card-icon{color:var(--rare-color);text-shadow:0 0 20px var(--rare-glow)}.rarity-common .promo-card-icon{color:var(--common-color)}.promo-card-title{font-weight:700;font-size:1.4rem;margin-bottom:1rem}.promo-card-description{font-size:.9rem;opacity:.6;flex-grow:1;margin-bottom:1.5rem}.promo-card-value{font-family:'Oswald',sans-serif;font-size:2.5rem;line-height:1}.promo-card-label{font-size:1rem;opacity:.8;margin-top:.25rem}
+        
+        /* Footer dengan Tombol Terintegrasi */
         .footer {
-            text-align: center;
-            padding: 2rem 0;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
+            margin-top: 5rem; padding: 3rem 1rem;
+            text-align: center; background: var(--dark-bg);
+            border-top: 1px solid var(--border-color);
         }
+        .footer-cta-button {
+            display: inline-block; padding: 1rem 3rem;
+            font-family: 'Oswald', sans-serif; font-size: 1.3rem;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #fff; background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
+            border: none; border-radius: 50px; text-decoration: none;
+            transition: all 0.3s ease; box-shadow: 0 0 20px var(--epic-glow);
+        }
+        .footer-cta-button:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--epic-glow); }
+        .footer p { margin-top: 2.5rem; margin-bottom: 0; color: rgba(255,255,255,0.5); font-size: 0.9rem; }
     </style>
 </head>
 <body>
-    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" role="status"></div></div>
+    <div class="parallax-bg"></div>
 
-    <div class="container">
-        <header class="page-header">
-            <h1 class="display-4"><i class="fas fa-book-skull"></i> Project NEXUS</h1>
-            <p class="lead">Sebuah misi membaca untuk melawan kebodohan digital. Selamat datang, Agen.</p>
+    <div id="prologue-screen">
+        <div class="story-container">
+            <p id="story-text"><span class="typewriter-cursor"></span></p>
+        </div>
+        <button id="initiate-mission-btn" class="initiate-button">
+            <i class="fas fa-bolt me-2"></i> MASUK KE NEXUS
+        </button>
+    </div>
+
+    <main id="main-hub">
+        <header class="mission-header">
+            <h1 class="mission-title">PROJECT NEXUS</h1>
+            <p class="mission-lead">Selamat datang, Agen. Ini adalah *dashboard* misimu. Selesaikan tugas, kumpulkan *resource*, dan upgrade *arsenal*-mu. Kegagalan bukanlah pilihan.</p>
         </header>
 
-        <!-- Bagian Cerita Lengkap -->
-        <section class="section" style="animation-delay: 0.2s;">
-            <h2 class="section-title">Briefing Misi</h2>
-            <div class="story-block">
-                <h4><i class="fas fa-satellite-dish me-2 text-primary"></i>Latar Belakang: Krisis NEXUS</h4>
-                <p><strong>Tahun 2055</strong>, dunia terhubung dalam jaringan pengetahuan global, <strong>NEXUS</strong>. Namun, sebuah krisis melanda: <strong>"The Glitch of Ignorance"</strong> — anomali yang merusak semangat belajar dan memutus koneksi manusia dengan literasi.</p>
-                <h4><i class="fas fa-bullseye me-2 text-primary"></i>Tujuan Utama: Project NEXUS</h4>
-                <p>Sebagai respons, diluncurkanlah proyek ini. Misi utamanya: <strong>Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</strong></p>
-                <h4><i class="fas fa-book-journal-whills me-2 text-primary"></i>Senjata Pilihan: Semua Jenis Buku</h4>
-                <p>Setiap buku menjadi <strong>Data Packet</strong> untuk memperkuat *firewall* pengetahuan. Novel, sejarah, biografi, sains, bahkan komik edukatif—semua bacaan dihargai.</p>
-            </div>
-        </section>
-
-        <!-- Bagian Cara Bermain -->
-        <section class="section" style="animation-delay: 0.4s;">
-            <h2 class="section-title">Mission Protocol</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="protocol-card">
-                        <div class="protocol-icon"><i class="fas fa-book-open"></i></div>
-                        <h5>1. Baca & Laporkan</h5>
-                        <p>Baca buku apa saja, lalu catat di Jurnal Baca untuk menyelesaikan misi.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="protocol-card">
-                        <div class="protocol-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                        <h5>2. Klaim Kupon</h5>
-                        <p>Tunjukkan progresmu kepada guru saat jam tatap muka untuk mendapatkan Kupon.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="protocol-card">
-                        <div class="protocol-icon"><i class="fas fa-gift"></i></div>
-                        <h5>3. Tukar Hadiah</h5>
-                        <p>Gunakan Kupon di **ATM Kupon** atau langsung ke guru untuk me-redeem hadiah dari The Vault.</p>
-                    </div>
+        <div class="container">
+            <section class="story-section mb-5">
+                <h2 class="section-title">The NEXUS Archives</h2>
+                <div class="story-block"><h3><i class="fas fa-satellite-dish"></i> Latar Belakang: Krisis NEXUS</h3><p><strong>Tahun 2055</strong>, dunia terhubung dalam jaringan pengetahuan global yang dikenal sebagai <strong>NEXUS</strong>. Namun, sebuah krisis melanda: <strong>"The Glitch of Ignorance"</strong> — anomali misterius yang merusak semangat belajar, memutus koneksi manusia dengan literasi.</p></div>
+                <div class="story-divider"><i class="fas fa-code-branch"></i></div>
+                <div class="story-block"><h3><i class="fas fa-bullseye"></i> Tujuan Utama: Project NEXUS</h3><p>Sebagai respons, diluncurkanlah proyek rahasia <strong>PROJECT NEXUS</strong>. Misi utamanya:</p><blockquote>🔐 Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</blockquote></div>
+                <div class="story-divider"><i class="fas fa-code-branch"></i></div>
+                <div class="story-block"><h3><i class="fas fa-book-journal-whills"></i> Senjata Pilihan: Semua Jenis Buku</h3><p>Di Project NEXUS, setiap buku menjadi <strong>Data Packet</strong> untuk memperkuat *firewall* pengetahuan. Novel, sejarah, biografi, sains, bahkan komik edukatif—semua bacaan dihargai.</p></div>
+            </section>
+            
+            <div class="how-to-play mb-5">
+                <h2 class="section-title">Mission Protocol</h2>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-4"><div class="guide-card"><i class="guide-icon fas fa-book-open" style="color:var(--rare-color);"></i><h4>1. Dekode Pengetahuan</h4><p>Baca buku apa saja. Laporkan di sistem Jurnal Baca untuk menyelesaikan Misi.</p></div></div>
+                    <div class="col-md-4"><div class="guide-card"><i class="guide-icon fas fa-server" style="color:var(--epic-color);"></i><h4>2. Ekstrak Kupon</h4><p>Tunjukkan progres misimu kepada *System Admin* (guru) saat jam tatap muka untuk mengekstrak Kupon.</p></div></div>
+                    <div class="col-md-4"><div class="guide-card"><i class="guide-icon fas fa-rocket" style="color:var(--legendary-color);"></i><h4>3. Upgrade Arsenal</h4><p>Gunakan Kupon di **ATM Kupon** atau langsung ke guru untuk me-*redeem* Hadiah dari **The Vault**.</p></div></div>
                 </div>
             </div>
-        </section>
 
-        <!-- Bagian Katalog Hadiah -->
-        <section class="section" style="animation-delay: 0.6s;">
-            <h2 class="section-title">The Vault (Katalog Hadiah)</h2>
-            <div id="prizes-list" class="row g-4">
-                <!-- Hadiah dirender di sini -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="rewards-content"><i class="fas fa-boxes-stacked me-2"></i>The Vault</button>
+                <button class="tab-btn missions" data-tab="missions-content"><i class="fas fa-clipboard-list me-2"></i>Mission Board</button>
             </div>
-        </section>
+            
+            <div class="tabs-content promo-card-grid">
+                <div id="rewards-content" class="tab-pane active"><div id="prizes-list" class="row g-4 justify-content-center"></div></div>
+                <div id="missions-content" class="tab-pane"><div id="coupon-types-list" class="row g-4 justify-content-center"></div></div>
+            </div>
+        </div>
 
-        <!-- Bagian Cara Dapat Kupon -->
-        <section class="section" style="animation-delay: 0.8s;">
-            <h2 class="section-title">Mission Board (Cara Dapat Kupon)</h2>
-            <div id="coupon-types-list" class="row g-4">
-                <!-- Misi dirender di sini -->
-            </div>
-        </section>
-        
         <footer class="footer">
+            <h2 class="section-title">Your Mission Awaits.</h2>
+            <a href="index.html" class="footer-cta-button">
+                <i class="fas fa-right-to-bracket me-2"></i> BERGABUNG DENGAN MISI
+            </a>
             <p>© 2025 Project NEXUS - Jurnal Baca - SMKN 1 Telagasari</p>
         </footer>
-    </div>
-
-    <!-- Tombol Melayang -->
-    <div class="fab-container">
-        <a href="index.html" class="fab-button" title="Ikuti Misi (Login)">
-            <i class="fas fa-right-to-bracket"></i>
-        </a>
-    </div>
-
+    </main>
+    
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
-    const loader = document.getElementById('loader');
+    const storyLines = [
+        "BOOTING SYSTEM...",
+        "INCOMING TRANSMISSION...",
+        "ANDA TELAH DIREKRUT UNTUK PROJECT NEXUS.",
+        "MISI ANDA DIMULAI SEKARANG."
+    ];
+
+    function typeWriter(element, lines, button, speed = 50, delay = 1200) {
+        let lineIndex = 0;
+        function typeLine() {
+            if (lineIndex >= lines.length) {
+                button.style.visibility = 'visible';
+                button.style.opacity = '1';
+                return;
+            }
+            let charIndex = 0;
+            const currentLine = lines[lineIndex];
+            element.innerHTML = '<span class="typewriter-cursor"></span>';
+            const typingInterval = setInterval(() => {
+                element.innerHTML = currentLine.substring(0, charIndex + 1) + '<span class="typewriter-cursor"></span>';
+                charIndex++;
+                if (charIndex === currentLine.length) {
+                    clearInterval(typingInterval);
+                    lineIndex++;
+                    setTimeout(typeLine, delay);
+                }
+            }, speed);
+        }
+        typeLine();
+    }
+    
+    function setup3dCards() {
+        const cards = document.querySelectorAll('.promo-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const rotateX = -y / 20;
+                const rotateY = x / 20;
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+            });
+            card.addEventListener('mouseleave', () => { card.style.transform = 'rotateX(0) rotateY(0) scale(1)'; });
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-        loadPromotionalData();
-    });
+        const storyElement = document.getElementById('story-text');
+        const prologueScreen = document.getElementById('prologue-screen');
+        const initiateButton = document.getElementById('initiate-mission-btn');
+        const mainHub = document.getElementById('main-hub');
 
-    async function loadPromotionalData() {
-        loader.style.display = 'flex';
-        const data = await apiCall('getCouponManagementData');
-        loader.style.display = 'none';
-
-        if (data) {
-            renderPrizes(data.prizes || []);
-            renderCouponTypes(data.couponTypes || []);
-        } else {
-            document.querySelector('.container').innerHTML = `<div class="text-center p-5 bg-light rounded-3 text-dark"><h3><i class="fas fa-satellite-dish"></i> Koneksi ke Gudang Gagal</h3><p>Data tidak dapat dimuat. Coba lagi nanti.</p></div>`;
-        }
-    }
-
-    function getRarity(value, type = 'cost') {
-        const costThresholds = { legendary: 50, epic: 25, rare: 10 };
-        const rewardThresholds = { legendary: 15, epic: 8, rare: 4 };
-        const thresholds = type === 'cost' ? costThresholds : rewardThresholds;
-
-        if (value >= thresholds.legendary) return { name: 'Legendary', class: 'rarity-legendary' };
-        if (value >= thresholds.epic) return { name: 'Epic', class: 'rarity-epic' };
-        if (value >= thresholds.rare) return { name: 'Rare', class: 'rarity-rare' };
-        return { name: 'Common', class: 'rarity-common' };
-    }
-
-    function renderPrizes(prizes) {
-        const container = document.getElementById('prizes-list');
-        if (prizes.length === 0) {
-            container.innerHTML = `<div class="col-12"><p class="text-center text-muted">The Vault sedang diisi ulang. Cek kembali nanti!</p></div>`;
-            return;
-        }
-
-        let prizesHtml = '';
-        prizes.sort((a,b) => a.kuponDibutuhkan - b.kuponDibutuhkan).forEach(prize => {
-            const rarity = getRarity(prize.kuponDibutuhkan, 'cost');
-            prizesHtml += `
-                <div class="col-md-6 col-lg-4">
-                    <div class="item-card rarity-border ${rarity.class}">
-                        <i class="fas fa-gift item-icon" style="color:${rarity.class === 'rarity-common' ? 'var(--common-color)' : `var(--${rarity.name.toLowerCase()}-color)`};"></i>
-                        <h5 class="item-title">${prize.namaHadiah}</h5>
-                        <p class="item-description">${prize.deskripsi || 'Hadiah eksklusif.'}</p>
-                        <div class="item-value" style="color:${rarity.class === 'rarity-common' ? 'var(--common-color)' : `var(--${rarity.name.toLowerCase()}-color)`};">
-                            ${prize.kuponDibutuhkan} <span style="font-size: 1rem; color: #666;">Kupon</span>
-                        </div>
-                    </div>
-                </div>`;
-        });
-        container.innerHTML = prizesHtml;
-    }
-
-    function renderCouponTypes(types) {
-        const container = document.getElementById('coupon-types-list');
-        if (types.length === 0) {
-            container.innerHTML = `<div class="col-12"><p class="text-center text-muted">Misi baru akan segera ditransmisikan. Bersiaplah!</p></div>`;
-            return;
-        }
+        typeWriter(storyElement, storyLines, initiateButton);
         
-        let typesHtml = '';
-        types.sort((a,b) => a.jumlahKupon - b.jumlahKupon).forEach(type => {
-            const rarity = getRarity(type.jumlahKupon, 'reward');
-            typesHtml += `
-                <div class="col-md-6 col-lg-4">
-                    <div class="item-card rarity-border ${rarity.class}">
-                        <i class="fas fa-trophy item-icon" style="color:${rarity.class === 'rarity-common' ? 'var(--common-color)' : `var(--${rarity.name.toLowerCase()}-color)`};"></i>
-                        <h5 class="item-title">${type.capaian}</h5>
-                        <p class="item-description">${type.deskripsi || 'Selesaikan misi ini.'}</p>
-                        <div class="item-value" style="color:${rarity.class === 'rarity-common' ? 'var(--common-color)' : `var(--${rarity.name.toLowerCase()}-color)`};">
-                            +${type.jumlahKupon} <span style="font-size: 1rem; color: #666;">Kupon</span>
-                        </div>
-                    </div>
-                </div>`;
+        initiateButton.addEventListener('click', () => {
+            prologueScreen.classList.add('hidden');
+            mainHub.style.opacity = '1';
+            document.body.style.overflowY = 'auto';
+            loadPromotionalData();
         });
-        container.innerHTML = typesHtml;
-    }
-
-    async function apiCall(action, data = {}) {
-        try {
-            const response = await fetch(API_URL, {method: 'POST', body: JSON.stringify({action, data}), redirect: "follow"});
-            if (!response.ok) throw new Error('Network response was not ok');
-            const result = await response.json();
-            if (result.status === 'success') return result.data;
-            else throw new Error(result.message || 'Terjadi kesalahan server.');
-        } catch (error) {
-            console.error("API Call Error:", error);
-            return null;
-        }
-    }
+        
+        setupTabs();
+    });
+    
+    function setupTabs(){const t=document.querySelectorAll(".tab-btn"),e=document.querySelectorAll(".tab-pane");t.forEach(n=>{n.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("active")),n.classList.add("active");const o=n.getAttribute("data-tab");e.forEach(t=>{t.classList.toggle("active",t.id===o)})})})}async function loadPromotionalData(){const t=await apiCall("getCouponManagementData");t?(renderPrizes(t.prizes||[]),renderCouponTypes(t.couponTypes||[]),setTimeout(setup3dCards,100)):document.querySelector(".container").innerHTML='<div class="text-center p-5"><h3><i class="fas fa-satellite-dish"></i> Koneksi ke Gudang Gagal</h3><p>Data tidak dapat dimuat. Coba lagi nanti.</p></div>'}function getRarity(t,e="cost"){const n={legendary:50,epic:25,rare:10},o={legendary:15,epic:8,rare:4},a=e==="cost"?n:o;return t>=a.legendary?{name:"Legendary",class:"rarity-legendary"}:t>=a.epic?{name:"Epic",class:"rarity-epic"}:t>=a.rare?{name:"Rare",class:"rarity-rare"}:{name:"Common",class:"rarity-common"}}function renderPrizes(t){const e=document.getElementById("prizes-list");if(0===t.length)return void(e.innerHTML='<div class="col-12"><p class="text-center opacity-50">The Vault sedang diisi ulang. Cek kembali nanti!</p></div>');let n="";t.sort((t,e)=>e.kuponDibutuhkan-t.kuponDibutuhkan).forEach(t=>{const e=getRarity(t.kuponDibutuhkan,"cost");n+=`
+                <div class="col-md-6 col-lg-4"><div class="promo-card ${e.class}" data-rarity="${e.name}"><div class="shine-effect"></div><i class="fas fa-gift promo-card-icon"></i><h4 class="promo-card-title">${t.namaHadiah}</h4><p class="promo-card-description">${t.deskripsi||"Hadiah eksklusif untuk agen berdedikasi."}</p><div><div class="promo-card-value">${t.kuponDibutuhkan}</div><div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div></div></div></div>`}),e.innerHTML=n}function renderCouponTypes(t){const e=document.getElementById("coupon-types-list");if(0===t.length)return void(e.innerHTML='<div class="col-12"><p class="text-center opacity-50">Misi baru akan segera ditransmisikan. Bersiaplah!</p></div>');let n="";t.sort((t,e)=>e.jumlahKupon-t.jumlahKupon).forEach(t=>{const e=getRarity(t.jumlahKupon,"reward");n+=`
+                <div class="col-md-6 col-lg-4"><div class="promo-card ${e.class}" data-rarity="${e.name}"><div class="shine-effect"></div><i class="fas fa-trophy promo-card-icon"></i><h4 class="promo-card-title">${t.capaian}</h4><p class="promo-card-description">${t.deskripsi||"Selesaikan misi ini untuk mendapatkan imbalan."}</p><div><div class="promo-card-value">+${t.jumlahKupon}</div><div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div></div></div></div>`}),e.innerHTML=n}async function apiCall(t,e={}){try{const n=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:t,data:e}),redirect:"follow"});if(!n.ok)throw new Error("Network response was not ok");const o=await n.json();if("success"===o.status)return o.data;throw new Error(o.message||"Terjadi kesalahan server.")}catch(t){return console.error("API Call Error:",t),null}}
 </script>
 </body>
 </html>

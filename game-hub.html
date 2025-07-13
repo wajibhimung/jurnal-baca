@@ -20,6 +20,7 @@
 
             --rare-glow: rgba(3, 169, 244, 0.4);
             --epic-glow: rgba(156, 39, 176, 0.5);
+            --legendary-glow: rgba(255, 152, 0, 0.6);
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -71,36 +72,39 @@
         }
         .mission-title { font-family: 'Oswald', sans-serif; font-size: 3rem; letter-spacing: 2px; text-transform: uppercase; color: var(--rare-color); text-shadow: 0 0 15px var(--rare-glow); }
         .mission-lead { max-width: 700px; margin: 1rem auto 0; color: rgba(224, 224, 224, 0.7); }
-        
-        /* [REVISI] Tombol Aksi di Header */
-        .header-cta-button {
-            display: inline-block;
-            padding: 0.8rem 2.5rem;
-            margin-top: 2.5rem; /* Memberi jarak dari deskripsi */
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #fff;
-            background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
-            border: none;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px var(--epic-glow);
-        }
-        .header-cta-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px var(--epic-glow);
-        }
-
         .section-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 2.5rem; text-align: center; margin-bottom: 3rem; }
-        .story-section { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2rem 3rem; margin-bottom: 5rem; }
-        .story-block { margin-bottom: 2.5rem; }
-        .story-block h3 { font-size: 1.8rem; color: var(--rare-color); margin-bottom: 1rem; }
+        
+        /* [REVISI TOTAL] Bagian Arsip Cerita */
+        .story-section {
+            background: rgba(10, 12, 22, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 2rem 3rem; margin-bottom: 5rem;
+            box-shadow: 0 0 30px rgba(3, 169, 244, 0.1);
+        }
+        .story-block { margin-bottom: 2.5rem; animation: fadeInUp 0.8s ease-out; }
+        .story-block h3 {
+            font-size: 1.8rem; color: var(--rare-color); margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            text-shadow: 0 0 5px var(--rare-glow);
+        }
+        .story-block h3::after {
+            content: ''; flex-grow: 1; height: 1px;
+            background: linear-gradient(90deg, var(--border-color), transparent);
+        }
         .story-block p { color: rgba(224, 224, 224, 0.8); line-height: 1.8; }
-        .story-block blockquote { font-family: 'Share Tech Mono', monospace; border-left: 3px solid var(--legendary-color); padding-left: 1.5rem; margin: 1.5rem 0; font-style: italic; }
-        .story-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-color), transparent); margin: 3rem 0; }
+        .story-block blockquote {
+            font-family: 'Share Tech Mono', monospace;
+            border: 1px solid var(--legendary-color);
+            border-left-width: 5px;
+            padding: 1.5rem; margin: 1.5rem 0;
+            text-align: center; font-size: 1.2rem;
+            background: linear-gradient(145deg, rgba(255,152,0,0.05), rgba(255,152,0,0.1));
+            box-shadow: 0 0 15px var(--legendary-glow);
+        }
+        .story-divider { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 3rem 0; }
+        .story-divider::before, .story-divider::after { content: ''; flex-grow: 1; height: 1px; background: var(--border-color); }
+        .story-divider i { font-size: 1rem; color: var(--rare-color); }
+
         .guide-card{background:var(--card-bg);border:1px solid var(--border-color);padding:2rem;border-radius:1rem;text-align:center;height:100%;transition:transform .3s ease,box-shadow .3s ease}.guide-card:hover{transform:translateY(-10px);box-shadow:0 10px 30px rgba(0,0,0,.3)}.guide-icon{font-size:3rem;margin-bottom:1rem}.guide-card h4{font-family:'Oswald',sans-serif;letter-spacing:1px;color:#fff}.guide-card p{opacity:.6;font-size:.9rem}.tabs-nav{display:flex;justify-content:center;gap:1rem;margin-top:5rem;margin-bottom:3rem;border-bottom:1px solid var(--border-color)}.tab-btn{font-family:'Oswald',sans-serif;font-size:1.5rem;letter-spacing:1px;text-transform:uppercase;background:0 0;border:none;color:rgba(255,255,255,.5);padding:1rem 1.5rem;position:relative;transition:color .3s ease}.tab-btn:hover{color:#fff}.tab-btn::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:4px;background-color:var(--legendary-color);transform:scaleX(0);transition:transform .3s ease}.tab-btn.active{color:#fff}.tab-btn.active::after{transform:scaleX(1)}.tab-btn.story.active::after{background-color:var(--legendary-color)}.tab-btn.missions.active::after{background-color:var(--epic-color)}.tab-pane{display:none}.tab-pane.active{display:block;animation:fadeInUp .5s ease-out}.promo-card-grid{perspective:1000px}.promo-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:1rem;padding:1.5rem;height:100%;display:flex;flex-direction:column;text-align:center;position:relative;overflow:hidden;transform-style:preserve-3d;transition:transform .1s ease-out}.promo-card::before{content:attr(data-rarity);position:absolute;top:15px;right:-40px;background-color:var(--common-color);color:#000;padding:5px 40px;font-size:.8rem;font-weight:700;text-transform:uppercase;transform:rotate(45deg);box-shadow:0 0 10px rgba(0,0,0,.5)}.promo-card .shine-effect{position:absolute;top:0;left:-150%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .6s ease}.promo-card:hover .shine-effect{left:150%}.rarity-common{border-color:var(--common-color)}.rarity-common::before{background-color:var(--common-color)}.rarity-rare{border-color:var(--rare-color)}.rarity-rare::before{background-color:var(--rare-color)}.rarity-epic{border-color:var(--epic-color)}.rarity-epic::before{background-color:var(--epic-color)}.rarity-legendary{border-color:var(--legendary-color)}.rarity-legendary::before{background-color:var(--legendary-color)}.promo-card-icon{font-size:4rem;margin-bottom:1.5rem;transition:transform .3s ease}.promo-card:hover .promo-card-icon{transform:scale(1.1)}.rarity-legendary .promo-card-icon{color:var(--legendary-color);text-shadow:0 0 20px var(--legendary-glow)}.rarity-epic .promo-card-icon{color:var(--epic-color);text-shadow:0 0 20px var(--epic-glow)}.rarity-rare .promo-card-icon{color:var(--rare-color);text-shadow:0 0 20px var(--rare-glow)}.rarity-common .promo-card-icon{color:var(--common-color)}.promo-card-title{font-weight:700;font-size:1.4rem;margin-bottom:1rem}.promo-card-description{font-size:.9rem;opacity:.6;flex-grow:1;margin-bottom:1.5rem}.promo-card-value{font-family:'Oswald',sans-serif;font-size:2.5rem;line-height:1}.promo-card-label{font-size:1rem;opacity:.8;margin-top:.25rem}
         .footer { margin-top: 5rem; padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
     </style>
@@ -121,20 +125,27 @@
         <header class="mission-header">
             <h1 class="mission-title">PROJECT NEXUS</h1>
             <p class="mission-lead">Selamat datang, Agen. Ini adalah *dashboard* misimu. Selesaikan tugas, kumpulkan *resource*, dan upgrade *arsenal*-mu. Kegagalan bukanlah pilihan.</p>
-            <!-- [REVISI] Tombol dipindahkan ke sini -->
-            <a href="index.html" class="header-cta-button">
-                <i class="fas fa-rocket me-2"></i> IKUTI MISI
-            </a>
         </header>
 
         <div class="container">
+            <!-- [REVISI] Bagian Cerita dan Cara Bermain Ditempatkan di Atas -->
             <section class="story-section mb-5">
                 <h2 class="section-title">The NEXUS Archives</h2>
-                <div class="story-block"><h3><i class="fas fa-satellite-dish me-2"></i> Latar Belakang: Krisis NEXUS</h3><p><strong>Tahun 2055</strong>, dunia terhubung dalam jaringan pengetahuan global yang dikenal sebagai <strong>NEXUS</strong>. Namun, sebuah krisis melanda: <strong>"The Glitch of Ignorance"</strong> — anomali misterius yang merusak semangat belajar, memutus koneksi manusia dengan literasi.</p></div>
-                <div class="story-divider"></div>
-                <div class="story-block"><h3><i class="fas fa-bullseye me-2"></i> Tujuan Utama: Project NEXUS</h3><p>Sebagai respons, diluncurkanlah proyek rahasia <strong>PROJECT NEXUS</strong>. Misi utamanya:</p><blockquote>🔐 Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</blockquote></div>
-                <div class="story-divider"></div>
-                <div class="story-block"><h3><i class="fas fa-book-journal-whills me-2"></i> Senjata Pilihan: Semua Jenis Buku</h3><p>Di Project NEXUS, setiap buku menjadi <strong>Data Packet</strong> untuk memperkuat *firewall* pengetahuan. Novel, sejarah, biografi, sains, bahkan komik edukatif—semua bacaan dihargai.</p></div>
+                <div class="story-block">
+                    <h3><i class="fas fa-satellite-dish"></i> Latar Belakang: Krisis NEXUS</h3>
+                    <p><strong>Tahun 2055</strong>, dunia terhubung dalam jaringan pengetahuan global yang dikenal sebagai <strong>NEXUS</strong>. Namun, sebuah krisis melanda: <strong>"The Glitch of Ignorance"</strong> — anomali misterius yang merusak semangat belajar, memutus koneksi manusia dengan literasi.</p>
+                </div>
+                <div class="story-divider"><i class="fas fa-code-branch"></i></div>
+                <div class="story-block">
+                    <h3><i class="fas fa-bullseye"></i> Tujuan Utama: Project NEXUS</h3>
+                    <p>Sebagai respons, diluncurkanlah proyek rahasia <strong>PROJECT NEXUS</strong>. Misi utamanya:</p>
+                    <blockquote>🔐 Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</blockquote>
+                </div>
+                <div class="story-divider"><i class="fas fa-code-branch"></i></div>
+                <div class="story-block">
+                    <h3><i class="fas fa-book-journal-whills"></i> Senjata Pilihan: Semua Jenis Buku</h3>
+                    <p>Di Project NEXUS, setiap buku menjadi <strong>Data Packet</strong> untuk memperkuat *firewall* pengetahuan. Novel, sejarah, biografi, sains, bahkan komik edukatif—semua bacaan dihargai.</p>
+                </div>
             </section>
             
             <div class="how-to-play mb-5">
@@ -158,7 +169,11 @@
         </div>
 
         <footer class="footer">
-            <p>© 2025 Project NEXUS - Jurnal Baca - SMKN 1 Telagasari</p>
+            <h2 class="section-title">Your Mission Awaits.</h2>
+             <a href="index.html" class="initiate-button" style="opacity: 1; visibility: visible; animation: none;">
+                <i class="fas fa-right-to-bracket me-2"></i> BERGABUNG DENGAN MISI
+            </a>
+            <p class="mt-4">© 2025 Project NEXUS - Jurnal Baca - SMKN 1 Telagasari</p>
         </footer>
     </main>
     

@@ -3,27 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog Hadiah & Kupon - Jurnal Baca</title>
+    <title>Katalog Hadiah & Misi - Jurnal Baca</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&family=Anton&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6a11cb;
-            --secondary-color: #2575fc;
-            --accent-color: #ffc107; /* Emas untuk hadiah */
-            --kupon-color: #0d6efd; /* Biru untuk kupon */
-            --dark-bg: #12121c;
-            --glow-color-prize: rgba(255, 193, 7, 0.3);
-            --glow-color-coupon: rgba(13, 110, 253, 0.3);
+            --dark-bg: #0d0f1a;
+            --card-bg: #1a1d2e;
+            --border-color: rgba(255, 255, 255, 0.1);
+            
+            --common-color: #9e9e9e;
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+
+            --common-glow: rgba(158, 158, 158, 0.3);
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --epic-glow: rgba(156, 39, 176, 0.5);
+            --legendary-glow: rgba(255, 152, 0, 0.6);
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--dark-bg);
-            background-image: radial-gradient(circle at 1% 1%, var(--primary-color), transparent 35%),
-                              radial-gradient(circle at 99% 99%, var(--secondary-color), transparent 40%);
-            color: #fff;
+            background-image: radial-gradient(circle at 1% 1%, rgba(106, 23, 203, 0.2), transparent 30%),
+                              radial-gradient(circle at 99% 99%, rgba(37, 117, 252, 0.2), transparent 35%);
+            color: #e0e0e0;
             overflow-x: hidden;
         }
 
@@ -34,112 +40,103 @@
         }
 
         .hero-section {
-            padding: 6rem 1rem;
+            padding: 5rem 1rem 3rem;
             text-align: center;
         }
-
-        .hero-section .display-3 {
-            font-family: 'Anton', sans-serif;
+        .hero-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3.5rem;
             letter-spacing: 2px;
             text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            background: linear-gradient(90deg, var(--rare-color), var(--legendary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--rare-glow);
         }
+        .hero-lead { max-width: 600px; margin: 1rem auto 0; opacity: 0.7; }
         
-        .hero-section .lead {
-            max-width: 600px;
-            margin: 1rem auto 0;
-            opacity: 0.8;
-        }
-
-        .section-title {
-            text-align: center;
-            font-weight: 700;
-            margin-bottom: 2.5rem;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: var(--accent-color);
-            margin: 0.5rem auto 0;
-            border-radius: 2px;
-        }
-        
-        .section-title.kupon::after {
-            background: var(--kupon-color);
-        }
-
-        .promo-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            padding: 2rem;
-            height: 100%;
+        .tabs-nav {
             display: flex;
-            flex-direction: column;
-            text-align: center;
-            transition: all 0.3s ease;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        .promo-card.prize-card:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 0 30px var(--glow-color-prize);
-            border-color: var(--accent-color);
-        }
-
-        .promo-card.coupon-card:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 0 30px var(--glow-color-coupon);
-            border-color: var(--kupon-color);
-        }
-
-        .promo-card-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .prize-card .promo-card-icon { color: var(--accent-color); }
-        .coupon-card .promo-card-icon { color: var(--kupon-color); }
-        
-        .promo-card-title {
-            font-weight: 700;
+        .tab-btn {
+            font-family: 'Oswald', sans-serif;
             font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 1rem 1.5rem;
+            position: relative;
+            transition: color 0.3s ease;
         }
-
-        .promo-card-description {
-            font-size: 0.95rem;
-            opacity: 0.7;
-            flex-grow: 1;
-            margin-bottom: 2rem;
+        .tab-btn:hover { color: #fff; }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0;
+            width: 100%; height: 4px;
+            background-color: var(--rare-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
+        .tab-btn.active { color: #fff; }
+        .tab-btn.active::after { transform: scaleX(1); }
+        .tab-btn.missions.active::after { background-color: var(--epic-color); }
         
-        .promo-card-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            line-height: 1;
-        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
         
-        .prize-card .promo-card-value { color: var(--accent-color); }
-        .coupon-card .promo-card-value { color: var(--kupon-color); }
-
-        .promo-card-label {
-            font-size: 1rem;
-            opacity: 0.8;
-            margin-top: 0.25rem;
+        .promo-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: 100%;
+            display: flex; flex-direction: column; text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-
-        .footer {
-            margin-top: 5rem;
-            padding: 2rem 0;
-            background: rgba(0,0,0,0.2);
-            text-align: center;
-            color: rgba(255,255,255,0.5);
+        .promo-card:hover { transform: scale(1.05); z-index: 10; }
+        
+        /* Rarity Styles */
+        .promo-card::before { /* Rarity Banner */
+            content: attr(data-rarity);
+            position: absolute; top: 15px; right: -40px;
+            background-color: var(--common-color);
+            color: #000;
+            padding: 5px 40px;
+            font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
+        .rarity-common { border-color: var(--common-color); box-shadow: 0 0 20px var(--common-glow); }
+        .rarity-common::before { background-color: var(--common-color); }
+        .rarity-rare { border-color: var(--rare-color); box-shadow: 0 0 20px var(--rare-glow); }
+        .rarity-rare::before { background-color: var(--rare-color); }
+        .rarity-epic { border-color: var(--epic-color); box-shadow: 0 0 25px var(--epic-glow); }
+        .rarity-epic::before { background-color: var(--epic-color); }
+        .rarity-legendary { border-color: var(--legendary-color); box-shadow: 0 0 30px var(--legendary-glow); }
+        .rarity-legendary::before { background-color: var(--legendary-color); }
+
+        .promo-card-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+        .rarity-legendary .promo-card-icon { color: var(--legendary-color); }
+        .rarity-epic .promo-card-icon { color: var(--epic-color); }
+        .rarity-rare .promo-card-icon { color: var(--rare-color); }
+        .rarity-common .promo-card-icon { color: var(--common-color); }
+
+        .promo-card-title { font-weight: 700; font-size: 1.4rem; margin-bottom: 1rem; }
+        .promo-card-description { font-size: 0.9rem; opacity: 0.6; flex-grow: 1; margin-bottom: 1.5rem; }
+        .promo-card-value { font-family: 'Oswald', sans-serif; font-size: 2.5rem; line-height: 1; }
+        .promo-card-label { font-size: 1rem; opacity: 0.8; margin-top: 0.25rem; }
+
+        .footer { margin-top: 5rem; padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
     </style>
 </head>
 <body>
@@ -147,31 +144,28 @@
 
     <main>
         <div class="hero-section">
-            <h1 class="display-3">Katalog Program Jurnal Baca</h1>
-            <p class="lead">
-                Semakin banyak kamu membaca, semakin banyak kupon yang bisa didapatkan. Tukarkan kuponmu dengan berbagai hadiah eksklusif yang tersedia!
-            </p>
+            <h1 class="hero-title">Arsenal Jurnal Baca</h1>
+            <p class="hero-lead">Selesaikan Misi, kumpulkan Kupon, dan klaim Hadiah eksklusif dari Gudang Hadiah. Setiap bacaan membawamu lebih dekat ke kemenangan!</p>
         </div>
 
         <div class="container">
-            <div class="row g-5">
-
-                <!-- Kolom untuk Hadiah -->
-                <div class="col-lg-6">
-                    <h2 class="section-title">Tukarkan Hadiah Ini</h2>
-                    <div class="row g-4" id="prizes-list">
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="rewards-content">Gudang Hadiah</button>
+                <button class="tab-btn missions" data-tab="missions-content">Daftar Misi</button>
+            </div>
+            
+            <div class="tabs-content">
+                <div id="rewards-content" class="tab-pane active">
+                    <div id="prizes-list" class="row g-4">
                         <!-- Kartu hadiah akan dirender oleh JavaScript di sini -->
                     </div>
                 </div>
 
-                <!-- Kolom untuk Kupon -->
-                <div class="col-lg-6">
-                    <h2 class="section-title kupon">Dapatkan Kupon</h2>
-                    <div class="row g-4" id="coupon-types-list">
+                <div id="missions-content" class="tab-pane">
+                    <div id="coupon-types-list" class="row g-4">
                         <!-- Kartu tipe kupon akan dirender oleh JavaScript di sini -->
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
@@ -185,12 +179,35 @@
     const loader = document.getElementById('loader');
 
     document.addEventListener('DOMContentLoaded', () => {
+        setupTabs();
         loadPromotionalData();
     });
 
+    function setupTabs() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update buttons
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update panes
+                const targetPaneId = button.getAttribute('data-tab');
+                tabPanes.forEach(pane => {
+                    if (pane.id === targetPaneId) {
+                        pane.classList.add('active');
+                    } else {
+                        pane.classList.remove('active');
+                    }
+                });
+            });
+        });
+    }
+
     async function loadPromotionalData() {
         loader.style.display = 'flex';
-        // Menggunakan endpoint yang sudah ada tanpa perlu login
         const data = await apiCall('getCouponManagementData');
         loader.style.display = 'none';
 
@@ -198,32 +215,43 @@
             renderPrizes(data.prizes || []);
             renderCouponTypes(data.couponTypes || []);
         } else {
-            document.querySelector('.container').innerHTML = `<div class="text-center p-5"><h3>Gagal memuat data promosi.</h3><p>Silakan coba muat ulang halaman nanti.</p></div>`;
+            document.querySelector('.container').innerHTML = `<div class="text-center p-5"><h3><i class="fas fa-satellite-dish"></i> Koneksi ke Gudang Gagal</h3><p>Data tidak dapat dimuat. Coba lagi nanti.</p></div>`;
         }
+    }
+
+    function getRarity(value, type = 'cost') {
+        const costThresholds = { legendary: 50, epic: 25, rare: 10 };
+        const rewardThresholds = { legendary: 15, epic: 8, rare: 4 };
+        const thresholds = type === 'cost' ? costThresholds : rewardThresholds;
+
+        if (value >= thresholds.legendary) return { name: 'Legendary', class: 'rarity-legendary' };
+        if (value >= thresholds.epic) return { name: 'Epic', class: 'rarity-epic' };
+        if (value >= thresholds.rare) return { name: 'Rare', class: 'rarity-rare' };
+        return { name: 'Common', class: 'rarity-common' };
     }
 
     function renderPrizes(prizes) {
         const container = document.getElementById('prizes-list');
         if (prizes.length === 0) {
-            container.innerHTML = `<div class="col-12"><p class="text-center opacity-50">Hadiah baru akan segera hadir!</p></div>`;
+            container.innerHTML = `<div class="col-12"><p class="text-center opacity-50">Gudang Hadiah sedang diisi ulang. Cek kembali nanti!</p></div>`;
             return;
         }
 
         let prizesHtml = '';
-        prizes.sort((a,b) => a.kuponDibutuhkan - b.kuponDibutuhkan).forEach(prize => {
+        prizes.sort((a,b) => b.kuponDibutuhkan - a.kuponDibutuhkan).forEach(prize => {
+            const rarity = getRarity(prize.kuponDibutuhkan, 'cost');
             prizesHtml += `
-                <div class="col-md-6">
-                    <div class="promo-card prize-card">
+                <div class="col-md-6 col-lg-4">
+                    <div class="promo-card ${rarity.class}" data-rarity="${rarity.name}">
                         <i class="fas fa-gift promo-card-icon"></i>
                         <h4 class="promo-card-title">${prize.namaHadiah}</h4>
-                        <p class="promo-card-description">${prize.deskripsi || 'Hadiah menarik untuk pembaca setia.'}</p>
+                        <p class="promo-card-description">${prize.deskripsi || 'Hadiah eksklusif untuk pembaca berdedikasi.'}</p>
                         <div>
                             <div class="promo-card-value">${prize.kuponDibutuhkan}</div>
                             <div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
         container.innerHTML = prizesHtml;
     }
@@ -231,40 +259,36 @@
     function renderCouponTypes(types) {
         const container = document.getElementById('coupon-types-list');
         if (types.length === 0) {
-            container.innerHTML = `<div class="col-12"><p class="text-center opacity-50">Cara mendapatkan kupon akan segera diumumkan!</p></div>`;
+            container.innerHTML = `<div class="col-12"><p class="text-center opacity-50">Misi baru akan segera tersedia. Bersiaplah!</p></div>`;
             return;
         }
         
         let typesHtml = '';
-        types.sort((a,b) => a.jumlahKupon - b.jumlahKupon).forEach(type => {
+        types.sort((a,b) => b.jumlahKupon - a.jumlahKupon).forEach(type => {
+            const rarity = getRarity(type.jumlahKupon, 'reward');
             typesHtml += `
-                <div class="col-md-6">
-                    <div class="promo-card coupon-card">
+                <div class="col-md-6 col-lg-4">
+                    <div class="promo-card ${rarity.class}" data-rarity="${rarity.name}">
                         <i class="fas fa-trophy promo-card-icon"></i>
                         <h4 class="promo-card-title">${type.capaian}</h4>
-                        <p class="promo-card-description">${type.deskripsi || 'Selesaikan capaian ini untuk mendapatkan kupon.'}</p>
+                        <p class="promo-card-description">${type.deskripsi || 'Selesaikan misi ini untuk mendapatkan imbalan.'}</p>
                         <div>
                             <div class="promo-card-value">+${type.jumlahKupon}</div>
                             <div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
         container.innerHTML = typesHtml;
     }
 
-    // Helper Function untuk memanggil API
     async function apiCall(action, data = {}) {
         try {
             const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" });
             if (!response.ok) throw new Error('Network response was not ok');
             const result = await response.json();
-            if (result.status === 'success') {
-                return result.data;
-            } else {
-                throw new Error(result.message || 'Terjadi kesalahan server.');
-            }
+            if (result.status === 'success') return result.data;
+            else throw new Error(result.message || 'Terjadi kesalahan server.');
         } catch (error) {
             console.error("API Call Error:", error);
             return null;

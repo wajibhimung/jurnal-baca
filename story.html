@@ -13,7 +13,7 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse-glow {0%, 100% { box-shadow: 0 0 20px var(--epic-glow), 0 0 30px var(--rare-glow); transform: scale(1); } 50% { box-shadow: 0 0 30px var(--epic-glow), 0 0 50px var(--rare-glow); transform: scale(1.05); }}
         @keyframes scan-line {0% { transform: translateY(-100%); } 100% { transform: translateY(100%); }}
-        body {font-family: 'Poppins', sans-serif;background-color: var(--dark-bg);color: var(--text-color);overflow-x: hidden;}
+        body {font-family: 'Poppins', sans-serif;background-color: var(--dark-bg);color: var(--text-color);overflow-x: hidden; transition: opacity 0.5s ease;}
         .parallax-bg {position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');}
         .loader-wrapper {position: fixed; top: 0; left: 0; width: 100%; height: 100%;background-color: var(--dark-bg);display: flex; flex-direction: column; justify-content: center; align-items: center;z-index: 9999; transition: opacity 0.5s ease-out;}
         .loader-logo {font-size: 5rem; color: var(--rare-color); text-shadow: 0 0 20px var(--rare-color); margin-bottom: 1rem; position: relative; overflow: hidden;}
@@ -41,42 +41,13 @@
         .cta-button i {margin-left: 1rem;}
 
         /* --- STYLES EFEK HACK --- */
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        @keyframes text-glitch-anim {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(2px, -2px); }
-            60% { transform: translate(-2px, -2px); }
-            80% { transform: translate(2px, 2px); }
-            100% { transform: translate(0); }
-        }
-        @keyframes color-glitch-anim {
-            0% { text-shadow: 0 0 3px #ff0000, 0 0 5px #00ff00; color: white; }
-            50% { text-shadow: 0 0 5px #0000ff, 0 0 3px #ffff00; color: #e0e0e0; }
-            100% { text-shadow: 0 0 3px #ff00ff, 0 0 5px #00ffff; color: white; }
-        }
-        .hacked-bg-flicker {
-            animation: flicker 0.1s infinite;
-        }
-        .hacked-red-flash {
-            background-color: rgba(255, 0, 0, 0.2) !important;
-            transition: background-color 0.05s !important;
-        }
-        .hacked-text-glitch {
-            animation: text-glitch-anim 0.2s infinite, color-glitch-anim 0.3s infinite;
-        }
-        #hacked-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(10, 255, 10, 0.08), rgba(10, 255, 10, 0.08) 1px, transparent 1px, transparent 2px);
-            z-index: 99999;
-            pointer-events: none;
-            display: none;
-            animation: flicker 0.15s infinite;
-        }
+        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @keyframes text-glitch-anim { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(2px, -2px); } 60% { transform: translate(-2px, -2px); } 80% { transform: translate(2px, 2px); } 100% { transform: translate(0); } }
+        @keyframes color-glitch-anim { 0% { text-shadow: 0 0 3px #ff0000, 0 0 5px #00ff00; color: white; } 50% { text-shadow: 0 0 5px #0000ff, 0 0 3px #ffff00; color: #e0e0e0; } 100% { text-shadow: 0 0 3px #ff00ff, 0 0 5px #00ffff; color: white; } }
+        .hacked-bg-flicker { animation: flicker 0.1s infinite; }
+        .hacked-red-flash { background-color: rgba(255, 0, 0, 0.2) !important; transition: background-color 0.05s !important; }
+        .hacked-text-glitch { animation: text-glitch-anim 0.2s infinite, color-glitch-anim 0.3s infinite; }
+        #hacked-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(10, 255, 10, 0.08), rgba(10, 255, 10, 0.08) 1px, transparent 1px, transparent 2px); z-index: 99999; pointer-events: none; display: none; animation: flicker 0.15s infinite; }
     </style>
 </head>
 <body>
@@ -84,12 +55,10 @@
         <div class="loader-logo"><i class="fas fa-network-wired"></i></div>
         <div class="loader-text">ACCESSING NEXUS ARCHIVES...</div>
     </div>
-    
-    <!-- Elemen Overlay untuk Efek Scanline -->
     <div id="hacked-overlay"></div>
-
     <div class="parallax-bg"></div>
     <main class="container">
+        <!-- Konten tetap sama -->
         <section class="story-section text-center">
             <h1><i class="fas fa-satellite-dish me-3"></i>PROJECT NEXUS</h1>
             <p class="lead mt-3">Misi Membaca untuk Melawan Kebodohan Digital</p>
@@ -144,8 +113,8 @@
             <blockquote class="mt-5">"Setiap buku adalah firewall.<br>Setiap halaman adalah patch.<br>Dan kamu adalah update yang kami tunggu."</blockquote>
         </section>
         <section class="story-section animate-on-scroll cta-section">
-            <h2>Jadi, Kamu Siap Bergabung?</h2>
-            <a href="#" class="cta-button mt-3">Terima Misi<i class="fas fa-right-to-bracket"></i></a>
+            <h2>ANDA TELAH MENERIMA MISI INI.</h2>
+            <p class="mt-3">MENGALIHKAN KE PUSAT KONTROL MISI...</p>
         </section>
     </main>
 
@@ -170,47 +139,78 @@
         const sections = document.querySelectorAll('.animate-on-scroll');
         sections.forEach(section => observer.observe(section));
 
-        // --- LOGIKA BARU UNTUK EFEK HACK ---
+        // --- LOGIKA BARU UNTUK PENGALIHAN OTOMATIS ---
+        
+        const calculateAndRedirect = () => {
+            const wpm = 225; // Kecepatan membaca rata-rata (kata per menit)
+            const mainContent = document.querySelector('main.container');
+            
+            if (mainContent) {
+                const text = mainContent.innerText || mainContent.textContent;
+                const wordCount = text.trim().split(/\s+/).length;
 
+                // Hitung waktu baca dalam milidetik
+                const readingTimeInMs = (wordCount / wpm) * 60 * 1000;
+
+                // Tetapkan waktu tunda minimum 15 detik (15000 ms)
+                const minimumDelayInMs = 15000; 
+
+                const redirectDelay = Math.max(readingTimeInMs, minimumDelayInMs);
+                
+                console.log(`Perkiraan jumlah kata: ${wordCount}`);
+                console.log(`Perkiraan waktu baca: ${(redirectDelay / 1000 / 60).toFixed(2)} menit.`);
+                console.log(`Halaman akan dialihkan dalam ${redirectDelay / 1000} detik.`);
+
+                setTimeout(() => {
+                    // Efek fade out sebelum redirect
+                    document.body.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'game-hub.html';
+                    }, 500); // Tunggu 0.5 detik untuk transisi fade out selesai
+
+                }, redirectDelay);
+            }
+        };
+        
+        // Panggil fungsi setelah loading awal selesai
+        setTimeout(calculateAndRedirect, 2500);
+
+
+        // --- LOGIKA EFEK HACK ---
         const body = document.body;
         const overlay = document.getElementById('hacked-overlay');
         const allTextElements = document.querySelectorAll('h1, h2, h4, p, blockquote, .cta-button, .protocol-card h4');
 
         const startHackingEffect = () => {
             setInterval(() => {
-                const randomEffect = Math.floor(Math.random() * 5); // Tentukan efek acak
-
+                const randomEffect = Math.floor(Math.random() * 5);
                 switch (randomEffect) {
                     case 0:
-                        // Kilatan Latar Merah
                         body.classList.add('hacked-red-flash');
                         setTimeout(() => body.classList.remove('hacked-red-flash'), 100 + Math.random() * 150);
                         break;
                     case 1:
-                        // Gangguan Teks Acak
                         const randomElement = allTextElements[Math.floor(Math.random() * allTextElements.length)];
                         randomElement.classList.add('hacked-text-glitch');
                         setTimeout(() => randomElement.classList.remove('hacked-text-glitch'), 300 + Math.random() * 400);
                         break;
                     case 2:
-                        // Tampilkan Overlay Scanline
                         overlay.style.display = 'block';
                         setTimeout(() => overlay.style.display = 'none', 150 + Math.random() * 200);
                         break;
                     case 3:
-                        // Kedipan Seluruh Halaman
                         body.classList.add('hacked-bg-flicker');
                         setTimeout(() => body.classList.remove('hacked-bg-flicker'), 200 + Math.random() * 150);
                         break;
                     case 4:
-                        // Scroll tiba-tiba
                         window.scrollBy(0, Math.random() > 0.5 ? 2 : -2);
                         break;
                 }
-            }, 700); // Memicu efek acak setiap 700 milidetik
+            }, 700);
         };
 
-        // Mulai efek 'hack' setelah 3 detik agar tidak mengganggu loading awal
+        // Mulai efek 'hack' setelah 3 detik
         setTimeout(startHackingEffect, 3000);
     });
 </script>

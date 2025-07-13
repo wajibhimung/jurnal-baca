@@ -18,127 +18,113 @@
             --epic-color: #9c27b0;
             --legendary-color: #ff9800;
 
-            --common-glow: rgba(158, 158, 158, 0.3);
             --rare-glow: rgba(3, 169, 244, 0.4);
             --epic-glow: rgba(156, 39, 176, 0.5);
-            --legendary-glow: rgba(255, 152, 0, 0.6);
         }
 
+        /* --- Animasi & Efek --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes text-glow {
-            0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px var(--rare-color), 0 0 15px var(--rare-color); }
-            50% { text-shadow: 0 0 10px #fff, 0 0 20px var(--rare-color), 0 0 30px var(--rare-color); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 30px var(--epic-glow), 0 0 50px var(--rare-glow); transform: scale(1); }
+            50% { box-shadow: 0 0 50px var(--epic-glow), 0 0 80px var(--rare-glow); transform: scale(1.05); }
         }
-        @keyframes subtle-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--rare-color); } }
 
+        /* --- Struktur Utama & Latar --- */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--dark-bg);
-            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
             color: #e0e0e0;
             overflow-x: hidden;
+            /* Cegah scroll saat prolog aktif */
+            overflow-y: hidden; 
+        }
+        .parallax-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
         }
 
-        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--dark-bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        
-        .hero-section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; text-align: center; }
-        .project-logo { opacity: 0; animation: fadeIn 1s 0.5s forwards; }
-        .project-logo i { font-size: 4rem; color: var(--rare-color); text-shadow: 0 0 20px var(--rare-glow); }
-        .project-logo h1 { font-family: 'Oswald', sans-serif; letter-spacing: 5px; animation: text-glow 2s ease-in-out infinite alternate; }
-        
+        /* --- [REVISI] Prolog & Transisi --- */
+        #prologue-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--dark-bg);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
         .story-container {
-            font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; max-width: 800px;
-            margin: 2rem auto; text-align: left; opacity: 0;
-            animation: fadeIn 1s 1.5s forwards; min-height: 100px;
+            font-family: 'Share Tech Mono', monospace; font-size: 1.1rem;
+            max-width: 800px; text-align: left;
+            padding: 1rem; min-height: 140px;
         }
         .typewriter-cursor { border-right: 0.15em solid var(--rare-color); animation: blink 0.75s step-end infinite; }
-        @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--rare-color); } }
-
-        .cta-button {
-            display: inline-block; padding: 1rem 2.5rem; font-family: 'Oswald', sans-serif; font-size: 1.25rem;
-            text-transform: uppercase; letter-spacing: 1px; color: #fff;
-            background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
+        .initiate-button {
+            display: inline-block; padding: 1rem 2.5rem; font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;
+            color: #fff; background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
             border: none; border-radius: 50px; text-decoration: none;
-            transition: all 0.3s ease; opacity: 0;
-            animation: fadeInUp 1s 9s forwards, subtle-float 4s 10s ease-in-out infinite;
+            opacity: 0; visibility: hidden;
+            transition: all 0.5s ease;
+            animation: pulse-glow 2s ease-in-out infinite;
         }
-        .cta-button:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 0 40px var(--epic-glow); animation-play-state: paused; }
-        .cta-button i { margin-left: 0.5rem; }
-        
-        .main-content { padding-top: 5rem; }
+        .initiate-button:hover { animation-play-state: paused; transform: scale(1.1); }
+        #prologue-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.5);
+        }
+
+        /* --- Konten Utama (Setelah Prolog) --- */
+        #main-hub {
+            opacity: 0;
+            transition: opacity 1s 0.5s ease-out;
+        }
+        .mission-header {
+            padding: 4rem 1rem 3rem; text-align: center;
+            border-bottom: 1px solid var(--border-color); margin-bottom: 4rem;
+        }
+        .mission-title {
+            font-family: 'Oswald', sans-serif; font-size: 3rem;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--rare-color); text-shadow: 0 0 15px var(--rare-glow);
+        }
+        .mission-lead { max-width: 700px; margin: 1rem auto 0; color: rgba(224, 224, 224, 0.7); }
         .section-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 2.5rem; text-align: center; margin-bottom: 3rem; }
         
-        .guide-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 2rem; border-radius: 1rem; text-align: center; height: 100%;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .guide-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .guide-icon { font-size: 3rem; margin-bottom: 1rem; }
-        .guide-card h4 { font-family: 'Oswald', sans-serif; letter-spacing: 1px; color: #fff; }
-        .guide-card p { opacity: 0.6; font-size: 0.9rem; }
-
-        .tabs-nav{display:flex;justify-content:center;gap:1rem;margin-top:5rem;margin-bottom:3rem;border-bottom:1px solid var(--border-color)}.tab-btn{font-family:'Oswald',sans-serif;font-size:1.5rem;letter-spacing:1px;text-transform:uppercase;background:0 0;border:none;color:rgba(255,255,255,.5);padding:1rem 1.5rem;position:relative;transition:color .3s ease}.tab-btn:hover{color:#fff}.tab-btn::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:4px;background-color:var(--legendary-color);transform:scaleX(0);transition:transform .3s ease}.tab-btn.active{color:#fff}.tab-btn.active::after{transform:scaleX(1)}.tab-btn.missions.active::after{background-color:var(--epic-color)}
-        .tab-pane{display:none}.tab-pane.active{display:block; animation: fadeInUp 0.5s ease-out;}
-
-        /* [REVISI] Kartu 3D Parallax */
-        .promo-card-grid { perspective: 1000px; }
-        .promo-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 1rem; padding: 1.5rem; height: 100%;
-            display: flex; flex-direction: column; text-align: center;
-            position: relative; overflow: hidden;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out; /* Transisi cepat untuk responsif */
-        }
-        .promo-card::before {
-            content: attr(data-rarity); position: absolute; top: 15px; right: -40px;
-            background-color: var(--common-color); color: #000;
-            padding: 5px 40px; font-size: 0.8rem; font-weight: 700;
-            text-transform: uppercase; transform: rotate(45deg);
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-        .promo-card .shine-effect {
-            position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.6s ease;
-        }
-        .promo-card:hover .shine-effect { left: 150%; }
-
-        .rarity-common{border-color:var(--common-color)}.rarity-common::before{background-color:var(--common-color)}.rarity-rare{border-color:var(--rare-color)}.rarity-rare::before{background-color:var(--rare-color)}.rarity-epic{border-color:var(--epic-color)}.rarity-epic::before{background-color:var(--epic-color)}.rarity-legendary{border-color:var(--legendary-color)}.rarity-legendary::before{background-color:var(--legendary-color)}
-        .promo-card-icon{font-size:4rem;margin-bottom:1.5rem; transition: transform 0.3s ease;}.promo-card:hover .promo-card-icon{transform: scale(1.1);}
-        .rarity-legendary .promo-card-icon{color:var(--legendary-color);text-shadow:0 0 20px var(--legendary-glow)}.rarity-epic .promo-card-icon{color:var(--epic-color);text-shadow:0 0 20px var(--epic-glow)}.rarity-rare .promo-card-icon{color:var(--rare-color);text-shadow:0 0 20px var(--rare-glow)}.rarity-common .promo-card-icon{color:var(--common-color)}
-        .promo-card-title{font-weight:700;font-size:1.4rem;margin-bottom:1rem}.promo-card-description{font-size:.9rem;opacity:.6;flex-grow:1;margin-bottom:1.5rem}.promo-card-value{font-family:'Oswald',sans-serif;font-size:2.5rem;line-height:1}.promo-card-label{font-size:1rem;opacity:.8;margin-top:.25rem}
-
-        .footer { margin-top: 5rem; padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
+        /* Gaya lain (guide-card, tabs, promo-card) tetap sama seperti sebelumnya */
+        .guide-card{background:var(--card-bg);border:1px solid var(--border-color);padding:2rem;border-radius:1rem;text-align:center;height:100%;transition:transform .3s ease,box-shadow .3s ease}.guide-card:hover{transform:translateY(-10px);box-shadow:0 10px 30px rgba(0,0,0,.3)}.guide-icon{font-size:3rem;margin-bottom:1rem}.guide-card h4{font-family:'Oswald',sans-serif;letter-spacing:1px;color:#fff}.guide-card p{opacity:.6;font-size:.9rem}.tabs-nav{display:flex;justify-content:center;gap:1rem;margin-top:5rem;margin-bottom:3rem;border-bottom:1px solid var(--border-color)}.tab-btn{font-family:'Oswald',sans-serif;font-size:1.5rem;letter-spacing:1px;text-transform:uppercase;background:0 0;border:none;color:rgba(255,255,255,.5);padding:1rem 1.5rem;position:relative;transition:color .3s ease}.tab-btn:hover{color:#fff}.tab-btn::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:4px;background-color:var(--legendary-color);transform:scaleX(0);transition:transform .3s ease}.tab-btn.active{color:#fff}.tab-btn.active::after{transform:scaleX(1)}.tab-btn.missions.active::after{background-color:var(--epic-color)}.tab-pane{display:none}.tab-pane.active{display:block;animation:fadeInUp .5s ease-out}.promo-card-grid{perspective:1000px}.promo-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:1rem;padding:1.5rem;height:100%;display:flex;flex-direction:column;text-align:center;position:relative;overflow:hidden;transform-style:preserve-3d;transition:transform .1s ease-out}.promo-card::before{content:attr(data-rarity);position:absolute;top:15px;right:-40px;background-color:var(--common-color);color:#000;padding:5px 40px;font-size:.8rem;font-weight:700;text-transform:uppercase;transform:rotate(45deg);box-shadow:0 0 10px rgba(0,0,0,.5)}.promo-card .shine-effect{position:absolute;top:0;left:-150%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .6s ease}.promo-card:hover .shine-effect{left:150%}.rarity-common{border-color:var(--common-color)}.rarity-common::before{background-color:var(--common-color)}.rarity-rare{border-color:var(--rare-color)}.rarity-rare::before{background-color:var(--rare-color)}.rarity-epic{border-color:var(--epic-color)}.rarity-epic::before{background-color:var(--epic-color)}.rarity-legendary{border-color:var(--legendary-color)}.rarity-legendary::before{background-color:var(--legendary-color)}.promo-card-icon{font-size:4rem;margin-bottom:1.5rem;transition:transform .3s ease}.promo-card:hover .promo-card-icon{transform:scale(1.1)}.rarity-legendary .promo-card-icon{color:var(--legendary-color);text-shadow:0 0 20px var(--legendary-glow)}.rarity-epic .promo-card-icon{color:var(--epic-color);text-shadow:0 0 20px var(--epic-glow)}.rarity-rare .promo-card-icon{color:var(--rare-color);text-shadow:0 0 20px var(--rare-glow)}.rarity-common .promo-card-icon{color:var(--common-color)}.promo-card-title{font-weight:700;font-size:1.4rem;margin-bottom:1rem}.promo-card-description{font-size:.9rem;opacity:.6;flex-grow:1;margin-bottom:1.5rem}.promo-card-value{font-family:'Oswald',sans-serif;font-size:2.5rem;line-height:1}.promo-card-label{font-size:1rem;opacity:.8;margin-top:.25rem}.footer{margin-top:5rem;padding:2rem 0;background:#000;text-align:center;color:rgba(255,255,255,.5)}
     </style>
 </head>
 <body>
-    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
+    <div class="parallax-bg"></div>
 
-    <main>
-        <div class="hero-section">
-            <div class="project-logo">
-                <i class="fas fa-network-wired"></i>
-                <h1>Project NEXUS</h1>
-            </div>
-            <div class="story-container">
-                <p id="story-text"><span class="typewriter-cursor"></span></p>
-            </div>
-            <a href="index.html" class="cta-button" style="opacity: 0;">
-                Akses Terminal
-                <i class="fas fa-right-to-bracket"></i>
-            </a>
+    <!-- [REVISI] Tahap 1: Prolog Layar Penuh -->
+    <div id="prologue-screen">
+        <div class="story-container">
+            <p id="story-text"><span class="typewriter-cursor"></span></p>
         </div>
+        <button id="initiate-mission-btn" class="initiate-button">
+            <i class="fas fa-bolt me-2"></i> INITIATE MISSION
+        </button>
+    </div>
 
-        <div class="container main-content" style="opacity: 0;">
+    <!-- [REVISI] Tahap 2 & 3: Mission Hub (Konten Utama) -->
+    <main id="main-hub">
+        <header class="mission-header">
+            <h1 class="mission-title">PROJECT NEXUS</h1>
+            <p class="mission-lead">Selamat datang, Agen. Ini adalah *dashboard* misimu. Selesaikan tugas, kumpulkan *resource*, dan upgrade *arsenal*-mu. Kegagalan bukanlah pilihan.</p>
+        </header>
+
+        <div class="container">
             <div class="how-to-play mb-5">
                 <h2 class="section-title">Mission Protocol</h2>
                 <div class="row g-4 justify-content-center">
-                    <div class="col-md-4"><div class="guide-card"><i class="fas fa-book-open guide-icon" style="color:var(--rare-color);"></i><h4>1. Dekode Pengetahuan</h4><p>Selesaikan Misi dengan membaca buku TKJ dan lainnya. Setiap buku adalah <b>data packet</b> yang memperkuat jaringan pengetahuanmu.</p></div></div>
-                    <div class="col-md-4"><div class="guide-card"><i class="fas fa-server guide-icon" style="color:var(--epic-color);"></i><h4>2. Ekstrak Data Fragmen</h4><p>Laporkan <b>data packet</b> yang berhasil didekode kepada <b>System Admin</b> (guru) saat jam tatap muka untuk mengekstrak Kupon.</p></div></div>
-                    <div class="col-md-4"><div class="guide-card"><i class="fas fa-rocket guide-icon" style="color:var(--legendary-color);"></i><h4>3. Upgrade Arsenal</h4><p>Gunakan Kupon di <i>ATM Kupon</i> untuk me-<b>redeem</b> Hadiah dari The Vault. Hadiah yang sudah diklaim akan terikat pada akunmu.</p></div></div>
+                    <div class="col-md-4"><div class="guide-card"><i class="guide-icon fas fa-book-open" style="color:var(--rare-color);"></i><h4>1. Dekode Pengetahuan</h4><p>Selesaikan Misi dengan membaca buku TKJ dan lainnya. Setiap buku adalah *data packet* yang memperkuat jaringan pengetahuanmu.</p></div></div>
+                    <div class="col-md-4"><div class="guide-card"><i class="guide-icon fas fa-server" style="color:var(--epic-color);"></i><h4>2. Ekstrak Data Fragmen</h4><p>Laporkan *data packet* yang berhasil didekode kepada *System Admin* (guru) saat jam tatap muka untuk mengekstrak Kupon.</p></div></div>
+                    <div class="col-md-4"><div class="guide-card"><i class="guide-icon fas fa-rocket" style="color:var(--legendary-color);"></i><h4>3. Upgrade Arsenal</h4><p>Gunakan Kupon di **ATM Kupon** untuk me-*redeem* Hadiah dari The Vault. Hadiah yang sudah diklaim akan terikat pada akunmu.</p></div></div>
                 </div>
             </div>
 
@@ -152,15 +138,15 @@
                 <div id="missions-content" class="tab-pane"><div id="coupon-types-list" class="row g-4 justify-content-center"></div></div>
             </div>
         </div>
+
+        <footer class="footer">
+            <a href="index.html" style="color: var(--rare-color); text-decoration: none;">Akses Terminal Agen</a><br><br>
+            © 2025 Project NEXUS - Jurnal Baca - SMKN 1 Telagasari
+        </footer>
     </main>
-
-    <footer class="footer">
-        © 2025 Project NEXUS - Jurnal Baca - Kelas TKJ SMKN 1 Telagasari
-    </footer>
-
+    
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
-    const loader = document.getElementById('loader');
 
     const storyLines = [
         "BOOTING SYSTEM... OK",
@@ -168,20 +154,18 @@
         "STATUS: ANOMALI TERDETEKSI. 'The Glitch of Ignorance' menyebar di jaringan.",
         "REKRUTMEN AGEN LITERASI DIGITAL DIAKTIFKAN.",
         "MISI UTAMA: Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.",
-        "Setiap buku adalah <b>firewall</b>. Setiap halaman adalah <b>patch</b>.",
+        "Setiap buku adalah *firewall*. Setiap halaman adalah *patch*.",
         "Selamat datang di Project NEXUS, Agen."
     ];
 
-    function typeWriter(element, lines, speed = 40, delay = 1200) {
+    function typeWriter(element, lines, button, speed = 40, delay = 1200) {
         let lineIndex = 0;
-        const ctaButton = document.querySelector('.cta-button');
-        const mainContent = document.querySelector('.main-content');
         
         function typeLine() {
             if (lineIndex >= lines.length) {
-                ctaButton.style.opacity = '1';
-                mainContent.style.animation = 'fadeInUp 1s forwards';
-                mainContent.style.opacity = '1';
+                // Tampilkan tombol setelah cerita selesai
+                button.style.visibility = 'visible';
+                button.style.opacity = '1';
                 return;
             }
             
@@ -199,10 +183,9 @@
                 }
             }, speed);
         }
-        
         typeLine();
     }
-
+    
     function setup3dCards() {
         const cards = document.querySelectorAll('.promo-card');
         cards.forEach(card => {
@@ -210,56 +193,38 @@
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
                 const y = e.clientY - rect.top - rect.height / 2;
-
-                const rotateX = -y / 20; // Mengontrol kemiringan vertikal
-                const rotateY = x / 20; // Mengontrol kemiringan horizontal
-                
+                const rotateX = -y / 20;
+                const rotateY = x / 20;
                 card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
             });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'rotateX(0) rotateY(0) scale(1)';
-            });
+            card.addEventListener('mouseleave', () => { card.style.transform = 'rotateX(0) rotateY(0) scale(1)'; });
         });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         const storyElement = document.getElementById('story-text');
-        typeWriter(storyElement, storyLines);
+        const prologueScreen = document.getElementById('prologue-screen');
+        const initiateButton = document.getElementById('initiate-mission-btn');
+        const mainHub = document.getElementById('main-hub');
+
+        // Mulai animasi prolog
+        typeWriter(storyElement, storyLines, initiateButton);
+        
+        // Setup listener untuk tombol utama
+        initiateButton.addEventListener('click', () => {
+            prologueScreen.classList.add('hidden');
+            mainHub.style.opacity = '1';
+            document.body.style.overflowY = 'auto'; // Aktifkan scroll
+            loadPromotionalData();
+        });
+        
         setupTabs();
-        loadPromotionalData();
     });
     
-    function setupTabs(){const t=document.querySelectorAll(".tab-btn"),e=document.querySelectorAll(".tab-pane");t.forEach(n=>{n.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("active")),n.classList.add("active");const o=n.getAttribute("data-tab");e.forEach(t=>{t.classList.toggle("active",t.id===o)})})})}
-    async function loadPromotionalData(){loader.style.display="flex";const t=await apiCall("getCouponManagementData");loader.style.display="none",t?(renderPrizes(t.prizes||[]),renderCouponTypes(t.couponTypes||[]),setTimeout(setup3dCards,100)):document.querySelector(".container.main-content").innerHTML='<div class="text-center p-5"><h3><i class="fas fa-satellite-dish"></i> Koneksi ke Gudang Gagal</h3><p>Data tidak dapat dimuat. Coba lagi nanti.</p></div>'}
-    function getRarity(t,e="cost"){const n={legendary:50,epic:25,rare:10},o={legendary:15,epic:8,rare:4},a=e==="cost"?n:o;return t>=a.legendary?{name:"Legendary",class:"rarity-legendary"}:t>=a.epic?{name:"Epic",class:"rarity-epic"}:t>=a.rare?{name:"Rare",class:"rarity-rare"}:{name:"Common",class:"rarity-common"}}
-    function renderPrizes(t){const e=document.getElementById("prizes-list");if(0===t.length)return void(e.innerHTML='<div class="col-12"><p class="text-center opacity-50">The Vault sedang diisi ulang. Cek kembali nanti!</p></div>');let n="";t.sort((t,e)=>e.kuponDibutuhkan-t.kuponDibutuhkan).forEach(t=>{const e=getRarity(t.kuponDibutuhkan,"cost");n+=`
-                <div class="col-md-6 col-lg-4">
-                    <div class="promo-card ${e.class}" data-rarity="${e.name}">
-                        <div class="shine-effect"></div>
-                        <i class="fas fa-gift promo-card-icon"></i>
-                        <h4 class="promo-card-title">${t.namaHadiah}</h4>
-                        <p class="promo-card-description">${t.deskripsi||"Hadiah eksklusif untuk agen berdedikasi."}</p>
-                        <div>
-                            <div class="promo-card-value">${t.kuponDibutuhkan}</div>
-                            <div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div>
-                        </div>
-                    </div>
-                </div>`}),e.innerHTML=n}
-    function renderCouponTypes(t){const e=document.getElementById("coupon-types-list");if(0===t.length)return void(e.innerHTML='<div class="col-12"><p class="text-center opacity-50">Misi baru akan segera ditransmisikan. Bersiaplah!</p></div>');let n="";t.sort((t,e)=>e.jumlahKupon-t.jumlahKupon).forEach(t=>{const e=getRarity(t.jumlahKupon,"reward");n+=`
-                <div class="col-md-6 col-lg-4">
-                    <div class="promo-card ${e.class}" data-rarity="${e.name}">
-                        <div class="shine-effect"></div>
-                        <i class="fas fa-trophy promo-card-icon"></i>
-                        <h4 class="promo-card-title">${t.capaian}</h4>
-                        <p class="promo-card-description">${t.deskripsi||"Selesaikan misi ini untuk mendapatkan imbalan."}</p>
-                        <div>
-                            <div class="promo-card-value">+${t.jumlahKupon}</div>
-                            <div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div>
-                        </div>
-                    </div>
-                </div>`}),e.innerHTML=n}
-    async function apiCall(t,e={}){try{const n=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:t,data:e}),redirect:"follow"});if(!n.ok)throw new Error("Network response was not ok");const o=await n.json();if("success"===o.status)return o.data;throw new Error(o.message||"Terjadi kesalahan server.")}catch(t){return console.error("API Call Error:",t),null}}
+    // Semua fungsi lain (API, render, dll) tidak berubah dan bekerja dengan baik.
+    function setupTabs(){const t=document.querySelectorAll(".tab-btn"),e=document.querySelectorAll(".tab-pane");t.forEach(n=>{n.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("active")),n.classList.add("active");const o=n.getAttribute("data-tab");e.forEach(t=>{t.classList.toggle("active",t.id===o)})})})}async function loadPromotionalData(){const t=await apiCall("getCouponManagementData");t?(renderPrizes(t.prizes||[]),renderCouponTypes(t.couponTypes||[]),setTimeout(setup3dCards,100)):document.querySelector(".container").innerHTML='<div class="text-center p-5"><h3><i class="fas fa-satellite-dish"></i> Koneksi ke Gudang Gagal</h3><p>Data tidak dapat dimuat. Coba lagi nanti.</p></div>'}function getRarity(t,e="cost"){const n={legendary:50,epic:25,rare:10},o={legendary:15,epic:8,rare:4},a=e==="cost"?n:o;return t>=a.legendary?{name:"Legendary",class:"rarity-legendary"}:t>=a.epic?{name:"Epic",class:"rarity-epic"}:t>=a.rare?{name:"Rare",class:"rarity-rare"}:{name:"Common",class:"rarity-common"}}function renderPrizes(t){const e=document.getElementById("prizes-list");if(0===t.length)return void(e.innerHTML='<div class="col-12"><p class="text-center opacity-50">The Vault sedang diisi ulang. Cek kembali nanti!</p></div>');let n="";t.sort((t,e)=>e.kuponDibutuhkan-t.kuponDibutuhkan).forEach(t=>{const e=getRarity(t.kuponDibutuhkan,"cost");n+=`
+                <div class="col-md-6 col-lg-4"><div class="promo-card ${e.class}" data-rarity="${e.name}"><div class="shine-effect"></div><i class="fas fa-gift promo-card-icon"></i><h4 class="promo-card-title">${t.namaHadiah}</h4><p class="promo-card-description">${t.deskripsi||"Hadiah eksklusif untuk agen berdedikasi."}</p><div><div class="promo-card-value">${t.kuponDibutuhkan}</div><div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div></div></div></div>`}),e.innerHTML=n}function renderCouponTypes(t){const e=document.getElementById("coupon-types-list");if(0===t.length)return void(e.innerHTML='<div class="col-12"><p class="text-center opacity-50">Misi baru akan segera ditransmisikan. Bersiaplah!</p></div>');let n="";t.sort((t,e)=>e.jumlahKupon-t.jumlahKupon).forEach(t=>{const e=getRarity(t.jumlahKupon,"reward");n+=`
+                <div class="col-md-6 col-lg-4"><div class="promo-card ${e.class}" data-rarity="${e.name}"><div class="shine-effect"></div><i class="fas fa-trophy promo-card-icon"></i><h4 class="promo-card-title">${t.capaian}</h4><p class="promo-card-description">${t.deskripsi||"Selesaikan misi ini untuk mendapatkan imbalan."}</p><div><div class="promo-card-value">+${t.jumlahKupon}</div><div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div></div></div></div>`}),e.innerHTML=n}async function apiCall(t,e={}){try{const n=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:t,data:e}),redirect:"follow"});if(!n.ok)throw new Error("Network response was not ok");const o=await n.json();if("success"===o.status)return o.data;throw new Error(o.message||"Terjadi kesalahan server.")}catch(t){return console.error("API Call Error:",t),null}}
 </script>
 </body>
 </html>

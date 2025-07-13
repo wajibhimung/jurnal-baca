@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The NEXUS Archives - Sebuah Misi Literasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #0A0C16;
+            --card-bg: #1a1d2e;
+            --border-color: rgba(3, 169, 244, 0.4);
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+            --text-color: #e0e0e0;
+            --text-muted: rgba(224, 224, 224, 0.6);
+        }
+
+        /* --- Animasi --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--epic-glow), 0 0 30px var(--rare-glow); transform: scale(1); }
+            50% { box-shadow: 0 0 30px var(--epic-glow), 0 0 50px var(--rare-glow); transform: scale(1.05); }
+        }
+        @keyframes scan-line {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* --- Latar Belakang & Loader --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        .parallax-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
+        }
+        .loader-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--dark-bg);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.5s ease-out;
+        }
+        .loader-logo { font-size: 5rem; color: var(--rare-color); text-shadow: 0 0 20px var(--rare-color); margin-bottom: 1rem; position: relative; overflow: hidden; }
+        .loader-logo::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: #fff; animation: scan-line 1.5s linear infinite; }
+        .loader-text { font-family: 'Share Tech Mono', monospace; letter-spacing: 2px; }
+
+        /* --- Struktur & Tipografi Konten --- */
+        .story-section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+            opacity: 0; /* Awalnya disembunyikan untuk animasi */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .story-section.is-visible { opacity: 1; }
+        
+        h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1.5px; }
+        h1 { font-size: 3.5rem; color: var(--rare-color); text-shadow: 0 0 15px var(--rare-glow); }
+        h2 { font-size: 2.5rem; margin-bottom: 2rem; }
+        h4 { color: var(--rare-color); }
+        
+        p { line-height: 1.8; color: var(--text-muted); }
+        strong { color: var(--text-color); font-weight: 600; }
+        
+        blockquote {
+            font-family: 'Share Tech Mono', monospace;
+            border-left: 4px solid var(--legendary-color);
+            padding-left: 2rem; margin: 2rem 0;
+            font-size: 1.25rem; font-style: italic;
+            background: linear-gradient(90deg, rgba(255, 152, 0, 0.05), transparent);
+        }
+        
+        .final-quote blockquote { border-color: var(--epic-color); background: linear-gradient(90deg, rgba(156, 39, 176, 0.05), transparent); }
+
+        /* --- Elemen UI Khusus --- */
+        .protocol-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: 1rem; text-align: center; height: 100%;
+        }
+        .protocol-icon { font-size: 3rem; margin-bottom: 1rem; }
+        
+        .book-list { list-style: none; padding-left: 0; }
+        .book-list li {
+            background: rgba(255, 255, 255, 0.03); padding: 0.75rem 1.5rem;
+            margin-bottom: 0.5rem; border-radius: 8px; border-left: 3px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        .book-list li:hover { background: rgba(255, 255, 255, 0.07); border-left-color: var(--rare-color); transform: translateX(10px); }
+        .book-list li i { margin-right: 1rem; color: var(--rare-color); }
+        
+        .cta-section { text-align: center; }
+        .cta-button {
+            display: inline-block; padding: 1.2rem 3rem; font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px;
+            color: #fff; background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
+            border: none; border-radius: 50px; text-decoration: none;
+            transition: all 0.3s ease;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        .cta-button:hover { animation-play-state: paused; transform: scale(1.1); }
+        .cta-button i { margin-left: 1rem; }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loader-wrapper">
+        <div class="loader-logo"><i class="fas fa-network-wired"></i></div>
+        <div class="loader-text">ACCESSING NEXUS ARCHIVES...</div>
+    </div>
+
+    <div class="parallax-bg"></div>
+
+    <main class="container">
+        
+        <section class="story-section text-center">
+            <h1><i class="fas fa-satellite-dish me-3"></i>PROJECT NEXUS</h1>
+            <p class="lead mt-3">Misi Membaca untuk Melawan Kebodohan Digital</p>
+        </section>
+
+        <section class="story-section animate-on-scroll">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    <i class="fas fa-calendar-alt fa-4x text-muted"></i>
+                    <h3 class="mt-2">TAHUN 2055</h3>
+                </div>
+                <div class="col-md-9">
+                    <p>Dunia terhubung dalam jaringan pengetahuan global yang dikenal sebagai <strong>NEXUS</strong>. Jutaan informasi tersimpan dan dibagikan melalui sistem ini, menjadikannya pusat peradaban digital. Namun, sebuah krisis diam-diam melanda:</p>
+                    <blockquote class="text-danger">"The Glitch of Ignorance" — anomali misterius yang merusak semangat belajar umat manusia, perlahan memutus koneksi antara manusia dan literasi.</blockquote>
+                </div>
+            </div>
+        </section>
+        
+        <section class="story-section animate-on-scroll text-center">
+            <h2><i class="fas fa-triangle-exclamation text-warning me-2"></i> Saatnya Melawan: Aktifkan PROJECT NEXUS</h2>
+            <p>Sebagai respons terhadap krisis global ini, diluncurkanlah sebuah proyek rahasia bernama <strong>PROJECT NEXUS</strong>, dijalankan oleh komunitas pendidik, pelajar, dan penjaga pengetahuan. Tujuan utamanya:</p>
+            <blockquote>🔐 Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</blockquote>
+        </section>
+
+        <section class="story-section animate-on-scroll">
+            <h2><i class="fas fa-book-journal-whills me-2"></i> Setiap Buku Adalah Senjata</h2>
+            <p>Di Project NEXUS, setiap buku yang dibaca — apapun jenisnya — menjadi <strong>Data Packet</strong> yang memperkuat *firewall* pengetahuan global. Tidak hanya buku teknologi, tetapi juga:</p>
+            <ul class="book-list mt-4">
+                <li><i class="fas fa-hat-wizard"></i>Novel dan fiksi yang membuka imajinasi.</li>
+                <li><i class="fas fa-landmark"></i>Buku sejarah yang memberi perspektif.</li>
+                <li><i class="fas fa-user-astronaut"></i>Biografi tokoh inspiratif.</li>
+                <li><i class="fas fa-atom"></i>Buku sains, seni, dan bahkan komik edukatif.</li>
+            </ul>
+            <p class="mt-3"><strong>Semua bacaan dihargai. Semua bacaan memberi dampak.</strong></p>
+        </section>
+        
+        <section class="story-section animate-on-scroll">
+            <h2 class="text-center">🎯 Misi Agen: Dari Halaman ke Kupon</h2>
+            <div class="row g-4 mt-4">
+                <div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-book-open" style="color:var(--rare-color);"></i><h4>1. Dekode Pengetahuan</h4><p>Baca buku apa saja. Setiap halaman adalah *patch* terhadap kebodohan.</p></div></div>
+                <div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-server" style="color:var(--epic-color);"></i><h4>2. Ekstrak Data Fragmen</h4><p>Laporkan buku yang selesai dibaca di sistem Jurnal Baca. Laporkan langsung ke *System Admin* (guru) saat jam tatap muka untuk mendapatkan Kupon Digital.</p></div></div>
+                <div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-rocket" style="color:var(--legendary-color);"></i><h4>3. Upgrade Arsenal</h4><p>Tukarkan kupon di **ATM Kupon** untuk mengakses hadiah-hadiah dari *The Vault* — sistem penghargaan untuk memotivasi belajarmu.</p></div></div>
+            </div>
+        </section>
+        
+        <section class="story-section animate-on-scroll">
+            <h2 class="text-center">💾 Misi Virtual: Lebih dari Sekadar Membaca</h2>
+            <p class="text-center mx-auto" style="max-width: 800px;">Situs Jurnal Baca Kelas TKJ telah dirancang ulang dengan tampilan futuristik dan misi gamifikasi. Ketika kamu login, kamu bukan lagi hanya siswa—kamu adalah agen literasi digital. Dengan fitur seperti <strong>Mission Board</strong>, <strong>The Vault</strong>, dan <strong>Tracking Kupon</strong>, kamu bisa melihat progres literasi seolah bermain game, namun dengan dampak nyata.</p>
+        </section>
+        
+        <section class="story-section animate-on-scroll">
+            <h2 class="text-center">✊ Siapa yang Bisa Bergabung?</h2>
+            <p class="text-center"><strong>Siapa pun.</strong> Tidak dibatasi jurusan atau minat. Suka fiksi? Kamu bisa jadi agen imajinatif. Suka sejarah? Kamu bisa jadi agen penjaga masa lalu. Suka sains atau teknologi? Kamu adalah agen pembangun masa depan.</p>
+        </section>
+        
+        <section class="story-section animate-on-scroll final-quote">
+            <h2 class="text-center">🧠 Penutup: Glitch Itu Nyata</h2>
+            <p class="text-center mx-auto" style="max-width: 800px;">Ketidaktertarikan membaca, ketergantungan hiburan pasif, dan minimnya refleksi adalah bagian dari *Glitch of Ignorance* yang hari ini merasuki dunia nyata. Project NEXUS adalah gerakan kecil untuk melawan itu — bukan dengan senjata, tapi dengan kata-kata. Bukan dengan kekerasan, tapi dengan kesadaran.</p>
+            <blockquote class="mt-5">"Setiap buku adalah firewall.<br>Setiap halaman adalah patch.<br>Dan kamu adalah update yang kami tunggu."</blockquote>
+        </section>
+
+        <section class="story-section animate-on-scroll cta-section">
+            <h2>Jadi, Kamu Siap Bergabung?</h2>
+            <a href="index.html" class="cta-button mt-3">
+                Terima Misi
+                <i class="fas fa-right-to-bracket"></i>
+            </a>
+        </section>
+
+    </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('loader');
+        
+        // Sembunyikan loader setelah beberapa saat
+        setTimeout(() => {
+            loader.style.opacity = '0';
+            // Hapus loader dari DOM setelah transisi selesai
+            setTimeout(() => loader.style.display = 'none', 500);
+        }, 2000); // Tampilkan loader selama 2 detik
+
+        // Setup animasi scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1 // Munculkan saat 10% elemen terlihat
+        });
+
+        const sections = document.querySelectorAll('.animate-on-scroll');
+        sections.forEach(section => observer.observe(section));
+    });
+</script>
+</body>
+</html>

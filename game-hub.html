@@ -25,8 +25,8 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px var(--epic-glow), 0 0 35px var(--rare-glow); }
-            50% { box-shadow: 0 0 35px var(--epic-glow), 0 0 60px var(--rare-glow); }
+            0%, 100% { box-shadow: 0 0 30px var(--epic-glow), 0 0 50px var(--rare-glow); transform: scale(1); }
+            50% { box-shadow: 0 0 50px var(--epic-glow), 0 0 80px var(--rare-glow); transform: scale(1.05); }
         }
         @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--rare-color); } }
 
@@ -64,7 +64,7 @@
         .initiate-button:hover { animation-play-state: paused; transform: scale(1.1); }
         #prologue-screen.hidden { opacity: 0; pointer-events: none; transform: scale(1.5); }
 
-        #main-hub { opacity: 0; transition: opacity 1s 0.5s ease-out; padding-bottom: 5rem; }
+        #main-hub { opacity: 0; transition: opacity 1s 0.5s ease-out; }
         .mission-header {
             padding: 4rem 1rem 3rem; text-align: center;
             border-bottom: 1px solid var(--border-color); margin-bottom: 4rem;
@@ -80,61 +80,40 @@
         .story-block blockquote { font-family: 'Share Tech Mono', monospace; border-left: 3px solid var(--legendary-color); padding-left: 1.5rem; margin: 1.5rem 0; font-style: italic; }
         .story-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-color), transparent); margin: 3rem 0; }
         
-        /* Gaya lain (guide-card, tabs, promo-card) tetap sama */
         .guide-card{background:var(--card-bg);border:1px solid var(--border-color);padding:2rem;border-radius:1rem;text-align:center;height:100%;transition:transform .3s ease,box-shadow .3s ease}.guide-card:hover{transform:translateY(-10px);box-shadow:0 10px 30px rgba(0,0,0,.3)}.guide-icon{font-size:3rem;margin-bottom:1rem}.guide-card h4{font-family:'Oswald',sans-serif;letter-spacing:1px;color:#fff}.guide-card p{opacity:.6;font-size:.9rem}.tabs-nav{display:flex;justify-content:center;gap:1rem;margin-top:5rem;margin-bottom:3rem;border-bottom:1px solid var(--border-color)}.tab-btn{font-family:'Oswald',sans-serif;font-size:1.5rem;letter-spacing:1px;text-transform:uppercase;background:0 0;border:none;color:rgba(255,255,255,.5);padding:1rem 1.5rem;position:relative;transition:color .3s ease}.tab-btn:hover{color:#fff}.tab-btn::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:4px;background-color:var(--legendary-color);transform:scaleX(0);transition:transform .3s ease}.tab-btn.active{color:#fff}.tab-btn.active::after{transform:scaleX(1)}.tab-btn.story.active::after{background-color:var(--legendary-color)}.tab-btn.missions.active::after{background-color:var(--epic-color)}.tab-pane{display:none}.tab-pane.active{display:block;animation:fadeInUp .5s ease-out}.promo-card-grid{perspective:1000px}.promo-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:1rem;padding:1.5rem;height:100%;display:flex;flex-direction:column;text-align:center;position:relative;overflow:hidden;transform-style:preserve-3d;transition:transform .1s ease-out}.promo-card::before{content:attr(data-rarity);position:absolute;top:15px;right:-40px;background-color:var(--common-color);color:#000;padding:5px 40px;font-size:.8rem;font-weight:700;text-transform:uppercase;transform:rotate(45deg);box-shadow:0 0 10px rgba(0,0,0,.5)}.promo-card .shine-effect{position:absolute;top:0;left:-150%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .6s ease}.promo-card:hover .shine-effect{left:150%}.rarity-common{border-color:var(--common-color)}.rarity-common::before{background-color:var(--common-color)}.rarity-rare{border-color:var(--rare-color)}.rarity-rare::before{background-color:var(--rare-color)}.rarity-epic{border-color:var(--epic-color)}.rarity-epic::before{background-color:var(--epic-color)}.rarity-legendary{border-color:var(--legendary-color)}.rarity-legendary::before{background-color:var(--legendary-color)}.promo-card-icon{font-size:4rem;margin-bottom:1.5rem;transition:transform .3s ease}.promo-card:hover .promo-card-icon{transform:scale(1.1)}.rarity-legendary .promo-card-icon{color:var(--legendary-color);text-shadow:0 0 20px var(--legendary-glow)}.rarity-epic .promo-card-icon{color:var(--epic-color);text-shadow:0 0 20px var(--epic-glow)}.rarity-rare .promo-card-icon{color:var(--rare-color);text-shadow:0 0 20px var(--rare-glow)}.rarity-common .promo-card-icon{color:var(--common-color)}.promo-card-title{font-weight:700;font-size:1.4rem;margin-bottom:1rem}.promo-card-description{font-size:.9rem;opacity:.6;flex-grow:1;margin-bottom:1.5rem}.promo-card-value{font-family:'Oswald',sans-serif;font-size:2.5rem;line-height:1}.promo-card-label{font-size:1rem;opacity:.8;margin-top:.25rem}
-        .footer { padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
         
-        /* [REVISI TOTAL] Tombol Melayang */
-        .fab-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 1000;
-            opacity: 0;
-            transform: translateY(100px); /* Mulai dari bawah layar */
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        /* [REVISI] Footer dan Tombol CTA Terintegrasi */
+        .footer {
+            margin-top: 5rem;
+            padding: 3rem 1rem;
+            text-align: center;
+            background: var(--dark-bg);
+            border-top: 1px solid var(--border-color);
         }
-        .fab-button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 65px;
-            height: 65px;
-            background: linear-gradient(45deg, var(--rare-color), var(--epic-color));
-            color: #fff;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            text-decoration: none;
-            box-shadow: 0 5px 20px var(--epic-glow);
-            animation: pulse-glow 3s ease-in-out infinite;
-            transition: transform 0.3s ease;
-        }
-        .fab-button:hover {
-            transform: scale(1.15);
-            animation-play-state: paused;
-        }
-        .fab-button:hover .fab-tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
-        .fab-tooltip {
-            position: absolute;
-            right: 120%; /* Posisi di sebelah kiri tombol */
-            top: 50%;
-            transform: translateY(-50%) translateX(10px);
-            padding: 0.5rem 1rem;
-            background: #000;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+        .footer-cta-link {
+            display: inline-block;
+            padding: 0.8rem 2.5rem;
             font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
+            color: #fff;
+            background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
             transition: all 0.3s ease;
-            pointer-events: none;
+            box-shadow: 0 0 15px var(--epic-glow);
+        }
+        .footer-cta-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--epic-glow);
+        }
+        .footer p {
+            margin-top: 2rem;
+            margin-bottom: 0;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -187,17 +166,12 @@
         </div>
 
         <footer class="footer">
-            © 2025 Project NEXUS - Jurnal Baca - SMKN 1 Telagasari
+            <a href="index.html" class="footer-cta-link">
+                <i class="fas fa-right-to-bracket me-2"></i> BERGABUNG DENGAN MISI (LOGIN)
+            </a>
+            <p>© 2025 Project NEXUS - Jurnal Baca - SMKN 1 Telagasari</p>
         </footer>
     </main>
-
-    <!-- Tombol Melayang -->
-    <div id="fab-container" class="fab-container">
-        <a href="index.html" class="fab-button">
-            <span class="fab-tooltip">AKSES TERMINAL AGEN</span>
-            <i class="fas fa-right-to-bracket"></i>
-        </a>
-    </div>
     
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
@@ -252,7 +226,6 @@
         const prologueScreen = document.getElementById('prologue-screen');
         const initiateButton = document.getElementById('initiate-mission-btn');
         const mainHub = document.getElementById('main-hub');
-        const fabContainer = document.getElementById('fab-container');
 
         typeWriter(storyElement, storyLines, initiateButton);
         
@@ -260,8 +233,6 @@
             prologueScreen.classList.add('hidden');
             mainHub.style.opacity = '1';
             document.body.style.overflowY = 'auto';
-            fabContainer.style.opacity = '1';
-            fabContainer.style.transform = 'translateY(0)';
             loadPromotionalData();
         });
         

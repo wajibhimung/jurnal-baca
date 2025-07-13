@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Hadiah & Kupon - Jurnal Baca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&family=Anton&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #ffc107; /* Emas untuk hadiah */
+            --kupon-color: #0d6efd; /* Biru untuk kupon */
+            --dark-bg: #12121c;
+            --glow-color-prize: rgba(255, 193, 7, 0.3);
+            --glow-color-coupon: rgba(13, 110, 253, 0.3);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 1% 1%, var(--primary-color), transparent 35%),
+                              radial-gradient(circle at 99% 99%, var(--secondary-color), transparent 40%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .loader-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--dark-bg);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
+        }
+
+        .hero-section {
+            padding: 6rem 1rem;
+            text-align: center;
+        }
+
+        .hero-section .display-3 {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .hero-section .lead {
+            max-width: 600px;
+            margin: 1rem auto 0;
+            opacity: 0.8;
+        }
+
+        .section-title {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+        
+        .section-title.kupon::after {
+            background: var(--kupon-color);
+        }
+
+        .promo-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .promo-card.prize-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 0 30px var(--glow-color-prize);
+            border-color: var(--accent-color);
+        }
+
+        .promo-card.coupon-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 0 30px var(--glow-color-coupon);
+            border-color: var(--kupon-color);
+        }
+
+        .promo-card-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .prize-card .promo-card-icon { color: var(--accent-color); }
+        .coupon-card .promo-card-icon { color: var(--kupon-color); }
+        
+        .promo-card-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .promo-card-description {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            flex-grow: 1;
+            margin-bottom: 2rem;
+        }
+        
+        .promo-card-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        
+        .prize-card .promo-card-value { color: var(--accent-color); }
+        .coupon-card .promo-card-value { color: var(--kupon-color); }
+
+        .promo-card-label {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+
+        .footer {
+            margin-top: 5rem;
+            padding: 2rem 0;
+            background: rgba(0,0,0,0.2);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
+
+    <main>
+        <div class="hero-section">
+            <h1 class="display-3">Katalog Program Jurnal Baca</h1>
+            <p class="lead">
+                Semakin banyak kamu membaca, semakin banyak kupon yang bisa didapatkan. Tukarkan kuponmu dengan berbagai hadiah eksklusif yang tersedia!
+            </p>
+        </div>
+
+        <div class="container">
+            <div class="row g-5">
+
+                <!-- Kolom untuk Hadiah -->
+                <div class="col-lg-6">
+                    <h2 class="section-title">Tukarkan Hadiah Ini</h2>
+                    <div class="row g-4" id="prizes-list">
+                        <!-- Kartu hadiah akan dirender oleh JavaScript di sini -->
+                    </div>
+                </div>
+
+                <!-- Kolom untuk Kupon -->
+                <div class="col-lg-6">
+                    <h2 class="section-title kupon">Dapatkan Kupon</h2>
+                    <div class="row g-4" id="coupon-types-list">
+                        <!-- Kartu tipe kupon akan dirender oleh JavaScript di sini -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        © 2025 Program Jurnal Baca - SMKN 1 Telagasari
+    </footer>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
+    const loader = document.getElementById('loader');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPromotionalData();
+    });
+
+    async function loadPromotionalData() {
+        loader.style.display = 'flex';
+        // Menggunakan endpoint yang sudah ada tanpa perlu login
+        const data = await apiCall('getCouponManagementData');
+        loader.style.display = 'none';
+
+        if (data) {
+            renderPrizes(data.prizes || []);
+            renderCouponTypes(data.couponTypes || []);
+        } else {
+            document.querySelector('.container').innerHTML = `<div class="text-center p-5"><h3>Gagal memuat data promosi.</h3><p>Silakan coba muat ulang halaman nanti.</p></div>`;
+        }
+    }
+
+    function renderPrizes(prizes) {
+        const container = document.getElementById('prizes-list');
+        if (prizes.length === 0) {
+            container.innerHTML = `<div class="col-12"><p class="text-center opacity-50">Hadiah baru akan segera hadir!</p></div>`;
+            return;
+        }
+
+        let prizesHtml = '';
+        prizes.sort((a,b) => a.kuponDibutuhkan - b.kuponDibutuhkan).forEach(prize => {
+            prizesHtml += `
+                <div class="col-md-6">
+                    <div class="promo-card prize-card">
+                        <i class="fas fa-gift promo-card-icon"></i>
+                        <h4 class="promo-card-title">${prize.namaHadiah}</h4>
+                        <p class="promo-card-description">${prize.deskripsi || 'Hadiah menarik untuk pembaca setia.'}</p>
+                        <div>
+                            <div class="promo-card-value">${prize.kuponDibutuhkan}</div>
+                            <div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = prizesHtml;
+    }
+
+    function renderCouponTypes(types) {
+        const container = document.getElementById('coupon-types-list');
+        if (types.length === 0) {
+            container.innerHTML = `<div class="col-12"><p class="text-center opacity-50">Cara mendapatkan kupon akan segera diumumkan!</p></div>`;
+            return;
+        }
+        
+        let typesHtml = '';
+        types.sort((a,b) => a.jumlahKupon - b.jumlahKupon).forEach(type => {
+            typesHtml += `
+                <div class="col-md-6">
+                    <div class="promo-card coupon-card">
+                        <i class="fas fa-trophy promo-card-icon"></i>
+                        <h4 class="promo-card-title">${type.capaian}</h4>
+                        <p class="promo-card-description">${type.deskripsi || 'Selesaikan capaian ini untuk mendapatkan kupon.'}</p>
+                        <div>
+                            <div class="promo-card-value">+${type.jumlahKupon}</div>
+                            <div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = typesHtml;
+    }
+
+    // Helper Function untuk memanggil API
+    async function apiCall(action, data = {}) {
+        try {
+            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" });
+            if (!response.ok) throw new Error('Network response was not ok');
+            const result = await response.json();
+            if (result.status === 'success') {
+                return result.data;
+            } else {
+                throw new Error(result.message || 'Terjadi kesalahan server.');
+            }
+        } catch (error) {
+            console.error("API Call Error:", error);
+            return null;
+        }
+    }
+</script>
+</body>
+</html>

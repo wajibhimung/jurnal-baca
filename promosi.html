@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog Hadiah & Misi - Jurnal Baca</title>
+    <title>Arsenal Jurnal Baca - Hadiah & Misi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
@@ -24,6 +24,11 @@
             --legendary-glow: rgba(255, 152, 0, 0.6);
         }
 
+        @keyframes text-glow {
+            0%, 100% { text-shadow: 0 0 10px var(--rare-glow), 0 0 20px var(--legendary-glow); }
+            50% { text-shadow: 0 0 20px var(--rare-glow), 0 0 40px var(--legendary-glow); }
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--dark-bg);
@@ -39,50 +44,49 @@
             display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
 
-        .hero-section {
-            padding: 5rem 1rem 3rem;
-            text-align: center;
-        }
+        .hero-section { padding: 4rem 1rem 3rem; text-align: center; }
         .hero-title {
             font-family: 'Oswald', sans-serif;
-            font-size: 3.5rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 3.5rem; letter-spacing: 2px; text-transform: uppercase;
             background: linear-gradient(90deg, var(--rare-color), var(--legendary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px var(--rare-glow);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: text-glow 3s ease-in-out infinite;
         }
-        .hero-lead { max-width: 600px; margin: 1rem auto 0; opacity: 0.7; }
+        .hero-lead { max-width: 700px; margin: 1rem auto 0; opacity: 0.7; }
+        
+        .section-title {
+            font-family: 'Oswald', sans-serif; text-transform: uppercase;
+            letter-spacing: 1px; font-size: 2rem;
+            text-align: center; margin-bottom: 2.5rem;
+        }
+
+        /* [BARU] Gaya untuk Mekanisme Permainan */
+        .guide-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: 1rem; text-align: center; height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .guide-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .guide-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .guide-card h4 { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+        .guide-card p { opacity: 0.6; font-size: 0.9rem; }
         
         .tabs-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
+            display: flex; justify-content: center; gap: 1rem;
+            margin-top: 4rem; margin-bottom: 3rem;
             border-bottom: 1px solid var(--border-color);
         }
         .tab-btn {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            padding: 1rem 1.5rem;
-            position: relative;
-            transition: color 0.3s ease;
+            font-family: 'Oswald', sans-serif; font-size: 1.5rem; letter-spacing: 1px;
+            text-transform: uppercase; background: none; border: none;
+            color: rgba(255, 255, 255, 0.5); padding: 1rem 1.5rem;
+            position: relative; transition: color 0.3s ease;
         }
         .tab-btn:hover { color: #fff; }
         .tab-btn::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; left: 0;
-            width: 100%; height: 4px;
-            background-color: var(--rare-color);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+            content: ''; position: absolute; bottom: -1px; left: 0;
+            width: 100%; height: 4px; background-color: var(--legendary-color);
+            transform: scaleX(0); transition: transform 0.3s ease;
         }
         .tab-btn.active { color: #fff; }
         .tab-btn.active::after { transform: scaleX(1); }
@@ -92,28 +96,18 @@
         .tab-pane.active { display: block; }
         
         .promo-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            height: 100%;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 1.5rem; height: 100%;
             display: flex; flex-direction: column; text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
         }
         .promo-card:hover { transform: scale(1.05); z-index: 10; }
         
-        /* Rarity Styles */
-        .promo-card::before { /* Rarity Banner */
-            content: attr(data-rarity);
-            position: absolute; top: 15px; right: -40px;
-            background-color: var(--common-color);
-            color: #000;
-            padding: 5px 40px;
-            font-size: 0.8rem; font-weight: 700;
-            text-transform: uppercase;
-            transform: rotate(45deg);
+        .promo-card::before {
+            content: attr(data-rarity); position: absolute; top: 15px; right: -40px;
+            background-color: var(--common-color); color: #000;
+            padding: 5px 40px; font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; transform: rotate(45deg);
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .rarity-common { border-color: var(--common-color); box-shadow: 0 0 20px var(--common-glow); }
@@ -145,25 +139,54 @@
     <main>
         <div class="hero-section">
             <h1 class="hero-title">Arsenal Jurnal Baca</h1>
-            <p class="hero-lead">Selesaikan Misi, kumpulkan Kupon, dan klaim Hadiah eksklusif dari Gudang Hadiah. Setiap bacaan membawamu lebih dekat ke kemenangan!</p>
+            <p class="hero-lead">Selamat datang, Pejuang Literasi! Selesaikan Misi dengan membaca, klaim Kupon-mu, dan tukarkan dengan Hadiah legendaris di Gudang Hadiah.</p>
         </div>
 
         <div class="container">
+            <!-- [BAGIAN BARU] Mekanisme Permainan -->
+            <div class="how-to-play mb-5">
+                <h2 class="section-title">Mekanisme Permainan</h2>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-4">
+                        <div class="guide-card">
+                            <i class="fas fa-bullseye guide-icon" style="color:var(--rare-color);"></i>
+                            <h4>1. Selesaikan Misi</h4>
+                            <p>Selesaikan berbagai Misi membaca yang tersedia. Setiap Misi yang tercapai akan memberimu hak untuk mendapatkan Kupon.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="guide-card">
+                            <i class="fas fa-hand-holding-medical guide-icon" style="color:var(--epic-color);"></i>
+                            <h4>2. Klaim Kupon</h4>
+                            <p>Tunjukkan progres misimu kepada guru **saat jam tatap muka di kelas** untuk mengklaim Kupon fisik atau digital yang menjadi hakmu.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="guide-card">
+                            <i class="fas fa-cash-register guide-icon" style="color:var(--legendary-color);"></i>
+                            <h4>3. Redeem Hadiah</h4>
+                            <p>Tukarkan Kupon secara mandiri melalui **ATM Kupon** atau langsung saat tatap muka. Hadiah bersifat *single-use* dan tidak dapat dikembalikan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [BAGIAN TAB] Gudang Hadiah & Daftar Misi -->
             <div class="tabs-nav">
-                <button class="tab-btn active" data-tab="rewards-content">Gudang Hadiah</button>
-                <button class="tab-btn missions" data-tab="missions-content">Daftar Misi</button>
+                <button class="tab-btn active" data-tab="rewards-content"><i class="fas fa-boxes me-2"></i>Gudang Hadiah</button>
+                <button class="tab-btn missions" data-tab="missions-content"><i class="fas fa-scroll me-2"></i>Daftar Misi</button>
             </div>
             
             <div class="tabs-content">
                 <div id="rewards-content" class="tab-pane active">
-                    <div id="prizes-list" class="row g-4">
-                        <!-- Kartu hadiah akan dirender oleh JavaScript di sini -->
+                    <div id="prizes-list" class="row g-4 justify-content-center">
+                        <!-- Konten dirender oleh JS -->
                     </div>
                 </div>
 
                 <div id="missions-content" class="tab-pane">
-                    <div id="coupon-types-list" class="row g-4">
-                        <!-- Kartu tipe kupon akan dirender oleh JavaScript di sini -->
+                    <div id="coupon-types-list" class="row g-4 justify-content-center">
+                        <!-- Konten dirender oleh JS -->
                     </div>
                 </div>
             </div>
@@ -189,18 +212,12 @@
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // Update buttons
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
-                // Update panes
                 const targetPaneId = button.getAttribute('data-tab');
                 tabPanes.forEach(pane => {
-                    if (pane.id === targetPaneId) {
-                        pane.classList.add('active');
-                    } else {
-                        pane.classList.remove('active');
-                    }
+                    pane.classList.toggle('active', pane.id === targetPaneId);
                 });
             });
         });

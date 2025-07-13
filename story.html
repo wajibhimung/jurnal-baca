@@ -48,6 +48,36 @@
         .hacked-red-flash { background-color: rgba(255, 0, 0, 0.2) !important; transition: background-color 0.05s !important; }
         .hacked-text-glitch { animation: text-glitch-anim 0.2s infinite, color-glitch-anim 0.3s infinite; }
         #hacked-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(10, 255, 10, 0.08), rgba(10, 255, 10, 0.08) 1px, transparent 1px, transparent 2px); z-index: 99999; pointer-events: none; display: none; animation: flicker 0.15s infinite; }
+
+        /* --- STYLES UNTUK SHUTDOWN OVERLAY --- */
+        @keyframes shutdown-flicker { 0%, 19%, 21%, 59%, 61%, 100% { opacity: 1; } 20%, 60% { opacity: 0.5; } }
+        #shutdown-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--dark-bg);
+            z-index: 100000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ff4136; /* Red */
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+        }
+        #shutdown-overlay .fa-biohazard {
+            font-size: 5rem;
+            animation: shutdown-flicker 1s infinite;
+            margin-bottom: 2rem;
+        }
+        #shutdown-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 4rem;
+            color: #ff4136;
+            text-shadow: 0 0 10px #ff4136, 0 0 20px #ff0000;
+            animation: shutdown-flicker 1.5s infinite;
+        }
+        #shutdown-message { font-size: 1.25rem; color: var(--text-color); }
+        .shutdown-timer { font-size: 2rem; margin: 1.5rem 0; color: #FFDC00; /* Yellow */ }
+        #shutdown-status { font-size: 1rem; color: var(--text-muted); height: 20px; }
     </style>
 </head>
 <body>
@@ -55,72 +85,36 @@
         <div class="loader-logo"><i class="fas fa-network-wired"></i></div>
         <div class="loader-text">ACCESSING NEXUS ARCHIVES...</div>
     </div>
+    
     <div id="hacked-overlay"></div>
+
+    <!-- OVERLAY BARU UNTUK SHUTDOWN -->
+    <div id="shutdown-overlay">
+        <i class="fas fa-biohazard"></i>
+        <h1 id="shutdown-title">SYSTEM COMPROMISED</h1>
+        <p id="shutdown-message">Misi telah diterima. Sesi ini akan dihentikan.</p>
+        <div class="shutdown-timer">
+            MENGALIHKAN DALAM: <span id="countdown-timer">10</span>
+        </div>
+        <p id="shutdown-status"></p>
+    </div>
+
     <div class="parallax-bg"></div>
     <main class="container">
-        <!-- Konten tetap sama -->
-        <section class="story-section text-center">
-            <h1><i class="fas fa-satellite-dish me-3"></i>PROJECT NEXUS</h1>
-            <p class="lead mt-3">Misi Membaca untuk Melawan Kebodohan Digital</p>
-        </section>
-        <section class="story-section animate-on-scroll">
-            <div class="row align-items-center">
-                <div class="col-md-3 text-center">
-                    <i class="fas fa-calendar-alt fa-4x text-muted"></i>
-                    <h3 class="mt-2">TAHUN 2055</h3>
-                </div>
-                <div class="col-md-9">
-                    <p>Dunia terhubung dalam jaringan pengetahuan global yang dikenal sebagai <strong>NEXUS</strong>. Jutaan informasi tersimpan dan dibagikan melalui sistem ini, menjadikannya pusat peradaban digital. Namun, sebuah krisis diam-diam melanda:</p>
-                    <blockquote class="text-danger">"The Glitch of Ignorance" — anomali misterius yang merusak semangat belajar umat manusia, perlahan memutus koneksi antara manusia dan literasi.</blockquote>
-                </div>
-            </div>
-        </section>
-        <section class="story-section animate-on-scroll text-center">
-            <h2><i class="fas fa-triangle-exclamation text-warning me-2"></i> Saatnya Melawan: Aktifkan PROJECT NEXUS</h2>
-            <p>Sebagai respons terhadap krisis global ini, diluncurkanlah sebuah proyek rahasia bernama <strong>PROJECT NEXUS</strong>, dijalankan oleh komunitas pendidik, pelajar, dan penjaga pengetahuan. Tujuan utamanya:</p>
-            <blockquote>🔐 Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</blockquote>
-        </section>
-        <section class="story-section animate-on-scroll">
-            <h2><i class="fas fa-book-journal-whills me-2"></i> Setiap Buku Adalah Senjata</h2>
-            <p>Di Project NEXUS, setiap buku yang dibaca — apapun jenisnya — menjadi <strong>Data Packet</strong> yang memperkuat *firewall* pengetahuan global. Tidak hanya buku teknologi, tetapi juga:</p>
-            <ul class="book-list mt-4">
-                <li><i class="fas fa-hat-wizard"></i>Novel dan fiksi yang membuka imajinasi.</li>
-                <li><i class="fas fa-landmark"></i>Buku sejarah yang memberi perspektif.</li>
-                <li><i class="fas fa-user-astronaut"></i>Biografi tokoh inspiratif.</li>
-                <li><i class="fas fa-atom"></i>Buku sains, seni, dan bahkan komik edukatif.</li>
-            </ul>
-            <p class="mt-3"><strong>Semua bacaan dihargai. Semua bacaan memberi dampak.</strong></p>
-        </section>
-        <section class="story-section animate-on-scroll">
-            <h2 class="text-center">🎯 Misi Agen: Dari Halaman ke Kupon</h2>
-            <div class="row g-4 mt-4">
-                <div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-book-open" style="color:var(--rare-color);"></i><h4>1. Dekode Pengetahuan</h4><p>Baca buku apa saja. Setiap halaman adalah *patch* terhadap kebodohan.</p></div></div>
-                <div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-server" style="color:var(--epic-color);"></i><h4>2. Ekstrak Data Fragmen</h4><p>Laporkan buku yang selesai dibaca di sistem Jurnal Baca. Laporkan langsung ke *System Admin* (guru) saat jam tatap muka untuk mendapatkan Kupon Digital.</p></div></div>
-                <div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-rocket" style="color:var(--legendary-color);"></i><h4>3. Upgrade Arsenal</h4><p>Tukarkan kupon di **ATM Kupon** untuk mengakses hadiah-hadiah dari *The Vault* — sistem penghargaan untuk memotivasi belajarmu.</p></div></div>
-            </div>
-        </section>
-        <section class="story-section animate-on-scroll">
-            <h2 class="text-center">💾 Misi Virtual: Lebih dari Sekadar Membaca</h2>
-            <p class="text-center mx-auto" style="max-width: 800px;">Situs Jurnal Baca Kelas TKJ telah dirancang ulang dengan tampilan futuristik dan misi gamifikasi. Ketika kamu login, kamu bukan lagi hanya siswa—kamu adalah agen literasi digital. Dengan fitur seperti <strong>Mission Board</strong>, <strong>The Vault</strong>, dan <strong>Tracking Kupon</strong>, kamu bisa melihat progres literasi seolah bermain game, namun dengan dampak nyata.</p>
-        </section>
-        <section class="story-section animate-on-scroll">
-            <h2 class="text-center">✊ Siapa yang Bisa Bergabung?</h2>
-            <p class="text-center"><strong>Siapa pun.</strong> Tidak dibatasi jurusan atau minat. Suka fiksi? Kamu bisa jadi agen imajinatif. Suka sejarah? Kamu bisa jadi agen penjaga masa lalu. Suka sains atau teknologi? Kamu adalah agen pembangun masa depan.</p>
-        </section>
-        <section class="story-section animate-on-scroll final-quote">
-            <h2 class="text-center">🧠 Penutup: Glitch Itu Nyata</h2>
-            <p class="text-center mx-auto" style="max-width: 800px;">Ketidaktertarikan membaca, ketergantungan hiburan pasif, dan minimnya refleksi adalah bagian dari *Glitch of Ignorance* yang hari ini merasuki dunia nyata. Project NEXUS adalah gerakan kecil untuk melawan itu — bukan dengan senjata, tapi dengan kata-kata. Bukan dengan kekerasan, tapi dengan kesadaran.</p>
-            <blockquote class="mt-5">"Setiap buku adalah firewall.<br>Setiap halaman adalah patch.<br>Dan kamu adalah update yang kami tunggu."</blockquote>
-        </section>
-        <section class="story-section animate-on-scroll cta-section">
-            <h2>ANDA TELAH MENERIMA MISI INI.</h2>
-            <p class="mt-3">MENGALIHKAN KE PUSAT KONTROL MISI...</p>
-        </section>
+        <!-- Konten Halaman Anda Tetap Di Sini -->
+        <section class="story-section text-center"><h1><i class="fas fa-satellite-dish me-3"></i>PROJECT NEXUS</h1><p class="lead mt-3">Misi Membaca untuk Melawan Kebodohan Digital</p></section>
+        <section class="story-section animate-on-scroll"><div class="row align-items-center"><div class="col-md-3 text-center"><i class="fas fa-calendar-alt fa-4x text-muted"></i><h3 class="mt-2">TAHUN 2055</h3></div><div class="col-md-9"><p>Dunia terhubung dalam jaringan pengetahuan global yang dikenal sebagai <strong>NEXUS</strong>. Jutaan informasi tersimpan dan dibagikan melalui sistem ini, menjadikannya pusat peradaban digital. Namun, sebuah krisis diam-diam melanda:</p><blockquote class="text-danger">"The Glitch of Ignorance" — anomali misterius yang merusak semangat belajar umat manusia, perlahan memutus koneksi antara manusia dan literasi.</blockquote></div></div></section>
+        <section class="story-section animate-on-scroll text-center"><h2><i class="fas fa-triangle-exclamation text-warning me-2"></i> Saatnya Melawan: Aktifkan PROJECT NEXUS</h2><p>Sebagai respons terhadap krisis global ini, diluncurkanlah sebuah proyek rahasia bernama <strong>PROJECT NEXUS</strong>, dijalankan oleh komunitas pendidik, pelajar, dan penjaga pengetahuan. Tujuan utamanya:</p><blockquote>🔐 Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</blockquote></section>
+        <section class="story-section animate-on-scroll"><h2><i class="fas fa-book-journal-whills me-2"></i> Setiap Buku Adalah Senjata</h2><p>Di Project NEXUS, setiap buku yang dibaca — apapun jenisnya — menjadi <strong>Data Packet</strong> yang memperkuat *firewall* pengetahuan global. Tidak hanya buku teknologi, tetapi juga:</p><ul class="book-list mt-4"><li><i class="fas fa-hat-wizard"></i>Novel dan fiksi yang membuka imajinasi.</li><li><i class="fas fa-landmark"></i>Buku sejarah yang memberi perspektif.</li><li><i class="fas fa-user-astronaut"></i>Biografi tokoh inspiratif.</li><li><i class="fas fa-atom"></i>Buku sains, seni, dan bahkan komik edukatif.</li></ul><p class="mt-3"><strong>Semua bacaan dihargai. Semua bacaan memberi dampak.</strong></p></section>
+        <section class="story-section animate-on-scroll"><h2 class="text-center">🎯 Misi Agen: Dari Halaman ke Kupon</h2><div class="row g-4 mt-4"><div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-book-open" style="color:var(--rare-color);"></i><h4>1. Dekode Pengetahuan</h4><p>Baca buku apa saja. Setiap halaman adalah *patch* terhadap kebodohan.</p></div></div><div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-server" style="color:var(--epic-color);"></i><h4>2. Ekstrak Data Fragmen</h4><p>Laporkan buku yang selesai dibaca di sistem Jurnal Baca. Laporkan langsung ke *System Admin* (guru) saat jam tatap muka untuk mendapatkan Kupon Digital.</p></div></div><div class="col-md-4"><div class="protocol-card"><i class="protocol-icon fas fa-rocket" style="color:var(--legendary-color);"></i><h4>3. Upgrade Arsenal</h4><p>Tukarkan kupon di **ATM Kupon** untuk mengakses hadiah-hadiah dari *The Vault* — sistem penghargaan untuk memotivasi belajarmu.</p></div></div></div></section>
+        <section class="story-section animate-on-scroll"><h2 class="text-center">💾 Misi Virtual: Lebih dari Sekadar Membaca</h2><p class="text-center mx-auto" style="max-width: 800px;">Situs Jurnal Baca Kelas TKJ telah dirancang ulang dengan tampilan futuristik dan misi gamifikasi. Ketika kamu login, kamu bukan lagi hanya siswa—kamu adalah agen literasi digital. Dengan fitur seperti <strong>Mission Board</strong>, <strong>The Vault</strong>, dan <strong>Tracking Kupon</strong>, kamu bisa melihat progres literasi seolah bermain game, namun dengan dampak nyata.</p></section>
+        <section class="story-section animate-on-scroll"><h2 class="text-center">✊ Siapa yang Bisa Bergabung?</h2><p class="text-center"><strong>Siapa pun.</strong> Tidak dibatasi jurusan atau minat. Suka fiksi? Kamu bisa jadi agen imajinatif. Suka sejarah? Kamu bisa jadi agen penjaga masa lalu. Suka sains atau teknologi? Kamu adalah agen pembangun masa depan.</p></section>
+        <section class="story-section animate-on-scroll final-quote"><h2 class="text-center">🧠 Penutup: Glitch Itu Nyata</h2><p class="text-center mx-auto" style="max-width: 800px;">Ketidaktertarikan membaca, ketergantungan hiburan pasif, dan minimnya refleksi adalah bagian dari *Glitch of Ignorance* yang hari ini merasuki dunia nyata. Project NEXUS adalah gerakan kecil untuk melawan itu — bukan dengan senjata, tapi dengan kata-kata. Bukan dengan kekerasan, tapi dengan kesadaran.</p><blockquote class="mt-5">"Setiap buku adalah firewall.<br>Setiap halaman adalah patch.<br>Dan kamu adalah update yang kami tunggu."</blockquote></section>
+        <section class="story-section animate-on-scroll cta-section"><h2>MISI DITERIMA.</h2><p class="mt-3">MEMINDAI KONEKSI...</p></section>
     </main>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Logika loader dan animasi scroll yang sudah ada
         const loader = document.getElementById('loader');
         setTimeout(() => {
             loader.style.opacity = '0';
@@ -139,51 +133,14 @@
         const sections = document.querySelectorAll('.animate-on-scroll');
         sections.forEach(section => observer.observe(section));
 
-        // --- LOGIKA BARU UNTUK PENGALIHAN OTOMATIS ---
-        
-        const calculateAndRedirect = () => {
-            const wpm = 225; // Kecepatan membaca rata-rata (kata per menit)
-            const mainContent = document.querySelector('main.container');
-            
-            if (mainContent) {
-                const text = mainContent.innerText || mainContent.textContent;
-                const wordCount = text.trim().split(/\s+/).length;
+        let hackInterval; // Variabel untuk menyimpan ID interval 'hack'
 
-                // Hitung waktu baca dalam milidetik
-                const readingTimeInMs = (wordCount / wpm) * 60 * 1000;
-
-                // Tetapkan waktu tunda minimum 15 detik (15000 ms)
-                const minimumDelayInMs = 15000; 
-
-                const redirectDelay = Math.max(readingTimeInMs, minimumDelayInMs);
-                
-                console.log(`Perkiraan jumlah kata: ${wordCount}`);
-                console.log(`Perkiraan waktu baca: ${(redirectDelay / 1000 / 60).toFixed(2)} menit.`);
-                console.log(`Halaman akan dialihkan dalam ${redirectDelay / 1000} detik.`);
-
-                setTimeout(() => {
-                    // Efek fade out sebelum redirect
-                    document.body.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        window.location.href = 'game-hub.html';
-                    }, 500); // Tunggu 0.5 detik untuk transisi fade out selesai
-
-                }, redirectDelay);
-            }
-        };
-        
-        // Panggil fungsi setelah loading awal selesai
-        setTimeout(calculateAndRedirect, 2500);
-
-
-        // --- LOGIKA EFEK HACK ---
         const body = document.body;
-        const overlay = document.getElementById('hacked-overlay');
-        const allTextElements = document.querySelectorAll('h1, h2, h4, p, blockquote, .cta-button, .protocol-card h4');
+        const hackedOverlay = document.getElementById('hacked-overlay');
+        const allTextElements = document.querySelectorAll('h1, h2, h4, p, blockquote, .protocol-card h4');
 
         const startHackingEffect = () => {
-            setInterval(() => {
+            hackInterval = setInterval(() => {
                 const randomEffect = Math.floor(Math.random() * 5);
                 switch (randomEffect) {
                     case 0:
@@ -196,8 +153,8 @@
                         setTimeout(() => randomElement.classList.remove('hacked-text-glitch'), 300 + Math.random() * 400);
                         break;
                     case 2:
-                        overlay.style.display = 'block';
-                        setTimeout(() => overlay.style.display = 'none', 150 + Math.random() * 200);
+                        hackedOverlay.style.display = 'block';
+                        setTimeout(() => hackedOverlay.style.display = 'none', 150 + Math.random() * 200);
                         break;
                     case 3:
                         body.classList.add('hacked-bg-flicker');
@@ -210,8 +167,57 @@
             }, 700);
         };
 
-        // Mulai efek 'hack' setelah 3 detik
-        setTimeout(startHackingEffect, 3000);
+        const triggerShutdownSequence = () => {
+            clearInterval(hackInterval); // Hentikan efek hack
+
+            const shutdownOverlay = document.getElementById('shutdown-overlay');
+            const countdownTimerEl = document.getElementById('countdown-timer');
+            const statusEl = document.getElementById('shutdown-status');
+            shutdownOverlay.style.display = 'flex'; // Tampilkan layar shutdown
+
+            let countdown = 10;
+            const statusMessages = [
+                "MEMUTUS KONEKSI TIDAK AMAN...",
+                "MEMBERSIHKAN CACHE LOKAL...",
+                "MENGHAPUS LOG AKSES...",
+                "MEMVERIFIKASI PROTOKOL EVAKUASI...",
+                "ENKRIPSI DATA TELEMETRI...",
+                "MEMPERSIAPKAN JALUR AMAN...",
+                "MEMBUKA KONEKSI TEROWONGAN...",
+                "INISIASI ANTARMUKA HUB...",
+                "KONFIRMASI HANDSHAKE...",
+                "PENGALIHAN DIMULAI..."
+            ];
+
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownTimerEl.textContent = countdown;
+                statusEl.textContent = ">> " + statusMessages[9 - countdown] + " OK";
+
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    body.style.opacity = '0'; // Mulai fade out seluruh halaman
+                    setTimeout(() => {
+                        window.location.href = 'game-hub.html';
+                    }, 500); // Tunggu transisi selesai
+                }
+            }, 1000);
+        };
+
+        const initiateTimedRedirect = () => {
+            const totalDurationMs = 120000; // 2 menit
+            const countdownDurationMs = 10000; // 10 detik
+            const warningTimeMs = totalDurationMs - countdownDurationMs;
+
+            // Mulai efek 'hack' setelah 3 detik
+            setTimeout(startHackingEffect, 3000);
+
+            // Jadwalkan peringatan shutdown
+            setTimeout(triggerShutdownSequence, warningTimeMs);
+        };
+
+        // Mulai seluruh proses
+        initiateTimedRedirect();
     });
 </script>
 

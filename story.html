@@ -59,7 +59,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #ff4136; /* Red */
+            color: #ff4136;
             font-family: 'Share Tech Mono', monospace;
             text-align: center;
         }
@@ -76,7 +76,7 @@
             animation: shutdown-flicker 1.5s infinite;
         }
         #shutdown-message { font-size: 1.25rem; color: var(--text-color); }
-        .shutdown-timer { font-size: 2rem; margin: 1.5rem 0; color: #FFDC00; /* Yellow */ }
+        .shutdown-timer { font-size: 2rem; margin: 1.5rem 0; color: #FFDC00; }
         #shutdown-status { font-size: 1rem; color: var(--text-muted); height: 20px; }
     </style>
 </head>
@@ -88,7 +88,6 @@
     
     <div id="hacked-overlay"></div>
 
-    <!-- OVERLAY BARU UNTUK SHUTDOWN -->
     <div id="shutdown-overlay">
         <i class="fas fa-biohazard"></i>
         <h1 id="shutdown-title">SYSTEM COMPROMISED</h1>
@@ -101,7 +100,7 @@
 
     <div class="parallax-bg"></div>
     <main class="container">
-        <!-- Konten Halaman Anda Tetap Di Sini -->
+        <!-- Konten tidak berubah -->
         <section class="story-section text-center"><h1><i class="fas fa-satellite-dish me-3"></i>PROJECT NEXUS</h1><p class="lead mt-3">Misi Membaca untuk Melawan Kebodohan Digital</p></section>
         <section class="story-section animate-on-scroll"><div class="row align-items-center"><div class="col-md-3 text-center"><i class="fas fa-calendar-alt fa-4x text-muted"></i><h3 class="mt-2">TAHUN 2055</h3></div><div class="col-md-9"><p>Dunia terhubung dalam jaringan pengetahuan global yang dikenal sebagai <strong>NEXUS</strong>. Jutaan informasi tersimpan dan dibagikan melalui sistem ini, menjadikannya pusat peradaban digital. Namun, sebuah krisis diam-diam melanda:</p><blockquote class="text-danger">"The Glitch of Ignorance" — anomali misterius yang merusak semangat belajar umat manusia, perlahan memutus koneksi antara manusia dan literasi.</blockquote></div></div></section>
         <section class="story-section animate-on-scroll text-center"><h2><i class="fas fa-triangle-exclamation text-warning me-2"></i> Saatnya Melawan: Aktifkan PROJECT NEXUS</h2><p>Sebagai respons terhadap krisis global ini, diluncurkanlah sebuah proyek rahasia bernama <strong>PROJECT NEXUS</strong>, dijalankan oleh komunitas pendidik, pelajar, dan penjaga pengetahuan. Tujuan utamanya:</p><blockquote>🔐 Dekode pengetahuan. Perkuat NEXUS. Lawan kebodohan.</blockquote></section>
@@ -110,11 +109,19 @@
         <section class="story-section animate-on-scroll"><h2 class="text-center">💾 Misi Virtual: Lebih dari Sekadar Membaca</h2><p class="text-center mx-auto" style="max-width: 800px;">Situs Jurnal Baca Kelas TKJ telah dirancang ulang dengan tampilan futuristik dan misi gamifikasi. Ketika kamu login, kamu bukan lagi hanya siswa—kamu adalah agen literasi digital. Dengan fitur seperti <strong>Mission Board</strong>, <strong>The Vault</strong>, dan <strong>Tracking Kupon</strong>, kamu bisa melihat progres literasi seolah bermain game, namun dengan dampak nyata.</p></section>
         <section class="story-section animate-on-scroll"><h2 class="text-center">✊ Siapa yang Bisa Bergabung?</h2><p class="text-center"><strong>Siapa pun.</strong> Tidak dibatasi jurusan atau minat. Suka fiksi? Kamu bisa jadi agen imajinatif. Suka sejarah? Kamu bisa jadi agen penjaga masa lalu. Suka sains atau teknologi? Kamu adalah agen pembangun masa depan.</p></section>
         <section class="story-section animate-on-scroll final-quote"><h2 class="text-center">🧠 Penutup: Glitch Itu Nyata</h2><p class="text-center mx-auto" style="max-width: 800px;">Ketidaktertarikan membaca, ketergantungan hiburan pasif, dan minimnya refleksi adalah bagian dari *Glitch of Ignorance* yang hari ini merasuki dunia nyata. Project NEXUS adalah gerakan kecil untuk melawan itu — bukan dengan senjata, tapi dengan kata-kata. Bukan dengan kekerasan, tapi dengan kesadaran.</p><blockquote class="mt-5">"Setiap buku adalah firewall.<br>Setiap halaman adalah patch.<br>Dan kamu adalah update yang kami tunggu."</blockquote></section>
-        <section class="story-section animate-on-scroll cta-section"><h2>MISI DITERIMA.</h2><p class="mt-3">MEMINDAI KONEKSI...</p></section>
+        
+        <!-- BAGIAN INI DIMODIFIKASI -->
+        <section class="story-section animate-on-scroll cta-section">
+            <h2>Jadi, Kamu Siap Bergabung?</h2>
+            <a href="#" id="manual-shutdown-button" class="cta-button mt-3">
+                Terima Misi<i class="fas fa-right-to-bracket"></i>
+            </a>
+        </section>
     </main>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // ... (Kode loader dan observer tetap sama)
         const loader = document.getElementById('loader');
         setTimeout(() => {
             loader.style.opacity = '0';
@@ -133,12 +140,16 @@
         const sections = document.querySelectorAll('.animate-on-scroll');
         sections.forEach(section => observer.observe(section));
 
-        let hackInterval; // Variabel untuk menyimpan ID interval 'hack'
+        // --- VARIABEL & ELEMEN UNTUK LOGIKA BARU ---
+        let hackInterval;
+        let isShutdownInitiated = false; // Penanda untuk mencegah eksekusi ganda
 
         const body = document.body;
         const hackedOverlay = document.getElementById('hacked-overlay');
+        const manualShutdownBtn = document.getElementById('manual-shutdown-button');
         const allTextElements = document.querySelectorAll('h1, h2, h4, p, blockquote, .protocol-card h4');
 
+        // --- FUNGSI-FUNGSI ---
         const startHackingEffect = () => {
             hackInterval = setInterval(() => {
                 const randomEffect = Math.floor(Math.random() * 5);
@@ -168,6 +179,10 @@
         };
 
         const triggerShutdownSequence = () => {
+            // Guard clause: Jika sudah dimulai, jangan lakukan apa-apa lagi.
+            if (isShutdownInitiated) return;
+            isShutdownInitiated = true; // Set penanda!
+
             clearInterval(hackInterval); // Hentikan efek hack
 
             const shutdownOverlay = document.getElementById('shutdown-overlay');
@@ -192,14 +207,16 @@
             const countdownInterval = setInterval(() => {
                 countdown--;
                 countdownTimerEl.textContent = countdown;
-                statusEl.textContent = ">> " + statusMessages[9 - countdown] + " OK";
+                if (countdown >= 0 && statusMessages[9 - countdown]) {
+                    statusEl.textContent = ">> " + statusMessages[9 - countdown] + " OK";
+                }
 
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
-                    body.style.opacity = '0'; // Mulai fade out seluruh halaman
+                    body.style.opacity = '0';
                     setTimeout(() => {
                         window.location.href = 'game-hub.html';
-                    }, 500); // Tunggu transisi selesai
+                    }, 500);
                 }
             }, 1000);
         };
@@ -209,11 +226,16 @@
             const countdownDurationMs = 10000; // 10 detik
             const warningTimeMs = totalDurationMs - countdownDurationMs;
 
-            // Mulai efek 'hack' setelah 3 detik
             setTimeout(startHackingEffect, 3000);
 
-            // Jadwalkan peringatan shutdown
+            // Jadwalkan peringatan shutdown otomatis
             setTimeout(triggerShutdownSequence, warningTimeMs);
+
+            // Tambahkan event listener untuk tombol manual
+            manualShutdownBtn.addEventListener('click', (event) => {
+                event.preventDefault(); // Mencegah link # diikuti
+                triggerShutdownSequence();
+            });
         };
 
         // Mulai seluruh proses

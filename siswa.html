@@ -3,221 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dasbor Siswa - Jurnal Baca</title>
+    <title>Dasbor Agen - Project NEXUS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
-        :root { --primary-color: #6a11cb; --secondary-color: #2575fc; --skeleton-bg: rgba(255,255,255,0.1); }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: #333; overflow-x: hidden; padding-top: 75px; }
+        :root {
+            --dark-bg: #0A0C16;
+            --card-bg: linear-gradient(145deg, #1e223a, #131524);
+            --border-color: rgba(3, 169, 244, 0.3);
+            
+            --common-color: #9e9e9e;
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --epic-glow: rgba(156, 39, 176, 0.5);
+            --legendary-glow: rgba(255, 152, 0, 0.6);
+            --skeleton-bg: #131524;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* PERUBAHAN: Animasi untuk tombol ATM */
+        @keyframes subtle-pulse {
+            0% { box-shadow: 0 0 15px var(--legendary-glow); }
+            50% { box-shadow: 0 0 30px var(--legendary-glow); }
+            100% { box-shadow: 0 0 15px var(--legendary-glow); }
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
+            color: #e0e0e0;
+            overflow-x: hidden;
+            padding-top: 75px;
+        }
+
         .main-content { padding-top: 40px; padding-bottom: 40px; }
-        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1080; }
-        nav.navbar { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .data-card, .journal-card, .leaderboard-card, .stat-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 15px; color: white; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
-        .journal-card { min-height: 180px; }
-        .journal-card:hover, .stat-card:hover { transform: translateY(-5px); }
+        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--dark-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1080; }
+        
+        nav.navbar { background: var(--dark-bg); border-bottom: 1px solid var(--border-color); }
+        .navbar-brand { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+        .navbar-text { color: #e0e0e0 !important; }
+
+        .data-card, .journal-card, .leaderboard-card, .stat-card, .target-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            color: #e0e0e0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .journal-card:hover, .stat-card:hover, .target-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        .journal-card { min-height: 180px; padding: 1rem; }
         .stat-card .card-body { position: relative; text-align: center; }
         .mood-icon { cursor: pointer; transition: transform 0.2s ease; opacity: 0.5; }
         .mood-icon:hover, .mood-icon.selected { transform: scale(1.3); opacity: 1; }
-        .btn-primary { background-image: linear-gradient(45deg, #f83292, #ff6b08); border: none; }
-        .modal-content { background: #fff; }
-        .leaderboard-list .list-group-item { background-color: rgba(255, 255, 255, 0.1); border: none; color: white; }
-        .leaderboard-list .list-group-item.highlight { background-color: rgba(255, 193, 7, 0.3); font-weight: bold; border-left: 4px solid #ffc107; }
-        .leaderboard-list .rank-badge { font-size: 0.9em; min-width: 30px; height: 30px; line-height: 22px; text-align: center; }
-        .footer { background: rgba(0, 0, 0, 0.2); color: rgba(255, 255, 255, 0.7); padding: 1rem 0; text-align: center; }
-        .stat-card-icon { font-size: 2rem; opacity: 0.7; margin-bottom: 0.5rem; }
-        .stat-card-value { font-size: 2.5rem; font-weight: 700; line-height: 1.2; }
-        .stat-card-label { font-size: 0.9rem; opacity: 0.8; }
-        #main-tab .nav-link { color: rgba(255,255,255,0.7); }
-        #main-tab .nav-link.active { color: #fff; background-color: rgba(255,255,255,0.2); font-weight: 600; }
-        .target-card { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; transition: all 0.3s ease; }
-        .target-card.completed { background: rgba(40, 167, 69, 0.3); border-left: 5px solid #28a745; box-shadow: 0 0 15px rgba(40, 167, 69, 0.5); }
-        .target-card .target-title { font-weight: 600; font-size: 1.1rem; }
-        .target-card .target-progress-text { font-size: 0.8rem; }
-        .target-card .progress { height: 20px; font-size: 0.8rem; font-weight: bold; background-color: rgba(0,0,0,0.2); }
-        .badge-card { text-align: center; padding: 1rem; opacity: 0.4; filter: grayscale(80%); transition: all 0.3s ease; }
-        .badge-card.unlocked { opacity: 1; filter: grayscale(0%); transform: scale(1.05); }
-        .badge-card .badge-icon { font-size: 3rem; color: #ffc107; }
-        .badge-card .badge-name { font-weight: 600; margin-top: 0.5rem; font-size: 0.9rem; color:white; }
-        .badge-card .badge-description { font-size: 0.8rem; min-height: 40px; color:rgba(255,255,255,0.7); }
-        #shareCardContainer { font-family: 'Poppins', sans-serif; position: fixed; top: -9999px; left: -9999px; width: 450px; height: 800px; }
-        #shareCard { width: 100%; height: 100%; color: #fff; padding: 30px; display: flex; flex-direction: column; background: linear-gradient(160deg, #1d2b64 0%, #f8cdda 100%); position: relative; }
-        #shareCard .share-header, #shareCard .share-footer { text-align: center; }
-        #shareCard .share-mood { font-size: 4rem; text-align: center; margin: 15px 0; }
-        #shareCard .share-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; text-align: center; }
-        #shareCard .share-author { font-size: 1.1rem; text-align: center; font-style: italic; opacity: 0.7; margin-bottom: 30px; }
-        #shareCard .share-summary { font-size: 1rem; border-left: 3px solid rgba(255,255,255,0.5); padding-left: 15px; margin-bottom: auto; max-height: 250px; overflow: hidden; }
         
-        .skeleton { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; background: var(--skeleton-bg); border-radius: 0.5rem;}
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        .toast-container { z-index: 1090; }
+        .section-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 2.2rem; color: #fff; }
 
-        .book-thumbnail-container { width: 100px; height: 150px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background-color: transparent; transition: all 0.3s ease; }
-        .book-thumbnail-container.skeleton { background-color: var(--skeleton-bg); }
-        .book-thumbnail-fallback { width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); padding: 10px; font-size: 0.8rem; line-height: 1.2; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 8px; }
-        .book-thumbnail-fallback .fallback-title { font-weight: 600; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-        .book-thumbnail-fallback i { font-size: 2rem; opacity: 0.5; margin-bottom: 0.5rem; }
-        .book-thumbnail-container img { width: 100%; height: 100%; object-fit: cover; }
-        .journal-card .card-text { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; -webkit-line-clamp: 3; }
-
-        @media (max-width: 575.98px) {
-            h1.text-white { font-size: 1.75rem; }
-            .stat-card-value { font-size: 2rem; }
-            .book-thumbnail-container { width: 80px; height: 120px; }
-            .journal-card .card-title { font-size: 1rem; }
-            .journal-card .card-subtitle { font-size: 0.75rem; }
-            .journal-card .card-text { font-size: 0.75rem; -webkit-line-clamp: 2; }
-            .journal-card .journal-footer { flex-direction: column; align-items: flex-start; gap: 0.5rem !important; }
-            .journal-card .journal-footer .btn-group { align-self: flex-end; }
+        /* Button Styling */
+        .btn-primary { background: linear-gradient(90deg, var(--rare-color), var(--epic-color)); border: none; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--epic-glow); }
+        
+        /* PERUBAHAN: Gaya untuk tombol ATM Kupon */
+        .btn-atm {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 1.1rem;
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            border: none;
+            color: #000;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+            animation: subtle-pulse 3s infinite;
         }
+        .btn-atm:hover {
+            transform: scale(1.05);
+            color: #000;
+            animation-play-state: paused;
+        }
+
+        .modal-content { background: #131524; border: 1px solid var(--border-color); color: #e0e0e0; }
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .modal-footer { border-top: 1px solid var(--border-color); }
+        .form-control, .form-select { background-color: #0A0C16; border: 1px solid var(--border-color); color: #e0e0e0; }
+        .form-control:focus, .form-select:focus { background-color: #0A0C16; color: #e0e0e0; border-color: var(--rare-color); box-shadow: 0 0 10px var(--rare-glow); }
+
+        .leaderboard-card { padding: 1.5rem; }
+        .leaderboard-list .list-group-item { background-color: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); color: #e0e0e0; }
+        .leaderboard-list .list-group-item.highlight { background-color: rgba(255, 152, 0, 0.2); border-left: 4px solid var(--legendary-color); font-weight: bold; }
+
+        .footer { margin-top: 4rem; padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
+
+        .stat-card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .stat-card:nth-child(1) .stat-card-icon { color: var(--rare-color); }
+        .stat-card:nth-child(2) .stat-card-icon { color: var(--common-color); }
+        .stat-card:nth-child(3) .stat-card-icon { color: var(--epic-color); }
+        .stat-card:nth-child(4) .stat-card-icon { color: var(--legendary-color); }
+        .stat-card-value { font-family: 'Oswald', sans-serif; font-size: 2.5rem; line-height: 1.2; color: #fff; }
+        .stat-card-label { font-size: 0.9rem; opacity: 0.6; text-transform: uppercase; }
+
+        #main-tab .nav-link { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,.5); border: none; border-bottom: 4px solid transparent; border-radius: 0; padding: 1rem 1.5rem; transition: color .3s ease, border-color .3s ease; }
+        #main-tab .nav-link:hover { color: #fff; }
+        #main-tab .nav-link.active { color: #fff; background-color: transparent; border-color: var(--legendary-color); }
+        .tab-pane { animation: fadeInUp 0.5s ease-out; }
+
+        .target-card { padding: 1.5rem; margin-bottom: 1rem; }
+        .badge-card { text-align: center; padding: 1rem; opacity: 0.3; filter: grayscale(80%); transition: all 0.3s ease; }
+        .badge-card.unlocked { opacity: 1; filter: grayscale(0%); transform: scale(1.05); }
+        .badge-card .badge-icon { font-size: 3rem; color: #ffc107; text-shadow: 0 0 15px var(--legendary-glow); }
+        .badge-card .badge-name { font-weight: 600; margin-top: 0.5rem; font-size: 0.9rem; color:#fff; }
+        .badge-card .badge-description { font-size: 0.8rem; min-height: 40px; color:rgba(255,255,255,0.6); }
+        
+        .skeleton { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; background: var(--skeleton-bg); border-radius: 1rem;}
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        
+        .book-thumbnail-container { width: 100px; height: 150px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background-color: transparent; }
+        .book-thumbnail-fallback { width: 100%; height: 100%; background: var(--card-bg); border: 1px solid var(--border-color); color: rgba(255,255,255,0.7); padding: 10px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 8px; }
+        .journal-card .card-text { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; -webkit-line-clamp: 3; opacity: 0.7; }
+        
+        #shareCardContainer, #shareCard { all: unset; } /* Reset CSS untuk share card */
     </style>
 </head>
 <body>
-    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" role="status"></div></div>
+    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
     
-    <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;">
         <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close" data-bs-dismiss="toast"></button></div>
+            <div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div>
             <div class="toast-body" id="toastBody"></div>
         </div>
     </div>
     
     <div class="d-flex flex-column min-vh-100">
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-            <div class="container"><a class="navbar-brand" href="#"><i class="fas fa-book-open-reader"></i> Jurnal Baca</a><div class="d-flex align-items-center"><span class="navbar-text me-3" id="studentName"></span><button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button></div></div>
+            <div class="container"><a class="navbar-brand" href="#"><i class="fas fa-user-secret me-2"></i> Dasbor Agen</a><div class="d-flex align-items-center"><span class="navbar-text me-3" id="studentName"></span><button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button></div></div>
         </nav>
         
         <main class="container main-content flex-grow-1">
-            <div class="row mb-4"><div class="col-12"><ul class="nav nav-pills nav-fill" id="main-tab" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-jurnal" type="button">Jurnal & Peringkat</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-target" type="button">Target Bacaan</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-lencana" type="button">Pencapaian</button></li></ul></div></div>
+            <div class="row mb-4"><div class="col-12"><ul class="nav nav-pills nav-fill" id="main-tab" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-jurnal" type="button">Intel & Peringkat</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-target" type="button">Directives</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-lencana" type="button">Arsenal</button></li></ul></div></div>
             <div class="tab-content" id="main-tabContent">
                 <div class="tab-pane fade show active" id="pills-jurnal" role="tabpanel">
-                    <div class="row mb-5" id="stats-container"></div>
-                    <div class="row"><div class="col-lg-8"><div class="d-flex justify-content-between align-items-center mb-4"><h1 class="text-white">Jurnal Saya</h1><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#journalModal" id="addJournalBtn"><i class="fas fa-plus-circle"></i> Tambah Jurnal</button></div><div id="journalList" class="row g-4"></div><nav id="journalPagination" class="d-flex justify-content-center mt-4"></nav></div><div class="col-lg-4 mt-5 mt-lg-0"><div id="leaderboard-container"></div></div></div>
+                    <div class="row mb-5 g-4" id="stats-container"></div>
+                    
+                    <!-- PERUBAHAN: Penambahan tombol ATM Kupon -->
+                    <div class="row mb-5">
+                        <div class="col-12 text-center">
+                             <a href="atm.html" class="btn btn-atm px-5 py-3">
+                                <i class="fas fa-cash-register fa-lg me-2"></i>
+                                Akses ATM Kupon
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row"><div class="col-lg-8"><div class="d-flex justify-content-between align-items-center mb-4"><h1 class="section-title">Data Log</h1><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#journalModal" id="addJournalBtn"><i class="fas fa-plus-circle"></i> Tambah Log</button></div><div id="journalList" class="row g-4"></div><nav id="journalPagination" class="d-flex justify-content-center mt-4"></nav></div><div class="col-lg-4 mt-5 mt-lg-0"><div id="leaderboard-container"></div></div></div>
                 </div>
                 <div class="tab-pane fade" id="pills-target" role="tabpanel"><div id="target-container"></div></div>
                 <div class="tab-pane fade" id="pills-lencana" role="tabpanel"><div id="badge-container"></div></div>
             </div>
         </main>
-        <footer class="footer text-center p-3"> Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Kelas TKJ SMKN 1 Telagasari © 2025</footer>
+        <footer class="footer text-center p-3"> Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Project NEXUS - Kelas TKJ SMKN 1 Telagasari © 2025</footer>
     </div>
     
-    <!-- All Modals are unchanged -->
-    <div id="shareCardContainer"><div id="shareCard"><div class="share-header"><div class="app-logo">Jurnal Baca TKJ</div></div><div class="share-mood" id="shareMood"></div><h2 class="share-title" id="shareTitle"></h2><p class="share-author" id="shareAuthor"></p><blockquote class="share-summary" id="shareSummary"></blockquote><div class="share-footer" id="shareStudentNameFooter"></div></div></div>
-    <div class="modal fade" id="journalModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="journalModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="journalForm"><input type="hidden" id="journalId"><div class="mb-3"><label class="form-label">Tanggal Baca</label><input type="date" class="form-control" id="tanggalBaca" required></div><div class="mb-3"><label class="form-label">Judul Buku</label><input type="text" class="form-control" id="judulBuku" required></div><div class="mb-3"><label class="form-label">Penulis</label><input type="text" class="form-control" id="penulis" required></div><div class="mb-3"><label class="form-label">Jumlah Halaman</label><input type="number" class="form-control" id="halaman" required></div><div class="mb-3"><label class="form-label">Ringkasan</label><textarea class="form-control" id="ringkasan" rows="4" required></textarea></div><div class="mb-3"><label class="form-label">Bagaimana perasaanmu?</label><div id="mood-selector" class="d-flex justify-content-around fs-2"><span class="mood-icon" data-mood="🤩">🤩</span><span class="mood-icon" data-mood="😊">😊</span><span class="mood-icon" data-mood="🤔">🤔</span><span class="mood-icon" data-mood="😭">😭</span><span class="mood-icon" data-mood="🤯">🤯</span></div><input type="hidden" id="mood" required></div><button type="submit" class="btn btn-primary w-100">Simpan</button></form></div></div></div></div>
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="confirmMessageText"></p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn"></button></div></div></div></div>
-    <div class="modal fade" id="imageResultModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Gambar Siap Dibagikan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center" id="imageResultContainer"></div></div></div></div>
-    <div class="modal fade" id="targetModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Buat Target Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="targetForm"><div class="mb-3"><label for="targetTitle" class="form-label">Nama Target</label><input type="text" class="form-control" id="targetTitle" placeholder="Contoh: Selesaikan Novel Laskar Pelangi" required></div><div class="mb-3"><label for="targetType" class="form-label">Tipe Target</label><select class="form-select" id="targetType"><option value="halaman">Berdasarkan Jumlah Halaman</option><option value="buku">Berdasarkan Jumlah Buku</option></select></div><div class="mb-3"><label for="targetValue" class="form-label">Nilai Target (Angka)</label><input type="number" class="form-control" id="targetValue" min="1" required></div><button type="submit" class="btn btn-primary w-100">Simpan Target</button></form></div></div></div></div>
-    <div class="modal fade" id="badgeUnlockedModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content text-center" style="background: linear-gradient(45deg, #ffc107, #ff9800); border:none;"><div class="modal-body p-4 text-white"><h2 class="mb-3">Lencana Terbuka!</h2><div id="badgeUnlockedIcon" style="font-size: 5rem;" class="mb-3"></div><h4 id="badgeUnlockedName"></h4><p id="badgeUnlockedDescription"></p><button type="button" class="btn btn-light" data-bs-dismiss="modal">Keren!</button></div></div></div></div>
+    <!-- Modals dan Share Card tidak berubah -->
+    <div id="shareCardContainer" style="position: fixed; top: -9999px; left: -9999px; width: 450px; height: 800px; font-family: 'Poppins', sans-serif;"><div id="shareCard" style="width: 100%; height: 100%; color: #fff; padding: 30px; display: flex; flex-direction: column; background: linear-gradient(160deg, #1d2b64 0%, #f8cdda 100%); position: relative;"><div class="share-header"><div class="app-logo">Project NEXUS Intel</div></div><div class="share-mood" id="shareMood" style="font-size: 4rem; text-align: center; margin: 15px 0;"></div><h2 class="share-title" id="shareTitle" style="font-family: 'Oswald', sans-serif; font-size: 2.2rem; text-align: center;"></h2><p class="share-author" id="shareAuthor" style="font-size: 1.1rem; text-align: center; font-style: italic; opacity: 0.7; margin-bottom: 30px;"></p><blockquote class="share-summary" id="shareSummary" style="font-size: 1rem; border-left: 3px solid rgba(255,255,255,0.5); padding-left: 15px; margin-bottom: auto; max-height: 250px; overflow: hidden;"></blockquote><div class="share-footer" id="shareStudentNameFooter" style="text-align: center;"></div></div></div>
+    <div class="modal fade" id="journalModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="journalModalTitle"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="journalForm"><input type="hidden" id="journalId"><div class="mb-3"><label class="form-label">Tanggal Misi</label><input type="date" class="form-control" id="tanggalBaca" required></div><div class="mb-3"><label class="form-label">Nama Data Packet (Judul Buku)</label><input type="text" class="form-control" id="judulBuku" required></div><div class="mb-3"><label class="form-label">Sumber Data (Penulis)</label><input type="text" class="form-control" id="penulis" required></div><div class="mb-3"><label class="form-label">Jumlah Data (Halaman)</label><input type="number" class="form-control" id="halaman" required></div><div class="mb-3"><label class="form-label">Intisari (Ringkasan)</label><textarea class="form-control" id="ringkasan" rows="4" required></textarea></div><div class="mb-3"><label class="form-label">Analisis Emosional</label><div id="mood-selector" class="d-flex justify-content-around fs-2"><span class="mood-icon" data-mood="🤩">🤩</span><span class="mood-icon" data-mood="😊">😊</span><span class="mood-icon" data-mood="🤔">🤔</span><span class="mood-icon" data-mood="😭">😭</span><span class="mood-icon" data-mood="🤯">🤯</span></div><input type="hidden" id="mood" required></div><button type="submit" class="btn btn-primary w-100">Kirim Laporan</button></form></div></div></div></div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmTitle"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="confirmMessageText"></p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn"></button></div></div></div></div>
+    <div class="modal fade" id="imageResultModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Transmisi Siap Dibagikan</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center" id="imageResultContainer"></div></div></div></div>
+    <div class="modal fade" id="targetModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Buat Directive Baru</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="targetForm"><div class="mb-3"><label for="targetTitle" class="form-label">Nama Directive</label><input type="text" class="form-control" id="targetTitle" placeholder="Contoh: Dekode Buku Jaringan Dasar" required></div><div class="mb-3"><label for="targetType" class="form-label">Tipe Directive</label><select class="form-select" id="targetType"><option value="halaman">Berdasarkan Jumlah Data</option><option value="buku">Berdasarkan Jumlah Data Packet</option></select></div><div class="mb-3"><label for="targetValue" class="form-label">Nilai Target (Angka)</label><input type="number" class="form-control" id="targetValue" min="1" required></div><button type="submit" class="btn btn-primary w-100">Aktifkan Directive</button></form></div></div></div></div>
+    <div class="modal fade" id="badgeUnlockedModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content text-center" style="background: linear-gradient(45deg, var(--epic-color), var(--legendary-color)); border:none;"><div class="modal-body p-4 text-white"><h2 class="mb-3">Achievement Unlocked!</h2><div id="badgeUnlockedIcon" style="font-size: 5rem;" class="mb-3"></div><h4 id="badgeUnlockedName"></h4><p id="badgeUnlockedDescription"></p><button type="button" class="btn btn-light" data-bs-dismiss="modal">Keren!</button></div></div></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
-    
-    let currentUser, allMyJournals, allLeaderboardData, allMyTargets, myBadges, myCouponCount;
-    let journalCurrentPage = 1, deleteInfo = { type: null, id: null };
-    const JOURNALS_PER_PAGE = 3;
-    const ALL_BADGES = { 'PEMBACA_PEMULA': { name: 'Langkah Pertama', description: 'Membuat jurnal pertamamu.', icon: 'fa-shoe-prints' }, 'BACA_100_HALAMAN': { name: 'Pemanasan', description: 'Mencapai total 100 halaman.', icon: 'fa-fire' }, 'PENJELAJAH_AWAL': { name: 'Kolektor Awal', description: 'Membaca 3 buku unik.', icon: 'fa-layer-group' }, 'KUTU_BUKU': { name: 'Kutu Buku', description: 'Membaca 5 buku unik.', icon: 'fa-book-reader' }, 'MARATON_500': { name: 'Pelari Maraton', description: 'Membaca total 500 halaman.', icon: 'fa-running' }, 'KONSISTEN_3_HARI': { name: 'Mulai Terbiasa', description: 'Membuat jurnal 3 hari berturut-turut.', icon: 'fa-calendar-check' } };
-    
-    let myJournalModal, myConfirmDeleteModal, myImageResultModal, myTargetModal, myBadgeUnlockedModal, appToast;
-    const loader = document.getElementById('loader');
-    const bookCoverCache = new Map();
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const userJson = sessionStorage.getItem('currentUser');
-        if (!userJson) { window.location.href = 'index.html'; return; }
-        currentUser = JSON.parse(userJson);
-        if (currentUser.role !== 'siswa') { logout(); return; }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // TIDAK ADA PERUBAHAN PADA LOGIKA JAVASCRIPT
+        const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
         
-        myJournalModal = new bootstrap.Modal(document.getElementById('journalModal'));
-        myConfirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-        myImageResultModal = new bootstrap.Modal(document.getElementById('imageResultModal'));
-        myTargetModal = new bootstrap.Modal(document.getElementById('targetModal'));
-        myBadgeUnlockedModal = new bootstrap.Modal(document.getElementById('badgeUnlockedModal'));
-        appToast = new bootstrap.Toast(document.getElementById('appToast'));
+        let currentUser, allMyJournals, allLeaderboardData, allMyTargets, myBadges, myCouponCount;
+        let journalCurrentPage = 1, deleteInfo = { type: null, id: null };
+        const JOURNALS_PER_PAGE = 3;
+        const ALL_BADGES = { 'PEMBACA_PEMULA': { name: 'Langkah Pertama', description: 'Membuat jurnal pertamamu.', icon: 'fa-shoe-prints' }, 'BACA_100_HALAMAN': { name: 'Pemanasan', description: 'Mencapai total 100 halaman.', icon: 'fa-fire' }, 'PENJELAJAH_AWAL': { name: 'Kolektor Awal', description: 'Membaca 3 buku unik.', icon: 'fa-layer-group' }, 'KUTU_BUKU': { name: 'Kutu Buku', description: 'Membaca 5 buku unik.', icon: 'fa-book-reader' }, 'MARATON_500': { name: 'Pelari Maraton', description: 'Membaca total 500 halaman.', icon: 'fa-running' }, 'KONSISTEN_3_HARI': { name: 'Mulai Terbiasa', description: 'Membuat jurnal 3 hari berturut-turut.', icon: 'fa-calendar-check' } };
+        
+        let myJournalModal, myConfirmDeleteModal, myImageResultModal, myTargetModal, myBadgeUnlockedModal, appToast;
+        const loader = document.getElementById('loader');
+        const bookCoverCache = new Map();
 
-        document.getElementById('studentName').textContent = `Hai, ${currentUser.user.nama}!`;
-        setupEventListeners();
-        renderAllSkeletons();
-        loadStudentDashboardData();
-    });
-    
-    function setupEventListeners() { document.getElementById('logoutBtn').addEventListener('click', logout); document.getElementById('addJournalBtn').addEventListener('click', showAddJournalModal); document.getElementById('journalForm').addEventListener('submit', handleJournalForm); document.getElementById('confirmDeleteBtn').addEventListener('click', executeDelete); document.getElementById('targetForm').addEventListener('submit', handleTargetForm); document.querySelectorAll('.mood-icon').forEach(icon => { icon.addEventListener('click', function() { document.querySelectorAll('.mood-icon').forEach(i => i.classList.remove('selected')); this.classList.add('selected'); document.getElementById('mood').value = this.dataset.mood; }); }); }
-    
-    async function apiCall(action, data = {}) { 
-        loader.style.display = 'flex'; 
-        try { 
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" }); 
-            const result = await response.json(); 
-            if (result.status === 'success') return result.data; 
-            else throw new Error(result.message || 'Terjadi kesalahan server.'); 
-        } catch (error) { 
-            console.error("API Call Error:", error); 
-            showToast("Error: " + error.message, 'Gagal', 'danger');
-            return null; 
-        } finally { 
-            loader.style.display = 'none'; 
-        } 
-    }
+        document.addEventListener('DOMContentLoaded', () => {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) { window.location.href = 'index.html'; return; }
+            currentUser = JSON.parse(userJson);
+            if (currentUser.role !== 'siswa') { logout(); return; }
+            
+            myJournalModal = new bootstrap.Modal(document.getElementById('journalModal'));
+            myConfirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            myImageResultModal = new bootstrap.Modal(document.getElementById('imageResultModal'));
+            myTargetModal = new bootstrap.Modal(document.getElementById('targetModal'));
+            myBadgeUnlockedModal = new bootstrap.Modal(document.getElementById('badgeUnlockedModal'));
+            appToast = new bootstrap.Toast(document.getElementById('appToast'));
 
-    // --- [PERUBAHAN UTAMA] ---
-    async function loadStudentDashboardData() {
-        // Menjalankan dua panggilan API secara bersamaan
-        const [dashboardData, couponManagementData] = await Promise.all([
-            apiCall('getStudentDashboardData', { emailSiswa: currentUser.user.email }),
-            apiCall('getCouponManagementData') // Meminjam API call dari kupon.html
-        ]);
-
-        if (dashboardData && couponManagementData) {
-            // Memproses data dari panggilan pertama (getStudentDashboardData)
-            allMyJournals = dashboardData.journals || [];
-            allLeaderboardData = dashboardData.leaderboard || [];
-            allMyTargets = dashboardData.targets || [];
-            myBadges = new Set(dashboardData.badges || []);
-
-            // Memproses data dari panggilan kedua (getCouponManagementData)
-            // untuk menghitung kupon milik siswa saat ini
-            const allCoupons = couponManagementData.studentCoupons || [];
-            myCouponCount = allCoupons.filter(c => c.emailSiswa === currentUser.user.email && c.status === 'Tersedia').length;
-
-            journalCurrentPage = 1;
-            renderAllComponents();
-        } else {
-            document.getElementById('pills-jurnal').innerHTML = `<div class="text-center text-white p-5"><h3>Gagal memuat data</h3><p>Silakan coba muat ulang halaman.</p></div>`;
+            document.getElementById('studentName').textContent = `Agen: ${currentUser.user.nama}`;
+            setupEventListeners();
+            renderAllSkeletons();
+            loadStudentDashboardData();
+        });
+        
+        function setupEventListeners() { document.getElementById('logoutBtn').addEventListener('click', logout); document.getElementById('addJournalBtn').addEventListener('click', showAddJournalModal); document.getElementById('journalForm').addEventListener('submit', handleJournalForm); document.getElementById('confirmDeleteBtn').addEventListener('click', executeDelete); document.getElementById('targetForm').addEventListener('submit', handleTargetForm); document.querySelectorAll('.mood-icon').forEach(icon => { icon.addEventListener('click', function() { document.querySelectorAll('.mood-icon').forEach(i => i.classList.remove('selected')); this.classList.add('selected'); document.getElementById('mood').value = this.dataset.mood; }); }); }
+        
+        async function apiCall(action, data = {}) { 
+            loader.style.display = 'flex'; 
+            try { 
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" }); 
+                const result = await response.json(); 
+                if (result.status === 'success') return result.data; 
+                else throw new Error(result.message || 'Terjadi kesalahan server.'); 
+            } catch (error) { 
+                console.error("API Call Error:", error); 
+                showToast("Error: " + error.message, 'Koneksi Gagal', 'danger');
+                return null; 
+            } finally { 
+                loader.style.display = 'none'; 
+            } 
         }
-    }
 
-    function renderAllComponents() { 
-        renderJournals(); 
-        renderLeaderboard(); 
-        renderTargets(); 
-        renderBadges(); 
-        calculateAndRenderStats(allMyJournals, myCouponCount); 
-    }
+        async function loadStudentDashboardData() {
+            const [dashboardData, couponManagementData] = await Promise.all([
+                apiCall('getStudentDashboardData', { emailSiswa: currentUser.user.email }),
+                apiCall('getCouponManagementData')
+            ]);
 
-    // Sisa kode tidak berubah...
-    async function fetchBookCover(title, author) { const cacheKey = `${title}|${author}`.toLowerCase(); if (bookCoverCache.has(cacheKey)) return bookCoverCache.get(cacheKey); try { const query = `intitle:${encodeURIComponent(title)}+inauthor:${encodeURIComponent(author)}`; const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1&fields=items(volumeInfo/imageLinks)`); if (!response.ok) throw new Error('Google Books API request failed'); const data = await response.json(); const coverUrl = data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail || null; const secureCoverUrl = coverUrl ? coverUrl.replace('http://', 'https://') : null; bookCoverCache.set(cacheKey, secureCoverUrl); return secureCoverUrl; } catch (error) { console.error("Error fetching book cover:", error); bookCoverCache.set(cacheKey, null); return null; } }
-    async function loadAndDisplayCover(journal, placeholderId) { const coverUrl = await fetchBookCover(journal.judulBuku, journal.penulis); const placeholder = document.getElementById(placeholderId); if (!placeholder) return; placeholder.classList.remove('skeleton'); if (coverUrl) { placeholder.innerHTML = `<img src="${coverUrl}" alt="Sampul buku ${journal.judulBuku}">`; } else { placeholder.innerHTML = `<div class="book-thumbnail-fallback"><i class="fas fa-book"></i><span class="fallback-title">${journal.judulBuku}</span></div>`; } }
-    function renderAllSkeletons() { let statsHtml = ''; for(let i=0; i<4; i++) { statsHtml += `<div class="col-lg-3 col-md-6 mb-4"><div class="stat-card h-100 skeleton"><div class="card-body"></div></div></div>`; } document.getElementById('stats-container').innerHTML = statsHtml; let journalsHtml = ''; for(let i=0; i<2; i++) journalsHtml += `<div class="col-lg-12"><div class="journal-card skeleton" style="height: 180px;"></div></div>`; document.getElementById('journalList').innerHTML = journalsHtml; document.getElementById('leaderboard-container').innerHTML = `<div class="leaderboard-card p-3 skeleton" style="height: 400px;"></div>`; document.getElementById('target-container').innerHTML = `<div class="data-card p-4 skeleton" style="height: 300px;"></div>`; document.getElementById('badge-container').innerHTML = `<div class="data-card p-4 skeleton" style="height: 300px;"></div>`; }
-    function showToast(message, title = 'Notifikasi', type = 'success') { const toastEl = document.getElementById('appToast'), titleEl = document.getElementById('toastTitle'), bodyEl = document.getElementById('toastBody'), iconEl = toastEl.querySelector('.toast-header i'); toastEl.classList.remove('text-white', 'bg-success', 'bg-danger'); iconEl.classList.remove('fa-check-circle', 'fa-times-circle'); if (type === 'success') { toastEl.classList.add('text-white', 'bg-success'); iconEl.classList.add('fa-check-circle'); } else { toastEl.classList.add('text-white', 'bg-danger'); iconEl.classList.add('fa-times-circle'); } titleEl.textContent = title; bodyEl.textContent = message; appToast.show(); }
-    function parseDate(dateString) { if (!dateString) return null; const parts = dateString.split('/'); return new Date(parts[2], parts[1] - 1, parts[0]); }
-    function calculateAndRenderStats(journals, couponCount) { const container = document.getElementById('stats-container'); let totalHalaman = 0, totalBuku = 0, kecepatanBaca = 0; if (journals && journals.length > 0) { totalHalaman = journals.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); const uniqueBooks = new Set(journals.map(j => (j.judulBuku || "").trim()).filter(Boolean)); totalBuku = uniqueBooks.size; if (journals.length > 1) { const sortedJournals = [...journals].sort((a,b) => parseDate(a.tanggalBaca) - parseDate(b.tanggalBaca)); const firstDate = parseDate(sortedJournals[0].tanggalBaca), lastDate = parseDate(sortedJournals[sortedJournals.length - 1].tanggalBaca); const daysDiff = Math.max(1, Math.ceil((lastDate.getTime() - firstDate.getTime()) / (1000 * 3600 * 24))); kecepatanBaca = (totalHalaman / daysDiff).toFixed(1); } else { kecepatanBaca = totalHalaman; } } container.innerHTML = ` <div class="col-lg-3 col-md-6 mb-4"> <div class="stat-card h-100"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-book-open"></i></div> <h1 class="stat-card-value">${totalHalaman.toLocaleString('id-ID')}</h1> <p class="stat-card-label">Total Halaman</p> </div> </div> </div> <div class="col-lg-3 col-md-6 mb-4"> <div class="stat-card h-100"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-swatchbook"></i></div> <h1 class="stat-card-value">${totalBuku.toLocaleString('id-ID')}</h1> <p class="stat-card-label">Buku Unik Dibaca</p> </div> </div> </div> <div class="col-lg-3 col-md-6 mb-4"> <div class="stat-card h-100"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-tachometer-alt"></i></div> <h1 class="stat-card-value">${kecepatanBaca.toLocaleString('id-ID')}</h1> <p class="stat-card-label">Halaman per Hari</p> </div> </div> </div> <div class="col-lg-3 col-md-6 mb-4"> <div class="stat-card h-100"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-ticket-alt"></i></div> <h1 class="stat-card-value">${(couponCount || 0).toLocaleString('id-ID')}</h1> <p class="stat-card-label">Jumlah Kupon</p> </div> </div> </div>`; }
-    function renderJournals() { const list = document.getElementById('journalList'); list.innerHTML = ''; if (!allMyJournals || allMyJournals.length === 0) { list.innerHTML = `<div class="col-12"><div class="text-center p-5 text-white"><h3>Belum ada jurnal.</h3><p>Ayo mulai membaca dan catat di sini!</p></div></div>`; renderPagination('journalPagination', 1, 0, JOURNALS_PER_PAGE, changeJournalPage); return; } const startIndex = (journalCurrentPage - 1) * JOURNALS_PER_PAGE; const endIndex = startIndex + JOURNALS_PER_PAGE; const paginatedJournals = allMyJournals.slice(startIndex, endIndex); let journalsHtml = ''; paginatedJournals.forEach(j => { const summary = j.ringkasan || ''; journalsHtml += ` <div class="col-lg-12"> <div class="journal-card p-3"> <div class="row g-3"> <div class="col-auto d-flex align-items-center"> <div class="book-thumbnail-container skeleton" id="cover-placeholder-${j.idJurnal}"></div> </div> <div class="col d-flex flex-column"> <div class="d-flex justify-content-between align-items-start"> <div class="me-2"> <h5 class="card-title mb-1">${j.judulBuku}</h5> <h6 class="card-subtitle text-white-50">${j.penulis}</h6> </div> <span class="fs-2">${j.mood}</span> </div> <p class="card-text small my-2 flex-grow-1">${summary}</p> <div class="d-flex justify-content-between align-items-center mt-auto journal-footer"> <small>Dibaca: ${j.tanggalBaca} | ${j.halaman} hal.</small> <div class="btn-group gap-2"> <button class="btn btn-sm btn-outline-info" onclick="generateShareImage('${j.idJurnal}')" title="Bagikan"><i class="fas fa-share-alt"></i></button> <button class="btn btn-sm btn-outline-warning" onclick="editJournal('${j.idJurnal}')" title="Edit"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-outline-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}', 'menghapus jurnal ini')" title="Hapus"><i class="fas fa-trash"></i></button> </div> </div> </div> </div> </div> </div>`; }); list.innerHTML = journalsHtml; paginatedJournals.forEach(j => { loadAndDisplayCover(j, `cover-placeholder-${j.idJurnal}`); }); renderPagination('journalPagination', journalCurrentPage, allMyJournals.length, JOURNALS_PER_PAGE, changeJournalPage); }
-    function renderLeaderboard() { const container = document.getElementById('leaderboard-container'); let listHtml = ''; if (allLeaderboardData.length === 0) { listHtml = '<li class="list-group-item text-white-50">Belum ada peringkat.</li>'; } else { const top10Data = allLeaderboardData.slice(0, 10); top10Data.forEach((siswa, index) => { const rank = index + 1; const highlightClass = siswa.nama === currentUser.user.nama ? 'highlight' : ''; const badgeColor = rank === 1 ? 'bg-warning' : (rank === 2 ? 'bg-secondary' : (rank === 3 ? 'bg-danger' : 'bg-info')); listHtml += `<li class="list-group-item d-flex justify-content-between align-items-center ${highlightClass}"><div><span class="badge ${badgeColor} rounded-pill me-2 rank-badge">${rank}</span> ${siswa.nama}</div><span class="badge bg-light text-dark">${siswa.totalHalaman} hal.</span></li>`; }); } container.innerHTML = `<div class="leaderboard-card p-3"><h4 class="text-white text-center"><i class="fas fa-trophy text-warning"></i> Top 10 Pembaca</h4><hr class="text-white-50"><ul class="list-group leaderboard-list">${listHtml}</ul></div>`; }
-    function renderTargets() { const container = document.getElementById('target-container'); let contentHtml; if (!allMyTargets || allMyTargets.length === 0) { contentHtml = '<p class="text-center text-white-50">Kamu belum punya target. Ayo buat satu!</p>'; } else { const totalPagesRead = allMyJournals.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); const uniqueBooksRead = new Set(allMyJournals.map(j => j.judulBuku ? j.judulBuku.trim() : '').filter(Boolean)).size; contentHtml = ''; allMyTargets.sort((a,b) => (a.status > b.status) ? 1 : -1).forEach(target => { let currentProgress = target.type === 'halaman' ? totalPagesRead : uniqueBooksRead; let percentage = Math.min(100, (currentProgress / target.targetValue) * 100); const isCompleted = target.status === 'Selesai'; const canComplete = !isCompleted && percentage >= 100; contentHtml += `<div class="target-card ${isCompleted ? 'completed' : ''}"><div class="d-flex justify-content-between align-items-center"><span class="target-title"><i class="fas fa-${target.type === 'halaman' ? 'pager' : 'book'} me-2 text-white-50"></i>${target.title}</span><div>${canComplete ? `<button class="btn btn-sm btn-outline-success me-1" onclick="updateTarget('${target.idTarget}')" title="Tandai Selesai"><i class="fas fa-check"></i></button>` : ''}<button class="btn btn-sm btn-outline-danger" onclick="deleteTarget('${target.idTarget}')" title="Hapus Target"><i class="fas fa-trash"></i></button></div></div><small class="d-block text-white-50">Target: ${target.targetValue} ${target.type}</small><div class="progress mt-2"><div class="progress-bar ${isCompleted ? 'bg-success' : 'bg-info'} progress-bar-striped progress-bar-animated" style="width: ${percentage}%"><b>${isCompleted ? 'TERCAPAI!' : Math.round(percentage) + '%'}</b></div></div><div class="target-progress-text mt-1">${currentProgress.toLocaleString('id-ID')} / ${parseInt(target.targetValue).toLocaleString('id-ID')}</div></div>`; }); } container.innerHTML = `<div class="data-card p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h4 class="card-title text-white">Kelola Target Bacaanmu</h4><button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#targetModal"><i class="fas fa-plus"></i> Buat Target Baru</button></div><div id="targetList">${contentHtml}</div></div>`; }
-    function renderBadges() { const container = document.getElementById('badge-container'); let contentHtml = ''; for (const badgeId in ALL_BADGES) { const badge = ALL_BADGES[badgeId]; const isUnlocked = myBadges.has(badgeId); contentHtml += `<div class="col-6 col-md-4 col-lg-3"><div class="badge-card ${isUnlocked ? 'unlocked' : ''}"><div class="badge-icon"><i class="fas ${badge.icon}"></i></div><div class="badge-name">${badge.name}</div><p class="badge-description">${badge.description}</p></div></div>`; } container.innerHTML = `<div class="data-card p-4"><h4 class="card-title mb-3 text-white">Koleksi Lencanamu</h4><div class="row g-3">${contentHtml}</div></div>`; }
-    function renderPagination(containerId, currentPage, totalItems, itemsPerPage, onPageClick) { const container = document.getElementById(containerId); if(!container) return; const totalPages = Math.ceil(totalItems / itemsPerPage); if (totalPages <= 1) { container.innerHTML = ''; return; } let html = '<ul class="pagination pagination-sm">'; for (let i = 1; i <= totalPages; i++) { html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="event.preventDefault(); ${onPageClick.name}(${i})">${i}</a></li>`; } html += '</ul>'; container.innerHTML = html; }
-    function changeJournalPage(page) { journalCurrentPage = page; renderJournals(); }
-    async function handleJournalForm(e) { e.preventDefault(); const journalId = document.getElementById('journalId').value; const action = journalId ? 'updateJournal' : 'addJournal'; const journalData = { idJurnal: journalId, idSiswa: currentUser.user.idSiswa, emailSiswa: currentUser.user.email, tanggalBaca: document.getElementById('tanggalBaca').value, judulBuku: document.getElementById('judulBuku').value, penulis: document.getElementById('penulis').value, halaman: document.getElementById('halaman').value, ringkasan: document.getElementById('ringkasan').value, mood: document.getElementById('mood').value }; const result = await apiCall(action, journalData); if (result !== null) { myJournalModal.hide(); document.getElementById('journalForm').reset(); showToast(action === 'addJournal' ? 'Jurnal berhasil ditambahkan!' : 'Jurnal berhasil diperbarui!', 'Berhasil'); await loadStudentDashboardData(); if (action === 'addJournal' && result.newBadges && result.newBadges.length > 0) { setTimeout(() => { const badge = result.newBadges[0]; document.getElementById('badgeUnlockedIcon').innerHTML = `<i class="fas ${badge.icon}"></i>`; document.getElementById('badgeUnlockedName').textContent = badge.name; document.getElementById('badgeUnlockedDescription').textContent = badge.description; myBadgeUnlockedModal.show(); }, 500); } } }
-    async function handleTargetForm(e) { e.preventDefault(); const targetData = { email: currentUser.user.email, title: document.getElementById('targetTitle').value, type: document.getElementById('targetType').value, targetValue: document.getElementById('targetValue').value }; const result = await apiCall('addTarget', targetData); if (result !== null) { myTargetModal.hide(); document.getElementById('targetForm').reset(); showToast('Target baru berhasil dibuat!', 'Berhasil'); await loadStudentDashboardData(); } }
-    function showConfirmDeleteModal(type, id, text) { document.getElementById('confirmMessageText').textContent = `Apakah Anda yakin ingin ${text}?`; document.getElementById('confirmTitle').textContent = `Konfirmasi Aksi`; const btn = document.getElementById('confirmDeleteBtn'); btn.className = 'btn'; if (type === 'target-complete') { btn.classList.add('btn-success'); btn.textContent = 'Ya, Selesaikan'; } else { btn.classList.add('btn-danger'); btn.textContent = 'Hapus'; } deleteInfo = { type, id }; myConfirmDeleteModal.show(); }
-    async function executeDelete() { myConfirmDeleteModal.hide(); let action = '', payload = {}, successMsg = ''; if (deleteInfo.type === 'journal') { action = 'deleteJournal'; payload = { idJurnal: deleteInfo.id }; successMsg = 'Jurnal berhasil dihapus.'; } else if (deleteInfo.type === 'target') { action = 'deleteTarget'; payload = { idTarget: deleteInfo.id }; successMsg = 'Target berhasil dihapus.'; } else if (deleteInfo.type === 'target-complete') { action = 'updateTargetStatus'; payload = { idTarget: deleteInfo.id, status: 'Selesai' }; successMsg = 'Target berhasil diselesaikan!'; } if (action) { const result = await apiCall(action, payload); if (result !== null) { showToast(successMsg, 'Berhasil'); await loadStudentDashboardData(); } } }
-    function updateTarget(idTarget) { showConfirmDeleteModal('target-complete', idTarget, 'menandai target ini sebagai selesai'); }
-    function deleteTarget(idTarget) { showConfirmDeleteModal('target', idTarget, 'menghapus target ini'); }
-    function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
-    function showAddJournalModal() { document.getElementById('journalForm').reset(); document.getElementById('journalId').value = ''; document.getElementById('journalModalTitle').textContent = 'Tambah Jurnal Baca'; document.querySelectorAll('.mood-icon').forEach(i => i.classList.remove('selected')); myJournalModal.show(); }
-    function editJournal(idJurnal) { const journal = allMyJournals.find(j => j.idJurnal === idJurnal); if(journal) { document.getElementById('journalId').value = journal.idJurnal; const dateParts = journal.tanggalBaca.split('/'); document.getElementById('tanggalBaca').value = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; document.getElementById('judulBuku').value = journal.judulBuku; document.getElementById('penulis').value = journal.penulis; document.getElementById('halaman').value = journal.halaman; document.getElementById('ringkasan').value = journal.ringkasan; document.getElementById('mood').value = journal.mood; document.querySelectorAll('.mood-icon').forEach(icon => { icon.classList.toggle('selected', icon.dataset.mood === journal.mood); }); document.getElementById('journalModalTitle').textContent = 'Edit Jurnal'; myJournalModal.show(); } }
-    async function generateShareImage(journalId) { loader.style.display = 'flex'; try { const journal = allMyJournals.find(j => j.idJurnal === journalId); if (!journal) throw new Error('Jurnal tidak ditemukan!'); document.getElementById('shareTitle').textContent = journal.judulBuku; document.getElementById('shareAuthor').textContent = `oleh ${journal.penulis}`; document.getElementById('shareSummary').textContent = `"${journal.ringkasan}"`; document.getElementById('shareMood').textContent = journal.mood; document.getElementById('shareStudentNameFooter').textContent = `Dibaca oleh ${currentUser.user.nama}`; const cardElement = document.getElementById('shareCard'); cardElement.parentElement.style.display = 'block'; const canvas = await html2canvas(cardElement, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: null }); cardElement.parentElement.style.display = 'none'; const imgData = canvas.toDataURL('image/png'); document.getElementById('imageResultContainer').innerHTML = `<img src="${imgData}" class="img-fluid" alt="Jurnal Baca"><p class="mt-2 small text-muted">Klik kanan untuk menyimpan gambar atau screenshot halaman ini.</p>`; myImageResultModal.show(); } catch(e) { console.error(e); showToast("Gagal membuat gambar, coba lagi.", "Error", "danger"); } finally { loader.style.display = 'none'; } }
-</script>
+            if (dashboardData && couponManagementData) {
+                allMyJournals = dashboardData.journals || [];
+                allLeaderboardData = dashboardData.leaderboard || [];
+                allMyTargets = dashboardData.targets || [];
+                myBadges = new Set(dashboardData.badges || []);
+                const allCoupons = couponManagementData.studentCoupons || [];
+                myCouponCount = allCoupons.filter(c => c.emailSiswa === currentUser.user.email && c.status === 'Tersedia').length;
+                journalCurrentPage = 1;
+                renderAllComponents();
+            } else {
+                document.getElementById('pills-jurnal').innerHTML = `<div class="text-center p-5"><h3 class="text-white"><i class="fas fa-satellite-dish"></i> Koneksi ke NEXUS Gagal</h3><p class="text-white-50">Data tidak dapat dimuat. Coba muat ulang halaman.</p></div>`;
+            }
+        }
+
+        function renderAllComponents() { renderJournals(); renderLeaderboard(); renderTargets(); renderBadges(); calculateAndRenderStats(allMyJournals, myCouponCount); }
+        async function fetchBookCover(title, author) { const cacheKey = `${title}|${author}`.toLowerCase(); if (bookCoverCache.has(cacheKey)) return bookCoverCache.get(cacheKey); try { const query = `intitle:${encodeURIComponent(title)}+inauthor:${encodeURIComponent(author)}`; const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1&fields=items(volumeInfo/imageLinks)`); if (!response.ok) throw new Error('Google Books API request failed'); const data = await response.json(); const coverUrl = data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail || null; const secureCoverUrl = coverUrl ? coverUrl.replace('http://', 'https://') : null; bookCoverCache.set(cacheKey, secureCoverUrl); return secureCoverUrl; } catch (error) { console.error("Error fetching book cover:", error); bookCoverCache.set(cacheKey, null); return null; } }
+        async function loadAndDisplayCover(journal, placeholderId) { const coverUrl = await fetchBookCover(journal.judulBuku, journal.penulis); const placeholder = document.getElementById(placeholderId); if (!placeholder) return; placeholder.classList.remove('skeleton'); if (coverUrl) { placeholder.innerHTML = `<img src="${coverUrl}" alt="Sampul buku ${journal.judulBuku}">`; } else { placeholder.innerHTML = `<div class="book-thumbnail-fallback"><i class="fas fa-book"></i><span class="fallback-title">${journal.judulBuku}</span></div>`; } }
+        function renderAllSkeletons() { let statsHtml = ''; for(let i=0; i<4; i++) { statsHtml += `<div class="col-lg-3 col-md-6"><div class="stat-card skeleton" style="height: 180px;"><div class="card-body"></div></div></div>`; } document.getElementById('stats-container').innerHTML = statsHtml; let journalsHtml = ''; for(let i=0; i<2; i++) journalsHtml += `<div class="col-lg-12"><div class="journal-card skeleton" style="height: 200px;"></div></div>`; document.getElementById('journalList').innerHTML = journalsHtml; document.getElementById('leaderboard-container').innerHTML = `<div class="leaderboard-card p-3 skeleton" style="height: 400px;"></div>`; document.getElementById('target-container').innerHTML = `<div class="data-card p-4 skeleton" style="height: 300px;"></div>`; document.getElementById('badge-container').innerHTML = `<div class="data-card p-4 skeleton" style="height: 300px;"></div>`; }
+        function showToast(message, title = 'Notifikasi Sistem', type = 'success') { const toastEl = document.getElementById('appToast'), titleEl = document.getElementById('toastTitle'), bodyEl = document.getElementById('toastBody'), iconEl = toastEl.querySelector('.toast-header i'); toastEl.classList.remove('text-white', 'bg-success', 'bg-danger'); iconEl.classList.remove('fa-check-circle', 'fa-times-circle'); if (type === 'success') { toastEl.className = 'toast bg-success text-white'; iconEl.className = 'fas fa-check-circle me-2'; } else { toastEl.className = 'toast bg-danger text-white'; iconEl.className = 'fas fa-times-circle me-2'; } titleEl.textContent = title; bodyEl.textContent = message; appToast.show(); }
+        function parseDate(dateString) { if (!dateString) return null; const parts = dateString.split('/'); return new Date(parts[2], parts[1] - 1, parts[0]); }
+        function calculateAndRenderStats(journals, couponCount) { const container = document.getElementById('stats-container'); let totalHalaman = 0, totalBuku = 0, kecepatanBaca = 0; if (journals && journals.length > 0) { totalHalaman = journals.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); const uniqueBooks = new Set(journals.map(j => (j.judulBuku || "").trim()).filter(Boolean)); totalBuku = uniqueBooks.size; if (journals.length > 1) { const sortedJournals = [...journals].sort((a,b) => parseDate(a.tanggalBaca) - parseDate(b.tanggalBaca)); const firstDate = parseDate(sortedJournals[0].tanggalBaca), lastDate = parseDate(sortedJournals[sortedJournals.length - 1].tanggalBaca); const daysDiff = Math.max(1, Math.ceil((lastDate.getTime() - firstDate.getTime()) / (1000 * 3600 * 24))); kecepatanBaca = (totalHalaman / daysDiff).toFixed(1); } else { kecepatanBaca = totalHalaman; } } container.innerHTML = ` <div class="col-lg-3 col-md-6"> <div class="stat-card h-100 p-3"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-book-open"></i></div> <div class="stat-card-value">${totalHalaman.toLocaleString('id-ID')}</div> <p class="stat-card-label">Total Data</p> </div> </div> </div> <div class="col-lg-3 col-md-6"> <div class="stat-card h-100 p-3"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-swatchbook"></i></div> <div class="stat-card-value">${totalBuku.toLocaleString('id-ID')}</div> <p class="stat-card-label">Packet Unik</p> </div> </div> </div> <div class="col-lg-3 col-md-6"> <div class="stat-card h-100 p-3"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-tachometer-alt"></i></div> <div class="stat-card-value">${kecepatanBaca.toLocaleString('id-ID')}</div> <p class="stat-card-label">Data per Hari</p> </div> </div> </div> <div class="col-lg-3 col-md-6"> <div class="stat-card h-100 p-3"> <div class="card-body"> <div class="stat-card-icon"><i class="fas fa-ticket-alt"></i></div> <div class="stat-card-value">${(couponCount || 0).toLocaleString('id-ID')}</div> <p class="stat-card-label">Kupon Tersedia</p> </div> </div> </div>`; }
+        function renderJournals() { const list = document.getElementById('journalList'); list.innerHTML = ''; if (!allMyJournals || allMyJournals.length === 0) { list.innerHTML = `<div class="col-12"><div class="text-center p-5"><h3 class="text-white-50">Belum ada data log.</h3><p>Mulai misi dan laporkan di sini!</p></div></div>`; renderPagination('journalPagination', 1, 0, JOURNALS_PER_PAGE, changeJournalPage); return; } const startIndex = (journalCurrentPage - 1) * JOURNALS_PER_PAGE; const endIndex = startIndex + JOURNALS_PER_PAGE; const paginatedJournals = allMyJournals.slice(startIndex, endIndex); let journalsHtml = ''; paginatedJournals.forEach(j => { const summary = j.ringkasan || ''; journalsHtml += ` <div class="col-lg-12"> <div class="journal-card"> <div class="row g-3"> <div class="col-auto d-flex align-items-center"> <div class="book-thumbnail-container skeleton" id="cover-placeholder-${j.idJurnal}"></div> </div> <div class="col d-flex flex-column"> <div class="d-flex justify-content-between align-items-start"> <div class="me-2"> <h5 class="card-title mb-1">${j.judulBuku}</h5> <h6 class="card-subtitle text-white-50">${j.penulis}</h6> </div> <span class="fs-2">${j.mood}</span> </div> <p class="card-text small my-2 flex-grow-1">${summary}</p> <div class="d-flex justify-content-between align-items-center mt-auto journal-footer"> <small class="text-white-50">Dilaporkan: ${j.tanggalBaca} | ${j.halaman} data</small> <div class="btn-group gap-2"> <button class="btn btn-sm btn-outline-info" onclick="generateShareImage('${j.idJurnal}')" title="Bagikan"><i class="fas fa-share-alt"></i></button> <button class="btn btn-sm btn-outline-warning" onclick="editJournal('${j.idJurnal}')" title="Edit"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-outline-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}', 'menghapus log ini')" title="Hapus"><i class="fas fa-trash"></i></button> </div> </div> </div> </div> </div> </div>`; }); list.innerHTML = journalsHtml; paginatedJournals.forEach(j => { loadAndDisplayCover(j, `cover-placeholder-${j.idJurnal}`); }); renderPagination('journalPagination', journalCurrentPage, allMyJournals.length, JOURNALS_PER_PAGE, changeJournalPage); }
+        function renderLeaderboard() { const container = document.getElementById('leaderboard-container'); let listHtml = ''; if (allLeaderboardData.length === 0) { listHtml = '<li class="list-group-item text-white-50">Belum ada peringkat.</li>'; } else { const top10Data = allLeaderboardData.slice(0, 10); top10Data.forEach((siswa, index) => { const rank = index + 1; const highlightClass = siswa.nama === currentUser.user.nama ? 'highlight' : ''; const badgeColor = rank === 1 ? 'bg-warning text-dark' : (rank === 2 ? 'bg-secondary' : (rank === 3 ? 'bg-danger' : 'bg-info text-dark')); listHtml += `<li class="list-group-item d-flex justify-content-between align-items-center ${highlightClass}"><div><span class="badge ${badgeColor} rounded-pill me-2 rank-badge">${rank}</span> ${siswa.nama}</div><span class="badge bg-light text-dark">${siswa.totalHalaman} data</span></li>`; }); } container.innerHTML = `<div class="leaderboard-card"><h4 class="text-white text-center" style="font-family: 'Oswald', sans-serif; letter-spacing: 1px;"><i class="fas fa-trophy me-2" style="color:var(--legendary-color);"></i> TOP 10 AGEN</h4><hr class="text-white-50"><ul class="list-group list-group-flush leaderboard-list">${listHtml}</ul></div>`; }
+        function renderTargets() { const container = document.getElementById('target-container'); let contentHtml; if (!allMyTargets || allMyTargets.length === 0) { contentHtml = '<p class="text-center text-white-50">Kamu belum punya directive. Ayo buat satu!</p>'; } else { const totalPagesRead = allMyJournals.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); const uniqueBooksRead = new Set(allMyJournals.map(j => j.judulBuku ? j.judulBuku.trim() : '').filter(Boolean)).size; contentHtml = ''; allMyTargets.sort((a,b) => (a.status > b.status) ? 1 : -1).forEach(target => { let currentProgress = target.type === 'halaman' ? totalPagesRead : uniqueBooksRead; let percentage = Math.min(100, (currentProgress / target.targetValue) * 100); const isCompleted = target.status === 'Selesai'; const canComplete = !isCompleted && percentage >= 100; contentHtml += `<div class="target-card ${isCompleted ? 'completed' : ''}"><div class="d-flex justify-content-between align-items-center"><span class="target-title"><i class="fas fa-${target.type === 'halaman' ? 'pager' : 'book'} me-2 text-white-50"></i>${target.title}</span><div>${canComplete ? `<button class="btn btn-sm btn-outline-success me-1" onclick="updateTarget('${target.idTarget}')" title="Tandai Selesai"><i class="fas fa-check"></i></button>` : ''}<button class="btn btn-sm btn-outline-danger" onclick="deleteTarget('${target.idTarget}')" title="Hapus Directive"><i class="fas fa-trash"></i></button></div></div><small class="d-block text-white-50">Target: ${target.targetValue} ${target.type}</small><div class="progress mt-2"><div class="progress-bar ${isCompleted ? 'bg-success' : 'progress-bar-striped progress-bar-animated'}" style="width: ${percentage}%; background-color: ${isCompleted ? '#28a745' : 'var(--rare-color)'}"><b>${isCompleted ? 'SELESAI!' : Math.round(percentage) + '%'}</b></div></div><div class="target-progress-text mt-1 text-white-50">${currentProgress.toLocaleString('id-ID')} / ${parseInt(target.targetValue).toLocaleString('id-ID')}</div></div>`; }); } container.innerHTML = `<div class="data-card p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h4 class="card-title text-white" style="font-family: 'Oswald', sans-serif; letter-spacing: 1px;">Kelola Directives</h4><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#targetModal"><i class="fas fa-plus"></i> Directive Baru</button></div><div id="targetList">${contentHtml}</div></div>`; }
+        function renderBadges() { const container = document.getElementById('badge-container'); let contentHtml = ''; for (const badgeId in ALL_BADGES) { const badge = ALL_BADGES[badgeId]; const isUnlocked = myBadges.has(badgeId); contentHtml += `<div class="col-6 col-md-4 col-lg-3 mb-3"><div class="badge-card ${isUnlocked ? 'unlocked' : ''}"><div class="badge-icon"><i class="fas ${badge.icon}"></i></div><div class="badge-name">${badge.name}</div><p class="badge-description">${badge.description}</p></div></div>`; } container.innerHTML = `<div class="data-card p-4"><h4 class="card-title mb-4 text-white" style="font-family: 'Oswald', sans-serif; letter-spacing: 1px;">Koleksi Achievement</h4><div class="row g-3">${contentHtml}</div></div>`; }
+        function renderPagination(containerId, currentPage, totalItems, itemsPerPage, onPageClick) { const container = document.getElementById(containerId); if(!container) return; const totalPages = Math.ceil(totalItems / itemsPerPage); if (totalPages <= 1) { container.innerHTML = ''; return; } let html = '<ul class="pagination pagination-sm justify-content-center">'; html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="event.preventDefault(); ${onPageClick.name}(${currentPage - 1})">«</a></li>`; for (let i = 1; i <= totalPages; i++) { html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="event.preventDefault(); ${onPageClick.name}(${i})">${i}</a></li>`; } html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" onclick="event.preventDefault(); ${onPageClick.name}(${currentPage + 1})">»</a></li>`; html += '</ul>'; const paginationStyle = document.createElement('style'); paginationStyle.textContent = `.pagination .page-link { background-color: transparent; border-color: var(--border-color); color: var(--rare-color); } .pagination .page-item.active .page-link { background-color: var(--rare-color); border-color: var(--rare-color); color: #fff; } .pagination .page-item.disabled .page-link { color: #6c757d; }`; document.head.appendChild(paginationStyle); container.innerHTML = html; }
+        function changeJournalPage(page) { journalCurrentPage = page; renderJournals(); window.scrollTo(0,0); }
+        async function handleJournalForm(e) { e.preventDefault(); const journalId = document.getElementById('journalId').value; const action = journalId ? 'updateJournal' : 'addJournal'; const journalData = { idJurnal: journalId, idSiswa: currentUser.user.idSiswa, emailSiswa: currentUser.user.email, tanggalBaca: document.getElementById('tanggalBaca').value, judulBuku: document.getElementById('judulBuku').value, penulis: document.getElementById('penulis').value, halaman: document.getElementById('halaman').value, ringkasan: document.getElementById('ringkasan').value, mood: document.getElementById('mood').value }; const result = await apiCall(action, journalData); if (result !== null) { myJournalModal.hide(); document.getElementById('journalForm').reset(); showToast(action === 'addJournal' ? 'Laporan berhasil dikirim!' : 'Laporan berhasil diperbarui!', 'Berhasil'); await loadStudentDashboardData(); if (action === 'addJournal' && result.newBadges && result.newBadges.length > 0) { setTimeout(() => { const badge = result.newBadges[0]; document.getElementById('badgeUnlockedIcon').innerHTML = `<i class="fas ${badge.icon}"></i>`; document.getElementById('badgeUnlockedName').textContent = badge.name; document.getElementById('badgeUnlockedDescription').textContent = badge.description; myBadgeUnlockedModal.show(); }, 500); } } }
+        async function handleTargetForm(e) { e.preventDefault(); const targetData = { email: currentUser.user.email, title: document.getElementById('targetTitle').value, type: document.getElementById('targetType').value, targetValue: document.getElementById('targetValue').value }; const result = await apiCall('addTarget', targetData); if (result !== null) { myTargetModal.hide(); document.getElementById('targetForm').reset(); showToast('Directive baru berhasil diaktifkan!', 'Berhasil'); await loadStudentDashboardData(); } }
+        function showConfirmDeleteModal(type, id, text) { document.getElementById('confirmMessageText').textContent = `Apakah Anda yakin ingin ${text}? Aksi ini tidak dapat dibatalkan.`; document.getElementById('confirmTitle').textContent = `Konfirmasi Aksi`; const btn = document.getElementById('confirmDeleteBtn'); btn.className = 'btn'; if (type === 'target-complete') { btn.classList.add('btn-success'); btn.textContent = 'Ya, Selesaikan'; } else { btn.classList.add('btn-danger'); btn.textContent = 'Hapus'; } deleteInfo = { type, id }; myConfirmDeleteModal.show(); }
+        async function executeDelete() { myConfirmDeleteModal.hide(); let action = '', payload = {}, successMsg = ''; if (deleteInfo.type === 'journal') { action = 'deleteJournal'; payload = { idJurnal: deleteInfo.id }; successMsg = 'Log berhasil dihapus.'; } else if (deleteInfo.type === 'target') { action = 'deleteTarget'; payload = { idTarget: deleteInfo.id }; successMsg = 'Directive berhasil dihapus.'; } else if (deleteInfo.type === 'target-complete') { action = 'updateTargetStatus'; payload = { idTarget: deleteInfo.id, status: 'Selesai' }; successMsg = 'Directive berhasil diselesaikan!'; } if (action) { const result = await apiCall(action, payload); if (result !== null) { showToast(successMsg, 'Berhasil'); await loadStudentDashboardData(); } } }
+        function updateTarget(idTarget) { showConfirmDeleteModal('target-complete', idTarget, 'menandai directive ini sebagai selesai'); }
+        function deleteTarget(idTarget) { showConfirmDeleteModal('target', idTarget, 'menghapus directive ini'); }
+        function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
+        function showAddJournalModal() { document.getElementById('journalForm').reset(); document.getElementById('journalId').value = ''; document.getElementById('journalModalTitle').textContent = 'Kirim Laporan Baru'; document.querySelectorAll('.mood-icon').forEach(i => i.classList.remove('selected')); myJournalModal.show(); }
+        function editJournal(idJurnal) { const journal = allMyJournals.find(j => j.idJurnal === idJurnal); if(journal) { document.getElementById('journalId').value = journal.idJurnal; const dateParts = journal.tanggalBaca.split('/'); document.getElementById('tanggalBaca').value = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; document.getElementById('judulBuku').value = journal.judulBuku; document.getElementById('penulis').value = journal.penulis; document.getElementById('halaman').value = journal.halaman; document.getElementById('ringkasan').value = journal.ringkasan; document.getElementById('mood').value = journal.mood; document.querySelectorAll('.mood-icon').forEach(icon => { icon.classList.toggle('selected', icon.dataset.mood === journal.mood); }); document.getElementById('journalModalTitle').textContent = 'Edit Laporan'; myJournalModal.show(); } }
+        async function generateShareImage(journalId) { loader.style.display = 'flex'; try { const journal = allMyJournals.find(j => j.idJurnal === journalId); if (!journal) throw new Error('Jurnal tidak ditemukan!'); const shareCard = document.getElementById('shareCard'); document.getElementById('shareTitle').textContent = journal.judulBuku; document.getElementById('shareAuthor').textContent = `oleh ${journal.penulis}`; document.getElementById('shareSummary').textContent = `"${journal.ringkasan}"`; document.getElementById('shareMood').textContent = journal.mood; document.getElementById('shareStudentNameFooter').textContent = `Agen: ${currentUser.user.nama}`; const canvas = await html2canvas(shareCard, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: null }); const imgData = canvas.toDataURL('image/png'); document.getElementById('imageResultContainer').innerHTML = `<img src="${imgData}" class="img-fluid" alt="Jurnal Baca"><p class="mt-2 small text-muted">Klik kanan untuk menyimpan gambar atau screenshot halaman ini.</p>`; myImageResultModal.show(); } catch(e) { console.error(e); showToast("Gagal membuat gambar, coba lagi.", "Error", "danger"); } finally { loader.style.display = 'none'; } }
+    </script>
 </body>
 </html>

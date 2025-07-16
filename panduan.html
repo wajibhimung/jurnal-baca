@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan - Project NEXUS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #0A0C16;
+            --card-bg: linear-gradient(145deg, #1e223a, #131524);
+            --border-color: rgba(3, 169, 244, 0.3);
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --text-light: #e0e0e0;
+            --text-muted-light: #8b949e;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
+            color: var(--text-light);
+            padding-top: 75px;
+        }
+
+        nav.navbar { background: var(--dark-bg); border-bottom: 1px solid var(--border-color); }
+        .navbar-brand { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+        .nav-link { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted-light) !important; }
+        .nav-link:hover, .nav-link.active { color: #fff !important; text-shadow: 0 0 10px var(--rare-glow); }
+
+        .section-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 2.5rem; text-align: center; margin-bottom: 3rem; color: #fff; }
+        .guide-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2rem; margin-bottom: 1.5rem; }
+        .guide-card h3 { font-family: 'Oswald', sans-serif; color: var(--rare-color); letter-spacing: 1px; }
+        .guide-card p { opacity: 0.8; }
+        .guide-card ul { padding-left: 20px; }
+        .guide-card li { margin-bottom: 0.5rem; }
+        .guide-card code { background-color: #0A0C16; color: var(--legendary-color); padding: 0.2em 0.4em; border-radius: 3px; }
+
+        .accordion-item { background: var(--card-bg); border: 1px solid var(--border-color); }
+        .accordion-header button { font-family: 'Oswald', sans-serif; letter-spacing: 1px; background: #131524; color: var(--text-light); }
+        .accordion-header button:not(.collapsed) { color: var(--rare-color); box-shadow: inset 0 -1px 0 var(--border-color); }
+        .accordion-header button:focus { box-shadow: 0 0 10px var(--rare-glow); }
+        .accordion-button::after { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2303a9f4'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e"); }
+        .accordion-body { font-size: 0.95rem; }
+
+        .icon-highlight { color: var(--rare-color); }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-book-atlas me-2"></i>PANDUAN NEXUS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="game-hub.html"><i class="fas fa-trophy me-2"></i>Hub</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-right-to-bracket me-2"></i>Terminal</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <section id="student-guide" class="mb-5">
+            <h2 class="section-title"><i class="fas fa-user-secret me-3"></i>Panduan untuk Agen (Siswa)</h2>
+
+            <div class="guide-card">
+                <h3><i class="fas fa-play-circle me-2 icon-highlight"></i> Langkah 1: Memulai Misi</h3>
+                <p>Misi utamamu adalah melawan "The Glitch of Ignorance" dengan cara memperkaya pengetahuan. Setiap buku yang kamu baca adalah senjata untuk memperkuat jaringan NEXUS.</p>
+                <ul>
+                    <li>Buka halaman <a href="index.html">Terminal</a> dan login menggunakan akun yang diberikan oleh Admin (Guru).</li>
+                    <li>Setelah login, Anda akan masuk ke <b>Dasbor Agen</b>.</li>
+                </ul>
+            </div>
+
+            <div class="guide-card">
+                <h3><i class="fas fa-book-open me-2 icon-highlight"></i> Langkah 2: Melaporkan Data Log (Jurnal)</h3>
+                <p>Setiap buku yang selesai dibaca adalah "Data Packet" yang harus dilaporkan ke sistem.</p>
+                <ul>
+                    <li>Di Dasbor Agen, pada tab <b>Intel & Peringkat</b>, klik tombol <code>+ Tambah Log</code>.</li>
+                    <li>Isi semua detail buku yang telah kamu baca: judul, penulis, jumlah halaman, dan ringkasan singkat.</li>
+                    <li>Pilih "Analisis Emosional" (mood) yang paling sesuai dengan perasaanmu setelah membaca buku tersebut.</li>
+                    <li>Klik <code>Kirim Laporan</code>. Laporanmu kini tercatat di sistem.</li>
+                </ul>
+            </div>
+
+             <div class="guide-card">
+                <h3><i class="fas fa-ticket-alt me-2 icon-highlight"></i> Langkah 3: Mengklaim Kupon</h3>
+                <p>Setelah Data Log tercatat, kamu harus melaporkan capaianmu kepada <b>System Admin (Guru)</b> di dunia nyata (saat jam pelajaran) untuk mengekstrak kupon dari misimu.</p>
+                 <ul>
+                    <li>Guru akan memverifikasi laporanmu dan memberikan kupon secara digital melalui <b>Admin Panel</b> mereka.</li>
+                    <li>Jumlah kupon yang kamu miliki akan bertambah dan bisa dilihat di Dasbor Agen pada kartu statistik <b>"Kupon Tersedia"</b>.</li>
+                </ul>
+            </div>
+
+            <div class="guide-card">
+                <h3><i class="fas fa-cash-register me-2 icon-highlight"></i> Langkah 4: Menggunakan ATM Kupon</h3>
+                <p>Semua kupon yang terkumpul dapat digunakan untuk menukarkan hadiah eksklusif di ATM Kupon.</p>
+                <ul>
+                    <li>Di Dasbor Agen, klik tombol besar berwarna emas <code>Akses ATM Kupon</code>.</li>
+                    <li>Di halaman ATM, kamu akan melihat <b>saldo kupon</b> milikmu.</li>
+                    <li>Pada tab <b>Redeem Hadiah</b>, kamu bisa melihat semua hadiah yang tersedia beserta harganya.</li>
+                    <li>Jika saldo kuponmu cukup, tombol <code>Tukar</code> pada hadiah akan aktif. Klik tombol tersebut.</li>
+                    <li>Setelah konfirmasi, kuponmu akan terpotong dan hadiah akan tercatat atas namamu.</li>
+                    <li>Pada tab <b>Riwayat Transaksi</b>, kamu bisa melihat semua hadiah yang pernah kamu tukarkan.</li>
+                </ul>
+                 <p class="mt-3"><strong>Penting:</strong> Setelah menukar hadiah secara digital, temui Admin (Guru) untuk mengambil hadiah fisikmu!</p>
+            </div>
+            
+             <div class="guide-card">
+                <h3><i class="fas fa-chart-line me-2 icon-highlight"></i> Fitur Lainnya di Dasbor</h3>
+                 <ul>
+                    <li><strong>Directives:</strong> Buat target membaca pribadi (berdasarkan jumlah buku atau halaman) untuk memotivasi dirimu sendiri.</li>
+                    <li><strong>Arsenal:</strong> Lihat koleksi <i>achievement</i> (lencana) yang telah kamu buka.</li>
+                    <li><strong>Peringkat:</strong> Pantau posisimu di antara agen-agen lain di Leaderboard.</li>
+                </ul>
+            </div>
+        </section>
+
+        <hr class="my-5" style="border-color: var(--border-color);">
+
+        <section id="teacher-guide">
+            <h2 class="section-title"><i class="fas fa-user-shield me-3"></i>Panduan untuk Admin (Guru)</h2>
+            <p class="text-center text-muted mb-4">Sebagai Admin, Anda memiliki kontrol penuh atas ekosistem Project NEXUS. Gunakan panel ini untuk mengelola agen, progres, dan sistem hadiah.</p>
+            
+            <div class="accordion" id="adminAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                            <i class="fas fa-users-cog me-2"></i> Manajemen Agen dan Unit (Siswa & Kelas)
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#adminAccordion">
+                        <div class="accordion-body">
+                            Kelola semua agen dan unit tempur mereka.
+                            <ul>
+                                <li><strong>Manajemen Unit (Kelas):</strong> Buka tab <code>Manajemen Unit</code> untuk menambah atau menghapus unit. Ini adalah langkah pertama sebelum menambahkan agen.</li>
+                                <li><strong>Manajemen Agen (Siswa):</strong> Buka tab <code>Manajemen Agen</code>. Klik <code>+ Rekrut Agen</code> untuk menambahkan siswa baru.
+                                    <ul>
+                                        <li>Isi nama, email, dan <b>wajib</b> isi password awal.</li>
+                                        <li>Pilih Unit (Kelas) tempat agen tersebut akan ditugaskan.</li>
+                                    </ul>
+                                </li>
+                                 <li>Anda juga dapat <b>mengedit</b> detail agen (termasuk reset password) atau <b>menghapus</b> agen dari sistem.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                             <i class="fas fa-gem me-2"></i> The Vault: Manajemen Kupon dan Hadiah
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#adminAccordion">
+                        <div class="accordion-body">
+                            "The Vault" adalah pusat dari sistem ekonomi Project NEXUS. Anda mengaksesnya melalui tombol <code>The Vault</code> di Admin Panel utama.
+                            <ul>
+                                <li><strong>Konfigurasi Vault (Penting!):</strong> Ini adalah langkah paling krusial.
+                                    <ul>
+                                        <li>Buka tab <code>Konfigurasi Vault</code>.</li>
+                                        <li>Pada bagian <b>Pemicu Kupon</b>, tambahkan capaian yang bisa menghasilkan kupon (misal: "Menyelesaikan 1 buku", "Laporan 100 halaman").</li>
+                                        <li>Pada bagian <b>Stok Hadiah</b>, tambahkan hadiah yang bisa ditukar oleh agen beserta biaya kuponnya.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Distribusi Kupon:</strong> Ini adalah aksi yang paling sering Anda lakukan.
+                                     <ul>
+                                        <li>Buka tab <code>Distribusi Kupon</code>.</li>
+                                        <li>Pilih nama agen yang telah melapor kepada Anda.</li>
+                                        <li>Klik tombol <code>Berikan</code> pada capaian yang sesuai. Kupon akan langsung ditambahkan ke saldo agen.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Redeem Hadiah (Opsional):</strong> Anda juga bisa membantu agen menukarkan hadiahnya langsung dari sini jika diperlukan.</li>
+                                <li><strong>Log Transaksi:</strong> Pantau semua riwayat penukaran hadiah. Jika seorang agen sudah mengambil hadiah fisiknya, Anda dapat menekan tombol <code>Gunakan</code> untuk mengubah statusnya, menandakan transaksi telah selesai sepenuhnya.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                           <i class="fas fa-binoculars me-2"></i> Pemantauan dan Laporan
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#adminAccordion">
+                        <div class="accordion-body">
+                           Gunakan data untuk memantau perkembangan dan aktivitas di seluruh jaringan.
+                           <ul>
+                               <li><strong>Dashboard:</strong> Lihat ringkasan visual cepat tentang agen paling aktif dan tabel peringkat teratas.</li>
+                               <li><strong>Intel per Unit:</strong> Fitur yang sangat berguna untuk melihat performa spesifik per kelas. Anda bisa memfilter berdasarkan rentang tanggal untuk melihat aktivitas membaca dalam periode tertentu (misal, dalam satu minggu atau satu bulan).</li>
+                               <li><strong>Progress Agen:</strong> Pantau pencapaian individu setiap agen, termasuk lencana yang telah mereka buka dan target pribadi yang mereka buat.</li>
+                               <li><strong>Semua Log:</strong> Akses database lengkap dari semua laporan (jurnal) yang pernah dikirim oleh seluruh agen. Anda bisa melihat detail setiap laporan di sini.</li>
+                           </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

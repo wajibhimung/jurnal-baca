@@ -5,26 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Meta SEO Tags -->
-    <title>Jurnal Baca Digital - Kelas TKJ SMKN 1 Telagasari</title>
-    <meta name="description" content="Jadi pembaca terbaik di kelas TKJ SMKN 1 Telagasari! Gunakan Jurnal Baca Digital ini untuk mencatat semua buku keren yang kamu baca, naikkan peringkatmu, dan buktikan semangat literasimu.">
-    <meta name="keywords" content="jurnal baca, literasi digital, tkj, smkn 1 telagasari, aplikasi pendidikan, jurnal siswa">
+    <title>Project NEXUS - Terminal Akses</title>
+    <meta name="description" content="Akses terminal Project NEXUS. Platform gamifikasi literasi untuk siswa TKJ SMKN 1 Telagasari. Masuk untuk memulai misimu.">
+    <meta name="keywords" content="project nexus, jurnal baca, literasi digital, tkj, smkn 1 telagasari, gamifikasi, aplikasi pendidikan">
     <meta name="author" content="Kelas TKJ SMKN 1 Telagasari">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-bg: rgba(255, 255, 255, 0.1);
-            --text-light: #f8f9fa;
-            --text-muted-light: #adb5bd;
-            --input-bg: rgba(255, 255, 255, 0.15);
-            --btn-gradient: linear-gradient(90deg, #ff85b1 0%, #ffc107 100%);
+            --dark-bg: #0A0C16;
+            --card-bg: linear-gradient(145deg, #1e223a, #131524);
+            --border-color: rgba(3, 169, 244, 0.3);
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --epic-glow: rgba(156, 39, 176, 0.5);
+            --text-light: #e0e0e0;
+            --text-muted-light: #8b949e;
         }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes text-glow {
+            0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px var(--rare-color), 0 0 15px var(--rare-color); }
+            50% { text-shadow: 0 0 10px #fff, 0 0 20px var(--rare-color), 0 0 30px var(--rare-color); }
+        }
+        @keyframes slideUpFadeIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         body { 
             font-family: 'Poppins', sans-serif; 
-            background: var(--bg-gradient); 
+            background-color: var(--dark-bg);
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
             color: var(--text-light); 
             display: flex; 
             flex-direction: column; 
@@ -32,73 +47,126 @@
             opacity: 0;
             animation: fadeIn 1s ease-out forwards;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .navbar {
+            background: rgba(10, 12, 22, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .navbar-brand {
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 2px;
+            color: var(--text-light);
+        }
+        .nav-link {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted-light) !important;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #fff !important;
+            text-shadow: 0 0 10px var(--rare-glow);
+        }
+
         main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 0; }
-        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 1080; }
+        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--dark-bg); display: none; justify-content: center; align-items: center; z-index: 1080; }
+        
         .login-container { width: 100%; max-width: 900px; }
+        
         .login-hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-right: 2rem; }
-        .login-hero img { max-width: 80%; margin-bottom: 1rem; }
+        .login-hero .hero-icon { font-size: 6rem; color: var(--rare-color); margin-bottom: 1.5rem; animation: text-glow 2.5s ease-in-out infinite alternate; }
+        .login-hero h1 { font-family: 'Oswald', sans-serif; letter-spacing: 5px; text-transform: uppercase; }
+
         .login-card { 
             background: var(--card-bg); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            border-radius: 20px; 
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid var(--border-color); 
+            border-radius: 1rem; 
             transform: translateY(20px);
             opacity: 0;
             animation: slideUpFadeIn 0.8s ease-out 0.5s forwards;
         }
-        @keyframes slideUpFadeIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        
+        .card-title { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+        
         .input-group { position: relative; }
         .form-icon { position: absolute; top: 50%; left: 15px; transform: translateY(-50%); color: var(--text-muted-light); pointer-events: none; z-index: 3; }
-        .password-toggle-icon { 
-            position: absolute; 
-            top: 50%; 
-            right: 0; 
-            transform: translateY(-50%); 
-            color: var(--text-muted-light); 
-            cursor: pointer; 
-            z-index: 3;
-            width: 50px; /* Area klik lebih besar */
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .password-toggle-icon { position: absolute; top: 50%; right: 0; transform: translateY(-50%); color: var(--text-muted-light); cursor: pointer; z-index: 3; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; }
+        
         .form-control, .form-select { 
-            background-color: var(--input-bg) !important; 
-            border: 1px solid rgba(255, 255, 255, 0.2) !important; 
+            background-color: var(--dark-bg) !important; 
+            border: 1px solid var(--border-color) !important; 
             color: var(--text-light) !important; 
             border-radius: 10px; 
             padding-left: 45px; 
             height: 50px; 
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         .form-control::placeholder { color: var(--text-muted-light); }
-        .form-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23adb5bd' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); }
-        .btn-login { background-image: var(--btn-gradient); border: none; font-weight: 600; border-radius: 10px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-        .footer { background: transparent; color: rgba(255, 255, 255, 0.7); padding: 1rem 0; text-align: center; flex-shrink: 0; }
-        .toast-container { z-index: 1090; }
-        /* PERBAIKAN: Atur warna teks di dalam toast body */
-        .toast-body {
-            color: #343a40; /* Warna teks gelap agar kontras */
+        .form-control:focus, .form-select:focus {
+            border-color: var(--rare-color) !important;
+            box-shadow: 0 0 15px var(--rare-glow) !important;
         }
+        .form-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238b949e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); }
+        
+        .btn-login { 
+            font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1.5px;
+            background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
+            border: none; 
+            font-weight: 600; 
+            border-radius: 10px; 
+            transition: all 0.3s ease; 
+        }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 5px 20px var(--epic-glow); }
+        
+        .footer { background: #000; color: rgba(255, 255, 255, 0.5); padding: 2rem 0; text-align: center; flex-shrink: 0; margin-top: auto; }
+        .toast-container { z-index: 1090; }
+        .toast { background-color: #131524; color: var(--text-light); border: 1px solid var(--border-color); }
+        .toast-header { background-color: transparent; border-bottom: 1px solid var(--border-color); }
+        .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+
         @media (max-width: 767.98px) { .login-hero { display: none; } .login-container { padding: 0 15px; } }
     </style>
 </head>
 <body>
     <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
     
-    <!-- Toast Container -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="game-hub.html"><i class="fas fa-network-wired me-2"></i>PROJECT NEXUS</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="story.html"><i class="fas fa-book-open me-2"></i>Intro</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="game-hub.html"><i class="fas fa-trophy me-2"></i>Hub</a>
+                        </li>
+                        <!-- PERUBAHAN: Penambahan Menu Panduan -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="panduan.html"><i class="fas fa-book-atlas me-2"></i>Panduan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html"><i class="fas fa-right-to-bracket me-2"></i>Terminal</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Konten halaman lainnya tidak berubah -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
         <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <i class="fas rounded me-2"></i>
                 <strong class="me-auto" id="toastTitle"></strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
             </div>
             <div class="toast-body" id="toastBody"></div>
         </div>
@@ -108,23 +176,22 @@
         <div class="container login-container">
             <div class="row align-items-center">
                 <div class="col-md-6 login-hero">
-                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/reading-book-3488545-2922432.png" alt="Ilustrasi Membaca Buku" class="img-fluid">
-                    <h1 class="fw-bold">Jurnal Baca Digital</h1>
-                    <p class="text-white-50">Platform literasi modern untuk siswa TKJ SMKN 1 Telagasari.</p>
+                    <div class="hero-icon"><i class="fas fa-user-secret"></i></div>
+                    <h1 class="fw-bold">Project NEXUS</h1>
+                    <p class="text-white-50">Platform gamifikasi literasi untuk agen masa depan.</p>
                 </div>
                 <div class="col-md-6">
                     <div class="card login-card">
                         <div class="card-body p-5">
-                            <h2 class="card-title text-center mb-4 fw-bold">Login Akun Anda</h2>
+                            <h2 class="card-title text-center mb-4 fw-bold">AKSES TERMINAL</h2>
                             <form id="loginForm" novalidate>
                                 <div class="input-group mb-3">
                                     <i class="fas fa-envelope form-icon"></i>
-                                    <input type="email" class="form-control" id="email" placeholder="Email" required>
+                                    <input type="email" class="form-control" id="email" placeholder="ID Agen (Email)" required>
                                 </div>
                                 <div class="input-group mb-3">
                                     <i class="fas fa-lock form-icon"></i>
-                                    <input type="password" class="form-control" id="password" placeholder="Password" required>
-                                    <!-- PERBAIKAN: ikon mata sekarang berada di dalam div yang lebih besar agar mudah diklik -->
+                                    <input type="password" class="form-control" id="password" placeholder="Kode Akses (Password)" required>
                                     <div class="password-toggle-icon" id="togglePassword">
                                         <i class="fas fa-eye"></i>
                                     </div>
@@ -132,12 +199,12 @@
                                 <div class="input-group mb-4">
                                     <i class="fas fa-users form-icon"></i>
                                     <select class="form-select" id="role" required>
-                                        <option value="siswa" selected>Login sebagai Siswa</option>
-                                        <option value="guru">Login sebagai Guru</option>
+                                        <option value="siswa" selected>Login sebagai Agen (Siswa)</option>
+                                        <option value="guru">Login sebagai Admin (Guru)</option>
                                     </select>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-login text-white btn-lg">LOGIN</button>
+                                    <button type="submit" class="btn btn-login text-white btn-lg">Masuk</button>
                                 </div>
                             </form>
                         </div>
@@ -148,111 +215,73 @@
     </main>
     <footer class="footer"> Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Kelas TKJ SMKN 1 Telagasari © 2025</footer>
     
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
-    const loginForm = document.getElementById('loginForm');
-    const loader = document.getElementById('loader');
-    const appToast = new bootstrap.Toast(document.getElementById('appToast'));
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // TIDAK ADA PERUBAHAN PADA LOGIKA JAVASCRIPT
+        const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
+        const loginForm = document.getElementById('loginForm');
+        const loader = document.getElementById('loader');
+        const appToast = new bootstrap.Toast(document.getElementById('appToast'));
 
-    function showToast(message, title = 'Gagal', type = 'danger') {
-        const toastEl = document.getElementById('appToast');
-        const titleEl = document.getElementById('toastTitle');
-        const bodyEl = document.getElementById('toastBody');
-        const iconEl = toastEl.querySelector('.toast-header i');
-        const headerEl = toastEl.querySelector('.toast-header');
-        const closeBtn = toastEl.querySelector('.btn-close');
-
-        // Reset classes
-        headerEl.classList.remove('bg-success', 'bg-danger', 'text-white');
-        closeBtn.classList.remove('btn-close-white');
-        iconEl.classList.remove('fa-check-circle', 'fa-times-circle');
-        
-        if(type === 'success') {
-            headerEl.classList.add('bg-success', 'text-white');
-            closeBtn.classList.add('btn-close-white');
-            iconEl.classList.add('fa-check-circle');
-        } else { // 'danger'
-            headerEl.classList.add('bg-danger', 'text-white');
-            closeBtn.classList.add('btn-close-white');
-            iconEl.classList.add('fa-times-circle');
-        }
-        
-        titleEl.textContent = title;
-        bodyEl.textContent = message;
-        appToast.show();
-    }
-
-    // Cek jika sudah login, redirect
-    document.addEventListener('DOMContentLoaded', () => {
-        const user = sessionStorage.getItem('currentUser');
-        if(user) {
-            const userData = JSON.parse(user);
-            if(userData.role === 'siswa') window.location.href = 'siswa.html';
-            if(userData.role === 'guru') window.location.href = 'guru.html';
-        }
-
-        // PERBAIKAN: Event listener untuk toggle password
-        const togglePasswordContainer = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        const eyeIcon = togglePasswordContainer.querySelector('i'); // Targetkan ikon di dalamnya
-
-        togglePasswordContainer.addEventListener('click', function () {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            // Ganti ikon mata
-            eyeIcon.classList.toggle('fa-eye');
-            eyeIcon.classList.toggle('fa-eye-slash');
-        });
-    });
-
-    // Handle form submit
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        if (!email || !password) {
-            showToast('Email dan Password tidak boleh kosong.');
-            return;
-        }
-
-        loader.style.display = 'flex';
-        
-        const payload = {
-            action: "login",
-            data: { email, password, role: document.getElementById('role').value }
-        };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                redirect: "follow"
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-
-            if (result.status === 'success' && result.data.status === 'success') {
-                sessionStorage.setItem('currentUser', JSON.stringify(result.data));
-                window.location.href = result.data.role === 'siswa' ? 'siswa.html' : 'guru.html';
+        function showToast(message, title = 'Kegagalan Sistem', type = 'danger') {
+            const toastEl = document.getElementById('appToast');
+            const titleEl = document.getElementById('toastTitle');
+            const bodyEl = document.getElementById('toastBody');
+            const iconEl = toastEl.querySelector('.toast-header i');
+            iconEl.className = 'fas rounded me-2';
+            if(type === 'success') {
+                iconEl.classList.add('fa-check-circle', 'text-success');
             } else {
-                const message = result.data?.message || result.message || 'Terjadi kesalahan saat login.';
-                showToast(message);
+                iconEl.classList.add('fa-times-circle', 'text-danger');
             }
-        } catch (error) {
-            console.error("Login Error:", error);
-            showToast("Gagal terhubung ke server. Periksa koneksi internet Anda.");
-        } finally {
-            loader.style.display = 'none';
+            titleEl.textContent = title;
+            bodyEl.textContent = message;
+            appToast.show();
         }
-    });
-</script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = sessionStorage.getItem('currentUser');
+            if(user) {
+                const userData = JSON.parse(user);
+                if(userData.role === 'siswa') window.location.href = 'siswa.html';
+                if(userData.role === 'guru') window.location.href = 'guru.html';
+            }
+            const togglePasswordContainer = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = togglePasswordContainer.querySelector('i');
+            togglePasswordContainer.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.classList.toggle('fa-eye');
+                eyeIcon.classList.toggle('fa-eye-slash');
+            });
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if (!email || !password) { showToast('ID Agen dan Kode Akses tidak boleh kosong.'); return; }
+            loader.style.display = 'flex';
+            const payload = { action: "login", data: { email, password, role: document.getElementById('role').value } };
+            try {
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), redirect: "follow" });
+                if (!response.ok) { throw new Error(`Error Jaringan: ${response.status}`); }
+                const result = await response.json();
+                if (result.status === 'success' && result.data.status === 'success') {
+                    sessionStorage.setItem('currentUser', JSON.stringify(result.data));
+                    window.location.href = result.data.role === 'siswa' ? 'siswa.html' : 'guru.html';
+                } else {
+                    const message = result.data?.message || result.message || 'Terjadi kesalahan saat otentikasi.';
+                    showToast(message);
+                }
+            } catch (error) {
+                console.error("Login Error:", error);
+                showToast("Gagal terhubung ke server. Periksa koneksi internet Anda.");
+            } finally {
+                loader.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

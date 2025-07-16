@@ -3,67 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dasbor Guru - Jurnal Baca</title>
+    <title>Admin Panel - Project NEXUS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary-color: #6a11cb; --secondary-color: #2575fc; --skeleton-bg: #e0e0e0; }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: #333; display: flex; flex-direction: column; min-height: 100vh; padding-top: 75px; }
+        :root {
+            --dark-bg: #0A0C16;
+            --card-bg: linear-gradient(145deg, #1e223a, #131524);
+            --border-color: rgba(3, 169, 244, 0.3);
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --text-light: #e0e0e0;
+            --text-muted-light: #8b949e;
+            --skeleton-bg: #131524;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 75px;
+        }
+
         .main-content { padding-top: 20px; padding-bottom: 40px; }
-        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1080; }
-        nav.navbar { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .data-card { background: rgba(255, 255, 255, 0.95); border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .nav-pills .nav-link { color: white; }
-        .nav-pills .nav-link.active { background-color: white; color: var(--primary-color); font-weight: 600; }
-        .modal-content { background: #fff; }
-        .jurnal-detail-ringkasan, .target-detail-list { white-space: pre-wrap; background-color: #f8f9fa; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto;}
-        .footer { background: rgba(0, 0, 0, 0.2); color: rgba(255, 255, 255, 0.7); padding: 1rem 0; text-align: center; flex-shrink: 0; }
-        .badge-icon-sm { font-size: 1.1rem; color: #ffc107; }
-        .target-card-guru { background: #f1f3f5; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem;}
-        .target-card-guru .progress { height: 10px; font-size: 0.7rem; }
-        .chart-container { position: relative; height: 350px; }
-        .pagination .page-link { background-color: #fff; border-color: #ddd; color: var(--primary-color); }
-        .pagination .page-item.active .page-link { background-color: var(--primary-color); border-color: var(--primary-color); color: #fff; }
-        .pagination .page-item.disabled .page-link { color: #6c757d; background-color: #e9ecef; }
+        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--dark-bg); display: flex; justify-content: center; align-items: center; z-index: 1080; }
+
+        nav.navbar { background: var(--dark-bg); border-bottom: 1px solid var(--border-color); }
+        .navbar-brand { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+
+        .data-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 1rem; }
+
+        /* Tabs Styling */
+        .nav-pills .nav-link {
+            font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted-light);
+            border-radius: 0;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 4px solid transparent;
+            transition: color .3s ease, border-color .3s ease;
+        }
+        .nav-pills .nav-link:hover { color: #fff; }
+        .nav-pills .nav-link.active {
+            color: #fff;
+            background-color: transparent;
+            border-color: var(--rare-color);
+        }
+
+        /* Modal Styling */
+        .modal-content { background: #131524; border: 1px solid var(--border-color); color: var(--text-light); }
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .modal-footer { border-top: 1px solid var(--border-color); }
+        .form-control, .form-select { background-color: var(--dark-bg) !important; border: 1px solid var(--border-color) !important; color: var(--text-light) !important; border-radius: 8px; }
+        .form-control:focus, .form-select:focus { border-color: var(--rare-color) !important; box-shadow: 0 0 15px var(--rare-glow) !important; }
+        .form-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238b949e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); }
+
+        .jurnal-detail-ringkasan, .target-detail-list { background-color: var(--dark-bg); padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto;}
+
+        .footer { margin-top: auto; padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
         
-        /* Skeleton Loader Styles */
+        /* Table Styling */
+        .table { color: var(--text-light); }
+        .table > :not(caption) > * > * { background-color: transparent; border-bottom-color: var(--border-color); }
+        .table-hover > tbody > tr:hover > * { color: var(--text-light); background-color: rgba(3, 169, 244, 0.1); }
+        
+        /* Button Styling */
+        .btn-primary { background: linear-gradient(90deg, var(--rare-color), var(--epic-color)); border: none; font-weight: 600; }
+        .btn-outline-light { border-color: var(--border-color); color: var(--text-light); }
+        .btn-outline-light:hover { background-color: var(--rare-color); border-color: var(--rare-color); color: #fff; }
+        .btn-success { background-color: #4caf50; border-color: #4caf50; }
+        .btn-info { background-color: var(--rare-color); border-color: var(--rare-color); }
+        .btn-warning { background-color: var(--legendary-color); border-color: var(--legendary-color); color: #000; }
+        
+        .badge-icon-sm { font-size: 1.1rem; color: var(--legendary-color); }
+        .target-card-guru { background: var(--dark-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem;}
+        .target-card-guru .progress { height: 10px; font-size: 0.7rem; background-color: rgba(0,0,0,0.4); }
+        
+        .chart-container { position: relative; height: 350px; }
+        
+        /* Pagination */
+        .pagination .page-link { background-color: transparent; border-color: var(--border-color); color: var(--rare-color); }
+        .pagination .page-item.active .page-link { background-color: var(--rare-color); border-color: var(--rare-color); color: #fff; }
+        .pagination .page-item.disabled .page-link { color: #6c757d; border-color: var(--border-color); }
+        
+        /* Skeleton Loader */
         .skeleton { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
         .skeleton-text { width: 100%; height: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.25rem; background: var(--skeleton-bg); }
         .skeleton-title { width: 40%; height: 1.5rem; margin-bottom: 1rem; background: var(--skeleton-bg); }
-        .skeleton-button { width: 120px; height: 38px; background: var(--skeleton-bg); border-radius: 0.25rem; }
-        .skeleton-card { background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 1.5rem; }
+        .skeleton-card { background: var(--card-bg); border-radius: 1rem; padding: 1.5rem; }
 
-        /* Toast Notification Styles */
+        /* Toast */
         .toast-container { z-index: 1090; }
+        .toast { background-color: #131524; color: var(--text-light); border: 1px solid var(--border-color); }
+        .toast-header { background-color: transparent; border-bottom: 1px solid var(--border-color); }
+        .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
     </style>
 </head>
 <body>
     <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" role="status"></div></div>
     
     <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div>
+        <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div>
     </div>
 
     <div class="d-flex flex-column min-vh-100">
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-            <div class="container-fluid"><a class="navbar-brand" href="#"><i class="fas fa-chalkboard-teacher"></i> Dasbor Guru</a>
-                <div class="d-flex align-items-center"><span class="navbar-text me-3" id="teacherName"></span>
-                    <a href="kupon.html" class="btn btn-outline-light btn-sm me-2">Kelola Kupon</a>
-                    <button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button></div>
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#"><i class="fas fa-user-shield"></i> ADMIN PANEL</a>
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text me-3" id="teacherName"></span>
+                    <a href="kupon.html" class="btn btn-warning btn-sm me-2"><i class="fas fa-ticket-alt me-1"></i> The Vault</a>
+                    <button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
             </div>
         </nav>
         
         <main class="container-fluid main-content flex-grow-1">
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation"><button class="nav-link active" id="stats-tab" data-bs-toggle="pill" data-bs-target="#pills-stats" type="button" data-render-function="renderStats">Statistik</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="jurnal-kelas-tab" data-bs-toggle="pill" data-bs-target="#pills-jurnal-kelas" type="button" data-render-function="renderJurnalPerKelasTab">Laporan per Kelas</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="gamifikasi-tab" data-bs-toggle="pill" data-bs-target="#pills-gamifikasi" type="button" data-render-function="renderGamifikasi">Gamifikasi</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="semua-jurnal-tab" data-bs-toggle="pill" data-bs-target="#pills-semua-jurnal" type="button" data-render-function="renderSemuaJurnal">Semua Jurnal</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="data-siswa-tab" data-bs-toggle="pill" data-bs-target="#pills-siswa" type="button" data-render-function="renderStudentList">Data Siswa</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="data-kelas-tab" data-bs-toggle="pill" data-bs-target="#pills-kelas" type="button" data-render-function="renderClassList">Data Kelas</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-stats" type="button" data-render-function="renderStats">Dashboard</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-jurnal-kelas" type="button" data-render-function="renderJurnalPerKelasTab">Intel per Unit</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-gamifikasi" type="button" data-render-function="renderGamifikasi">Progress Agen</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-semua-jurnal" type="button" data-render-function="renderSemuaJurnal">Semua Log</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-siswa" type="button" data-render-function="renderStudentList">Manajemen Agen</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-kelas" type="button" data-render-function="renderClassList">Manajemen Unit</button></li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-stats"></div>
@@ -75,16 +145,17 @@
             </div>
         </main>
         <footer class="footer text-center p-3"> 
-            Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Kelas TKJ SMKN 1 Telagasari © <a href="kupon.html">2025</a></footer>
+            Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Kelas TKJ SMKN 1 Telagasari © <a href="game-hub.html" class="text-white">2025</a></footer>
     </div>
     
     <!-- Modals -->
-    <div class="modal fade" id="studentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="studentModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="studentForm"><input type="hidden" id="studentId"><div class="mb-3"><label class="form-label">Nama Siswa</label><input type="text" id="studentNameInput" class="form-control" required></div><div class="mb-3"><label class="form-label">Email</label><input type="email" id="studentEmailInput" class="form-control" required></div><div class="mb-3"><label class="form-label">Password</label><input type="text" id="studentPasswordInput" class="form-control" placeholder="Biarkan kosong jika tidak ingin mengubah"></div><div class="mb-3"><label class="form-label">Kelas</label><select id="studentClassInput" class="form-select" required></select></div><button type="submit" class="btn btn-primary w-100">Simpan</button></form></div></div></div></div>
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmTitle">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="confirmMessageText"></p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div></div></div></div>
-    <div class="modal fade" id="jurnalDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="jurnalDetailTitle">Detail</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="jurnalDetailBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button></div></div></div></div>
+    <div class="modal fade" id="studentModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="studentModalTitle"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="studentForm"><input type="hidden" id="studentId"><div class="mb-3"><label class="form-label">Nama Agen</label><input type="text" id="studentNameInput" class="form-control" required></div><div class="mb-3"><label class="form-label">ID (Email)</label><input type="email" id="studentEmailInput" class="form-control" required></div><div class="mb-3"><label class="form-label">Kode Akses (Password)</label><input type="text" id="studentPasswordInput" class="form-control" placeholder="Biarkan kosong jika tidak ingin mengubah"></div><div class="mb-3"><label class="form-label">Unit (Kelas)</label><select id="studentClassInput" class="form-select" required></select></div><button type="submit" class="btn btn-primary w-100">Simpan</button></form></div></div></div></div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmTitle">Konfirmasi</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="confirmMessageText"></p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div></div></div></div>
+    <div class="modal fade" id="jurnalDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="jurnalDetailTitle">Detail Log</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="jurnalDetailBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button></div></div></div></div>
     
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // SEMUA LOGIKA JAVASCRIPT TETAP SAMA DAN TIDAK DIUBAH
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
     let currentUser = null, teacherData = null, studentChart = null, deleteInfo = { type: null, id: null };
     const loader = document.getElementById('loader');
@@ -106,7 +177,7 @@
         myJurnalDetailModal = new bootstrap.Modal(document.getElementById('jurnalDetailModal'));
         appToast = new bootstrap.Toast(document.getElementById('appToast'));
 
-        document.getElementById('teacherName').textContent = `Hai, ${currentUser.user.nama}!`;
+        document.getElementById('teacherName').textContent = `Admin: ${currentUser.user.nama}`;
         setupEventListeners();
         loadInitialData();
     });
@@ -121,10 +192,8 @@
             tab.addEventListener('shown.bs.tab', (event) => {
                 const targetEl = event.target;
                 const container = document.querySelector(targetEl.getAttribute('data-bs-target'));
-                
                 if (!container.getAttribute('data-rendered')) {
                     renderLoadingSkeleton(container, targetEl.id);
-                    // Use a small timeout to let the browser render the skeleton before heavy work
                     setTimeout(() => {
                         const renderFunction = window[targetEl.getAttribute('data-render-function')];
                         if (typeof renderFunction === 'function') {
@@ -175,65 +244,39 @@
             teacherData.allTargets = allTargets || [];
             teacherData.allStudentBadges = allStudentBadges || [];
         } else {
-            teacherData = null; // Ensure teacherData is null on failure
+            teacherData = null;
         }
     }
+    
+    function debounce(func, delay) { let timeout; return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; }
+    const debouncedSearch = debounce((tableId) => { updatePaginatedView(tableId, { resetPage: true }); }, 300);
 
-    // --- DEBOUNCE FUNCTION ---
-    function debounce(func, delay) {
-        let timeout;
-        return function(...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
-
-    const debouncedSearch = debounce((tableId) => {
-        updatePaginatedView(tableId, { resetPage: true });
-    }, 300);
-
-    // --- RENDER & HELPER FUNCTIONS ---
     function renderLoadingSkeleton(container, tabId) {
         let skeletonHtml = '<div class="card data-card skeleton-card"><div class="skeleton skeleton-title"></div>';
         if (tabId === 'stats-tab') {
             skeletonHtml += '<div class="row"><div class="col-lg-7"><div class="skeleton" style="width:100%; height: 350px; border-radius: 1rem;"></div></div><div class="col-lg-5"><div class="skeleton-text" style="height: 2rem;"></div><div class="skeleton-text" style="height: 2rem;"></div><div class="skeleton-text" style="height: 2rem;"></div></div></div>';
         } else {
             skeletonHtml += '<div class="row mb-3"><div class="col-md-4"><div class="skeleton-text" style="height: 2rem;"></div></div><div class="col-md-4"><div class="skeleton-text" style="height: 2rem;"></div></div></div>';
-            for (let i = 0; i < 5; i++) {
-                skeletonHtml += '<div class="skeleton-text mb-2" style="height: 2.5rem;"></div>';
-            }
+            for (let i = 0; i < 5; i++) { skeletonHtml += '<div class="skeleton-text mb-2" style="height: 2.5rem;"></div>'; }
         }
         skeletonHtml += '</div>';
         container.innerHTML = skeletonHtml;
     }
 
-    function showToast(message, title = 'Notifikasi', type = 'success') {
-        const toastEl = document.getElementById('appToast');
-        const titleEl = document.getElementById('toastTitle');
-        const bodyEl = document.getElementById('toastBody');
-        const iconEl = toastEl.querySelector('.toast-header i');
-        const headerEl = toastEl.querySelector('.toast-header');
-        const closeBtn = toastEl.querySelector('.btn-close');
-        headerEl.classList.remove('bg-success', 'bg-danger', 'text-white');
-        closeBtn.classList.remove('btn-close-white');
-        iconEl.classList.remove('fa-check-circle', 'fa-times-circle');
+    function showToast(message, title = 'Notifikasi Sistem', type = 'success') {
+        const toastEl = document.getElementById('appToast'), titleEl = document.getElementById('toastTitle'), bodyEl = document.getElementById('toastBody'), iconEl = toastEl.querySelector('.toast-header i');
+        iconEl.className = 'fas rounded me-2';
         if(type === 'success') {
-            headerEl.classList.add('bg-success', 'text-white');
-            closeBtn.classList.add('btn-close-white');
-            iconEl.classList.add('fa-check-circle');
+            iconEl.classList.add('fa-check-circle', 'text-success');
         } else {
-            headerEl.classList.add('bg-danger', 'text-white');
-            closeBtn.classList.add('btn-close-white');
-            iconEl.classList.add('fa-times-circle');
+            iconEl.classList.add('fa-times-circle', 'text-danger');
         }
-        titleEl.textContent = title;
-        bodyEl.textContent = message;
-        appToast.show();
+        titleEl.textContent = title; bodyEl.textContent = message; appToast.show();
     }
     
     function renderStats() {
         const container = document.getElementById('pills-stats');
-        container.innerHTML = `<div class="row"><div class="col-lg-7 mb-4"><div class="card data-card h-100"><div class="card-body"><h5 class="card-title">Siswa Paling Aktif (Halaman Dibaca)</h5><div class="chart-container"><canvas id="studentChart"></canvas></div></div></div></div><div class="col-lg-5 mb-4"><div class="card data-card h-100"><div class="card-body"><h5 class="card-title">Tabel Peringkat 5 Besar</h5><div class="table-responsive"><table class="table table-striped table-hover"><thead><tr><th>Peringkat</th><th>Nama Siswa</th><th>Buku Unik</th><th>Total Halaman</th></tr></thead><tbody id="leaderboardTable"></tbody></table></div></div></div></div></div>`;
+        container.innerHTML = `<div class="row"><div class="col-lg-7 mb-4"><div class="card data-card h-100"><div class="card-body"><h5 class="card-title" style="font-family: 'Oswald', sans-serif;">Agen Paling Aktif (Total Data)</h5><div class="chart-container"><canvas id="studentChart"></canvas></div></div></div></div><div class="col-lg-5 mb-4"><div class="card data-card h-100"><div class="card-body"><h5 class="card-title" style="font-family: 'Oswald', sans-serif;">Peringkat 5 Besar Agen</h5><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th>Nama Agen</th><th>Packet</th><th>Total Data</th></tr></thead><tbody id="leaderboardTable"></tbody></table></div></div></div></div></div>`;
         if (!teacherData || !teacherData.students) return;
         const studentStats = {};
         teacherData.students.forEach(s => { studentStats[s.nama] = { totalPages: 0, uniqueBooks: new Set() }; });
@@ -244,7 +287,9 @@
         const data = top5.map(item => item.totalPages);
         const ctx = document.getElementById('studentChart').getContext('2d');
         if (studentChart) studentChart.destroy();
-        studentChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: '# Halaman Dibaca', data, backgroundColor: 'rgba(75, 192, 192, 0.5)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 }] }, options: { scales: { y: { beginAtZero: true } }, responsive: true, maintainAspectRatio: false } });
+        Chart.defaults.color = 'rgba(224, 224, 224, 0.7)';
+        Chart.defaults.borderColor = 'rgba(224, 224, 224, 0.1)';
+        studentChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Total Data', data, backgroundColor: 'rgba(3, 169, 244, 0.5)', borderColor: 'rgba(3, 169, 244, 1)', borderWidth: 1 }] }, options: { indexAxis: 'y', scales: { x: { beginAtZero: true } }, responsive: true, maintainAspectRatio: false } });
         const tableBody = document.getElementById('leaderboardTable');
         tableBody.innerHTML = '';
         top5.forEach((student, index) => {
@@ -254,10 +299,10 @@
 
     function renderJurnalPerKelasTab() {
         const container = document.getElementById('pills-jurnal-kelas');
-        container.innerHTML = `<div class="card data-card"><div class="card-body"><h5 class="card-title">Laporan Aktivitas Membaca per Kelas</h5><div class="row g-3 align-items-end mb-4 border-bottom pb-3"><div class="col-md-5"><label for="selectKelasForReport" class="form-label">Pilih Kelas:</label><select id="selectKelasForReport" class="form-select"></select></div><div class="col-md-3"><label for="startDate" class="form-label">Tanggal Mulai:</label><input type="date" id="startDate" class="form-control"></div><div class="col-md-3"><label for="endDate" class="form-label">Tanggal Akhir:</label><input type="date" id="endDate" class="form-control"></div><div class="col-md-1"><button id="resetDateFilter" class="btn btn-outline-secondary w-100" title="Reset Filter"><i class="fas fa-times"></i></button></div></div><div id="classReportContainer" class="d-none"><h6 id="classReportTitle"></h6><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama Siswa</th><th>Buku Unik (Periode ini)</th><th>Total Halaman (Periode ini)</th><th>Aksi</th></tr></thead><tbody id="classReportTable"></tbody></table></div></div></div></div>`;
+        container.innerHTML = `<div class="card data-card"><div class="card-body"><h5 class="card-title" style="font-family: 'Oswald', sans-serif;">Intel Aktivitas per Unit</h5><div class="row g-3 align-items-end mb-4 border-bottom pb-3" style="border-color: var(--border-color) !important;"><div class="col-md-5"><label for="selectKelasForReport" class="form-label">Pilih Unit:</label><select id="selectKelasForReport" class="form-select"></select></div><div class="col-md-3"><label for="startDate" class="form-label">Tanggal Mulai:</label><input type="date" id="startDate" class="form-control"></div><div class="col-md-3"><label for="endDate" class="form-label">Tanggal Akhir:</label><input type="date" id="endDate" class="form-control"></div><div class="col-md-1"><button id="resetDateFilter" class="btn btn-outline-secondary w-100" title="Reset Filter"><i class="fas fa-times"></i></button></div></div><div id="classReportContainer" class="d-none"><h6>Laporan untuk Unit: <span id="classReportTitle"></span></h6><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama Agen</th><th>Packet Unik</th><th>Total Data</th><th>Aksi</th></tr></thead><tbody id="classReportTable"></tbody></table></div></div></div></div>`;
         if (!teacherData) return;
         const select = document.getElementById('selectKelasForReport');
-        select.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+        select.innerHTML = '<option value="">-- Pilih Unit --</option>';
         teacherData.classes.forEach(c => { select.innerHTML += `<option value="${c}">${c}</option>`; });
         select.addEventListener('change', showClassReport);
         document.getElementById('startDate').addEventListener('change', showClassReport);
@@ -265,7 +310,6 @@
         document.getElementById('resetDateFilter').addEventListener('click', () => { document.getElementById('startDate').value = ''; document.getElementById('endDate').value = ''; showClassReport(); });
     }
 
-    // --- PAGINATION & SEARCH LOGIC ---
     function renderPaginatedTableBody(config) {
         const tableBody = document.getElementById(`${config.tableId}TableBody`);
         const paginationContainer = document.getElementById(`${config.tableId}Pagination`);
@@ -297,35 +341,26 @@
         }
     }
 
-    function changePage(tableId, page) {
-        if (paginationState[tableId]) {
-            paginationState[tableId].currentPage = page;
-            updatePaginatedView(tableId);
-        }
-    }
+    function changePage(tableId, page) { if (paginationState[tableId]) { paginationState[tableId].currentPage = page; updatePaginatedView(tableId); } }
 
     function updatePaginatedView(tableId, options = {}) {
         if (!teacherData) return;
-        
         const state = paginationState[tableId] = paginationState[tableId] || {};
         if (options.resetPage) state.currentPage = 1;
-        
         const searchInput = document.getElementById(`${tableId}Search`);
         const filterDropdown = document.getElementById(`filterKelas${tableId.charAt(0).toUpperCase() + tableId.slice(1)}`);
-        
         state.searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
         state.filterValue = filterDropdown ? filterDropdown.value : 'all';
-
         let config = {};
         switch (tableId) {
             case 'gamifikasi':
-                config = { tableId, data: teacherData.students, columns: ['Nama Siswa', 'Kelas', 'Lencana', 'Target Aktif', 'Aksi'], rowGenerator: (s) => `<tr><td>${s.nama}</td><td>${s.kelas}</td><td>${teacherData.allStudentBadges.filter(b=>b.email===s.email).map(b=>(ALL_BADGES[b.badgeId]?`<i class="fas ${ALL_BADGES[b.badgeId].icon} badge-icon-sm me-2" title="${ALL_BADGES[b.badgeId].name}"></i>`:'')).join('')||'<small class="text-muted">-</small>'}</td><td>${teacherData.allTargets.filter(t=>t.email===s.email && t.status==='Aktif').length} Target</td><td><button class="btn btn-sm btn-outline-primary py-0" onclick="showStudentGamifikasi('${s.email}')">Lihat</button></td></tr>`, filterFunction: (i, term, filter) => (filter === 'all' || i.kelas === filter) && i.nama.toLowerCase().includes(term), initialSort: (a, b) => a.nama.localeCompare(b.nama) };
+                config = { tableId, data: teacherData.students, columns: ['Nama Agen', 'Unit', 'Lencana', 'Target Aktif', 'Aksi'], rowGenerator: (s) => `<tr><td>${s.nama}</td><td>${s.kelas}</td><td>${teacherData.allStudentBadges.filter(b=>b.email===s.email).map(b=>(ALL_BADGES[b.badgeId]?`<i class="fas ${ALL_BADGES[b.badgeId].icon} badge-icon-sm me-2" title="${ALL_BADGES[b.badgeId].name}"></i>`:'')).join('')||'<small class="text-muted">-</small>'}</td><td>${teacherData.allTargets.filter(t=>t.email===s.email && t.status==='Aktif').length} Target</td><td><button class="btn btn-sm btn-info py-0" onclick="showStudentGamifikasi('${s.email}')">Lihat</button></td></tr>`, filterFunction: (i, term, filter) => (filter === 'all' || i.kelas === filter) && i.nama.toLowerCase().includes(term), initialSort: (a, b) => a.nama.localeCompare(b.nama) };
                 break;
             case 'semuaJurnal':
-                config = { tableId, data: teacherData.journals, columns: ['Tanggal', 'Siswa', 'Kelas', 'Judul Buku', 'Aksi'], rowGenerator: (j) => `<tr><td>${j.tanggalBaca}</td><td>${j.namaSiswa}</td><td>${j.kelasSiswa}</td><td>${j.judulBuku}</td><td><button class="btn btn-sm btn-info" onclick="showJurnalDetail('${j.idJurnal}')"><i class="fas fa-eye"></i></button> <button class="btn btn-sm btn-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}', 'jurnal ini')"><i class="fas fa-trash"></i></button></td></tr>`, filterFunction: (i, term, filter) => (filter === 'all' || i.kelasSiswa === filter) && ((i.namaSiswa||'').toLowerCase().includes(term) || (i.judulBuku||'').toLowerCase().includes(term)), initialSort: (a, b) => parseDate(b.tanggalBaca) - parseDate(a.tanggalBaca) };
+                config = { tableId, data: teacherData.journals, columns: ['Tanggal', 'Agen', 'Unit', 'Judul Data Packet', 'Aksi'], rowGenerator: (j) => `<tr><td>${j.tanggalBaca}</td><td>${j.namaSiswa}</td><td>${j.kelasSiswa}</td><td>${j.judulBuku}</td><td><button class="btn btn-sm btn-info" onclick="showJurnalDetail('${j.idJurnal}')"><i class="fas fa-eye"></i></button> <button class="btn btn-sm btn-danger" onclick="showConfirmDeleteModal('journal', '${j.idJurnal}', 'log ini')"><i class="fas fa-trash"></i></button></td></tr>`, filterFunction: (i, term, filter) => (filter === 'all' || i.kelasSiswa === filter) && ((i.namaSiswa||'').toLowerCase().includes(term) || (i.judulBuku||'').toLowerCase().includes(term)), initialSort: (a, b) => parseDate(b.tanggalBaca) - parseDate(a.tanggalBaca) };
                 break;
             case 'studentList':
-                config = { tableId, data: teacherData.students, columns: ['Nama', 'Email', 'Kelas', 'Aksi'], rowGenerator: (s) => `<tr><td>${s.nama}</td><td>${s.email}</td><td>${s.kelas}</td><td><button class="btn btn-sm btn-warning" onclick="editStudent('${s.idSiswa}')"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-danger" onclick="showConfirmDeleteModal('student', '${s.idSiswa}', 'siswa \\'${s.nama}\\'')"><i class="fas fa-trash"></i></button></td></tr>`, filterFunction: (i, term) => i.nama.toLowerCase().includes(term) || i.email.toLowerCase().includes(term), initialSort: (a, b) => a.nama.localeCompare(b.nama) };
+                config = { tableId, data: teacherData.students, columns: ['Nama', 'Email', 'Unit', 'Aksi'], rowGenerator: (s) => `<tr><td>${s.nama}</td><td>${s.email}</td><td>${s.kelas}</td><td><button class="btn btn-sm btn-warning" onclick="editStudent('${s.idSiswa}')"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-danger" onclick="showConfirmDeleteModal('student', '${s.idSiswa}', 'agen \\'${s.nama}\\'')"><i class="fas fa-trash"></i></button></td></tr>`, filterFunction: (i, term) => i.nama.toLowerCase().includes(term) || i.email.toLowerCase().includes(term), initialSort: (a, b) => a.nama.localeCompare(b.nama) };
                 break;
         }
         if (Object.keys(config).length > 0) renderPaginatedTableBody(config);
@@ -342,8 +377,8 @@
         renderShell({
             containerId: 'pills-gamifikasi', tableId: 'gamifikasi',
             shellHtml: `<div class="card data-card"><div class="card-body">
-                <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center"><div class="col-md-auto"><h5 class="card-title mb-0">Pantau Pencapaian</h5></div><div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="gamifikasiSearch" placeholder="Cari nama siswa..."></div><div class="col-md-4 col-lg-3"><select id="filterKelasGamifikasi" class="form-select form-select-sm"><option value="all">Semua Kelas</option></select></div></div>
-                <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama Siswa</th><th>Kelas</th><th>Lencana</th><th>Target Aktif</th><th>Aksi</th></tr></thead><tbody id="gamifikasiTableBody"></tbody></table></div><nav id="gamifikasiPagination" class="mt-3"></nav></div></div>`,
+                <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center"><div class="col-md-auto"><h5 class="card-title mb-0" style="font-family: 'Oswald', sans-serif;">Pantau Progress Agen</h5></div><div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="gamifikasiSearch" placeholder="Cari nama agen..."></div><div class="col-md-4 col-lg-3"><select id="filterKelasGamifikasi" class="form-select form-select-sm"><option value="all">Semua Unit</option></select></div></div>
+                <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama Agen</th><th>Unit</th><th>Lencana</th><th>Target Aktif</th><th>Aksi</th></tr></thead><tbody id="gamifikasiTableBody"></tbody></table></div><nav id="gamifikasiPagination" class="mt-3"></nav></div></div>`,
             initFunction: () => {
                 const filterDropdown = document.getElementById('filterKelasGamifikasi');
                 if (teacherData && teacherData.classes) teacherData.classes.forEach(c => { filterDropdown.innerHTML += `<option value="${c}">${c}</option>`; });
@@ -357,8 +392,8 @@
         renderShell({
             containerId: 'pills-semua-jurnal', tableId: 'semuaJurnal',
             shellHtml: `<div class="card data-card"><div class="card-body">
-                <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center"><div class="col-md-auto"><h5 class="card-title mb-0">Semua Jurnal</h5></div><div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="semuaJurnalSearch" placeholder="Cari judul atau siswa..."></div><div class="col-md-4 col-lg-3"><select id="filterKelasSemuaJurnal" class="form-select form-select-sm"><option value="all">Semua Kelas</option></select></div></div>
-                <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Judul Buku</th><th>Aksi</th></tr></thead><tbody id="semuaJurnalTableBody"></tbody></table></div><nav id="semuaJurnalPagination" class="mt-3"></nav></div></div>`,
+                <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center"><div class="col-md-auto"><h5 class="card-title mb-0" style="font-family: 'Oswald', sans-serif;">Semua Log Intel</h5></div><div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="semuaJurnalSearch" placeholder="Cari judul atau agen..."></div><div class="col-md-4 col-lg-3"><select id="filterKelasSemuaJurnal" class="form-select form-select-sm"><option value="all">Semua Unit</option></select></div></div>
+                <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Tanggal</th><th>Agen</th><th>Unit</th><th>Judul Data Packet</th><th>Aksi</th></tr></thead><tbody id="semuaJurnalTableBody"></tbody></table></div><nav id="semuaJurnalPagination" class="mt-3"></nav></div></div>`,
             initFunction: () => {
                 const filterDropdown = document.getElementById('filterKelasSemuaJurnal');
                 if (teacherData && teacherData.classes) teacherData.classes.forEach(c => { filterDropdown.innerHTML += `<option value="${c}">${c}</option>`; });
@@ -372,8 +407,8 @@
         renderShell({
             containerId: 'pills-siswa', tableId: 'studentList',
             shellHtml: `<div class="card data-card"><div class="card-body">
-                <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center"><div class="col-md-auto"><h5 class="card-title mb-0">Data Siswa</h5></div><div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="studentListSearch" placeholder="Cari nama atau email..."></div><div class="col-md-auto text-end flex-grow-1"><button class="btn btn-success btn-sm" id="addStudentBtn"><i class="fas fa-user-plus"></i> Tambah Siswa</button></div></div>
-                <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama</th><th>Email</th><th>Kelas</th><th>Aksi</th></tr></thead><tbody id="studentListTableBody"></tbody></table></div><nav id="studentListPagination" class="mt-3"></nav></div></div>`,
+                <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center"><div class="col-md-auto"><h5 class="card-title mb-0" style="font-family: 'Oswald', sans-serif;">Manajemen Agen</h5></div><div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="studentListSearch" placeholder="Cari nama atau email..."></div><div class="col-md-auto text-end flex-grow-1"><button class="btn btn-success btn-sm" id="addStudentBtn"><i class="fas fa-user-plus"></i> Rekrut Agen</button></div></div>
+                <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Nama</th><th>Email</th><th>Unit</th><th>Aksi</th></tr></thead><tbody id="studentListTableBody"></tbody></table></div><nav id="studentListPagination" class="mt-3"></nav></div></div>`,
             initFunction: () => {
                 document.getElementById('addStudentBtn').addEventListener('click', showAddStudentModal);
                 document.getElementById('studentListSearch').addEventListener('input', () => debouncedSearch('studentList'));
@@ -381,30 +416,29 @@
         });
     }
 
-    // --- ALL OTHER UNCHANGED FUNCTIONS ---
     function renderClassList() {
         const container = document.getElementById('pills-kelas');
-        container.innerHTML = `<div class="card data-card"><div class="card-body"><div class="input-group mb-3"><input type="text" id="newClassName" class="form-control" placeholder="Nama Kelas Baru"><button class="btn btn-success" id="addClassBtn"><i class="fas fa-plus"></i> Tambah</button></div><ul id="classList" class="list-group"></ul></div></div>`;
+        container.innerHTML = `<div class="card data-card"><div class="card-body"><h5 class="card-title" style="font-family: 'Oswald', sans-serif;">Manajemen Unit</h5><div class="input-group mb-3"><input type="text" id="newClassName" class="form-control" placeholder="Nama Unit Baru"><button class="btn btn-success" id="addClassBtn"><i class="fas fa-plus"></i> Tambah</button></div><ul id="classList" class="list-group"></ul></div></div>`;
         if (!teacherData) return;
         document.getElementById('addClassBtn').addEventListener('click', addClass);
         const list = document.getElementById('classList');
         list.innerHTML = '';
-        teacherData.classes.sort().forEach(c => { list.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center">${c}<button class="btn btn-sm btn-outline-danger" onclick="showConfirmDeleteModal('class', '${c}', 'kelas \\'${c}\\'')"><i class="fas fa-trash"></i></button></li>`; });
+        teacherData.classes.sort().forEach(c => { list.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-light border-secondary">${c}<button class="btn btn-sm btn-outline-danger" onclick="showConfirmDeleteModal('class', '${c}', 'unit \\'${c}\\'')"><i class="fas fa-trash"></i></button></li>`; });
     }
     function parseDate(dateString) { if (!dateString || typeof dateString !== 'string') return null; const parts = dateString.split('/'); if (parts.length !== 3) return null; return new Date(parts[2], parts[1] - 1, parts[0]); }
-    function showClassReport() { if (!teacherData) return; const selectedClass = document.getElementById('selectKelasForReport').value; const container = document.getElementById('classReportContainer'); if (!selectedClass) { container.classList.add('d-none'); return; } container.classList.remove('d-none'); document.getElementById('classReportTitle').textContent = `Menampilkan Laporan untuk Kelas: ${selectedClass}`; const startDateString = document.getElementById('startDate').value; const endDateString = document.getElementById('endDate').value; let dateFilteredJournals = teacherData.journals; if (startDateString && endDateString) { const startDate = new Date(startDateString); startDate.setHours(0, 0, 0, 0); const endDate = new Date(endDateString); endDate.setHours(23, 59, 59, 999); dateFilteredJournals = teacherData.journals.filter(j => { const journalDate = parseDate(j.tanggalBaca); return journalDate && journalDate >= startDate && journalDate <= endDate; }); } const studentsInClass = teacherData.students.filter(s => s.kelas === selectedClass); const reportData = studentsInClass.map(student => { const studentJournalsInPeriod = dateFilteredJournals.filter(j => j.namaSiswa === student.nama); const uniqueBooksInPeriod = new Set(studentJournalsInPeriod.map(j => (j.judulBuku || "").trim()).filter(Boolean)); const totalHalamanInPeriod = studentJournalsInPeriod.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); return { nama: student.nama, totalBuku: uniqueBooksInPeriod.size, totalHalaman: totalHalamanInPeriod }; }); const tableBody = document.getElementById('classReportTable'); tableBody.innerHTML = ''; if(reportData.length === 0) { tableBody.innerHTML = `<tr><td colspan="4" class="text-center">Tidak ada siswa di kelas ini.</td></tr>`; return; } reportData.sort((a,b) => b.totalHalaman - a.totalHalaman).forEach(data => { tableBody.innerHTML += `<tr><td>${data.nama}</td><td>${data.totalBuku}</td><td>${data.totalHalaman}</td><td><button class="btn btn-sm btn-outline-primary" onclick="showStudentJournals('${data.nama}')">Lihat Jurnal</button></td></tr>`; }); }
-    function showJurnalDetail(idJurnal) { const jurnal = teacherData.journals.find(j => j.idJurnal === idJurnal); if(!jurnal) return; const detailBody = document.getElementById('jurnalDetailBody'); const modalTitle = document.getElementById('jurnalDetailTitle'); detailBody.innerHTML = `<div class="row"><div class="col-md-9"><h3>${jurnal.judulBuku}</h3><p class="text-muted">oleh <strong>${jurnal.penulis}</strong></p><hr><p><strong>Dibaca oleh:</strong> ${jurnal.namaSiswa} (${jurnal.kelasSiswa})</p><p><strong>Tanggal Baca:</strong> ${jurnal.tanggalBaca}</p><p><strong>Halaman Dibaca:</strong> ${jurnal.halaman}</p></div><div class="col-md-3 text-center"><p class="mb-0"><strong>Mood:</strong></p><div class="jurnal-detail-mood">${jurnal.mood || 'N/A'}</div></div></div><div class="mt-3"><h5>Ringkasan:</h5><div class="jurnal-detail-ringkasan">${jurnal.ringkasan}</div></div>`; modalTitle.textContent = 'Detail Jurnal'; myJurnalDetailModal.show(); }
-    function showStudentJournals(studentName) { const startDateString = document.getElementById('startDate').value; const endDateString = document.getElementById('endDate').value; let studentJournals = teacherData.journals.filter(j => j.namaSiswa === studentName); if (startDateString && endDateString) { const startDate = new Date(startDateString); startDate.setHours(0, 0, 0, 0); const endDate = new Date(endDateString); endDate.setHours(23, 59, 59, 999); studentJournals = studentJournals.filter(j => { const journalDate = parseDate(j.tanggalBaca); return journalDate && journalDate >= startDate && journalDate <= endDate; }); } document.getElementById('jurnalDetailTitle').textContent = `Jurnal oleh ${studentName}`; let detailHTML = `<h5>Total Entri: ${studentJournals.length}</h5><hr>`; if(studentJournals.length === 0) { detailHTML += '<p>Siswa ini tidak memiliki jurnal dalam rentang tanggal yang dipilih.</p>'; } else { studentJournals.sort((a, b) => parseDate(b.tanggalBaca) - parseDate(a.tanggalBaca)); studentJournals.forEach(j => { detailHTML += `<div class="mb-3 p-2 border rounded"><strong>${j.judulBuku}</strong><br><small>${j.tanggalBaca} - ${j.halaman} halaman</small></div>`; }); } document.getElementById('jurnalDetailBody').innerHTML = detailHTML; myJurnalDetailModal.show(); }
-    function showStudentGamifikasi(studentEmail) { const student = teacherData.students.find(s => s.email === studentEmail); if (!student) return; const studentJournals = teacherData.journals.filter(j => j.namaSiswa === student.nama && j.kelasSiswa === student.kelas); const totalPages = studentJournals.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); const uniqueBooks = new Set(studentJournals.map(j => (j.judulBuku || "").trim()).filter(Boolean)); let detailHTML = '<h4><i class="fas fa-award me-2 text-warning"></i>Lencana yang Diraih</h4>'; const studentBadges = teacherData.allStudentBadges.filter(b => b.email === studentEmail); if (studentBadges.length > 0) { detailHTML += '<div class="d-flex flex-wrap">'; studentBadges.forEach(b => { const badgeInfo = ALL_BADGES[b.badgeId]; if (badgeInfo) { detailHTML += `<div class="text-center p-2"><i class="fas ${badgeInfo.icon} fa-2x text-warning"></i><br><small>${badgeInfo.name}</small></div>`; } }); detailHTML += '</div>'; } else { detailHTML += '<p class="text-muted">Belum ada lencana yang diraih.</p>'; } detailHTML += '<hr class="my-4">'; detailHTML += '<h4><i class="fas fa-bullseye me-2 text-primary"></i>Target Aktif</h4>'; const activeTargets = teacherData.allTargets.filter(t => t.email === studentEmail && t.status === 'Aktif'); if(activeTargets.length > 0) { detailHTML += '<div class="target-detail-list">'; activeTargets.forEach(target => { let currentProgress = target.type.toLowerCase() === 'halaman' ? totalPages : uniqueBooks.size; const goal = parseInt(target.targetValue) || 1; const progressPercent = Math.min(Math.round((currentProgress / goal) * 100), 100); detailHTML += `<div class="target-card-guru"><div><strong>${target.title || `Target: ${goal} ${target.type}`}</strong></div><small>Progress: ${currentProgress} / ${goal}</small><div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: ${progressPercent}%" aria-valuenow="${progressPercent}">${progressPercent}%</div></div></div>`; }); detailHTML += '</div>'; } else { detailHTML += '<p class="text-muted">Tidak ada target aktif saat ini.</p>'; } detailHTML += '<hr class="my-4">'; detailHTML += '<h4><i class="fas fa-history me-2 text-secondary"></i>Riwayat Target Selesai</h4>'; const completedTargets = teacherData.allTargets.filter(t => t.email === studentEmail && t.status === 'Selesai'); if (completedTargets.length > 0) { detailHTML += '<ul class="list-group list-group-flush">'; completedTargets.forEach(target => { detailHTML += `<li class="list-group-item d-flex justify-content-between align-items-center"><div><strong>${target.title || `Target: ${target.targetValue} ${target.type}`}</strong><br><small class="text-muted">Status: Selesai</small></div><i class="fas fa-check-circle text-success fa-2x"></i></li>`; }); detailHTML += '</ul>'; } else { detailHTML += '<p class="text-muted">Belum ada target yang diselesaikan.</p>'; } document.getElementById('jurnalDetailTitle').textContent = `Progress Gamifikasi: ${student.nama}`; document.getElementById('jurnalDetailBody').innerHTML = detailHTML; myJurnalDetailModal.show(); }
+    function showClassReport() { if (!teacherData) return; const selectedClass = document.getElementById('selectKelasForReport').value; const container = document.getElementById('classReportContainer'); if (!selectedClass) { container.classList.add('d-none'); return; } container.classList.remove('d-none'); document.getElementById('classReportTitle').textContent = `${selectedClass}`; const startDateString = document.getElementById('startDate').value; const endDateString = document.getElementById('endDate').value; let dateFilteredJournals = teacherData.journals; if (startDateString && endDateString) { const startDate = new Date(startDateString); startDate.setHours(0, 0, 0, 0); const endDate = new Date(endDateString); endDate.setHours(23, 59, 59, 999); dateFilteredJournals = teacherData.journals.filter(j => { const journalDate = parseDate(j.tanggalBaca); return journalDate && journalDate >= startDate && journalDate <= endDate; }); } const studentsInClass = teacherData.students.filter(s => s.kelas === selectedClass); const reportData = studentsInClass.map(student => { const studentJournalsInPeriod = dateFilteredJournals.filter(j => j.namaSiswa === student.nama); const uniqueBooksInPeriod = new Set(studentJournalsInPeriod.map(j => (j.judulBuku || "").trim()).filter(Boolean)); const totalHalamanInPeriod = studentJournalsInPeriod.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); return { nama: student.nama, totalBuku: uniqueBooksInPeriod.size, totalHalaman: totalHalamanInPeriod }; }); const tableBody = document.getElementById('classReportTable'); tableBody.innerHTML = ''; if(reportData.length === 0) { tableBody.innerHTML = `<tr><td colspan="4" class="text-center">Tidak ada agen di unit ini.</td></tr>`; return; } reportData.sort((a,b) => b.totalHalaman - a.totalHalaman).forEach(data => { tableBody.innerHTML += `<tr><td>${data.nama}</td><td>${data.totalBuku}</td><td>${data.totalHalaman}</td><td><button class="btn btn-sm btn-outline-info" onclick="showStudentJournals('${data.nama}')">Lihat Log</button></td></tr>`; }); }
+    function showJurnalDetail(idJurnal) { const jurnal = teacherData.journals.find(j => j.idJurnal === idJurnal); if(!jurnal) return; const detailBody = document.getElementById('jurnalDetailBody'); const modalTitle = document.getElementById('jurnalDetailTitle'); detailBody.innerHTML = `<div class="row"><div class="col-md-9"><h3>${jurnal.judulBuku}</h3><p class="text-muted">oleh <strong>${jurnal.penulis}</strong></p><hr><p><strong>Dilaporkan oleh:</strong> ${jurnal.namaSiswa} (${jurnal.kelasSiswa})</p><p><strong>Tanggal Lapor:</strong> ${jurnal.tanggalBaca}</p><p><strong>Jumlah Data:</strong> ${jurnal.halaman}</p></div><div class="col-md-3 text-center"><p class="mb-0"><strong>Mood:</strong></p><div class="fs-1">${jurnal.mood || 'N/A'}</div></div></div><div class="mt-3"><h5>Intisari:</h5><div class="jurnal-detail-ringkasan">${jurnal.ringkasan}</div></div>`; modalTitle.textContent = 'Detail Log'; myJurnalDetailModal.show(); }
+    function showStudentJournals(studentName) { const startDateString = document.getElementById('startDate').value; const endDateString = document.getElementById('endDate').value; let studentJournals = teacherData.journals.filter(j => j.namaSiswa === studentName); if (startDateString && endDateString) { const startDate = new Date(startDateString); startDate.setHours(0, 0, 0, 0); const endDate = new Date(endDateString); endDate.setHours(23, 59, 59, 999); studentJournals = studentJournals.filter(j => { const journalDate = parseDate(j.tanggalBaca); return journalDate && journalDate >= startDate && journalDate <= endDate; }); } document.getElementById('jurnalDetailTitle').textContent = `Log oleh ${studentName}`; let detailHTML = `<h5>Total Log: ${studentJournals.length}</h5><hr>`; if(studentJournals.length === 0) { detailHTML += '<p>Agen ini tidak memiliki log dalam rentang tanggal yang dipilih.</p>'; } else { studentJournals.sort((a, b) => parseDate(b.tanggalBaca) - parseDate(a.tanggalBaca)); studentJournals.forEach(j => { detailHTML += `<div class="mb-3 p-2 border rounded border-secondary"><strong>${j.judulBuku}</strong><br><small>${j.tanggalBaca} - ${j.halaman} data</small></div>`; }); } document.getElementById('jurnalDetailBody').innerHTML = detailHTML; myJurnalDetailModal.show(); }
+    function showStudentGamifikasi(studentEmail) { const student = teacherData.students.find(s => s.email === studentEmail); if (!student) return; const studentJournals = teacherData.journals.filter(j => j.namaSiswa === student.nama && j.kelasSiswa === student.kelas); const totalPages = studentJournals.reduce((sum, j) => sum + (parseInt(j.halaman) || 0), 0); const uniqueBooks = new Set(studentJournals.map(j => (j.judulBuku || "").trim()).filter(Boolean)); let detailHTML = '<h4><i class="fas fa-award me-2" style="color:var(--legendary-color)"></i>Lencana Diraih</h4>'; const studentBadges = teacherData.allStudentBadges.filter(b => b.email === studentEmail); if (studentBadges.length > 0) { detailHTML += '<div class="d-flex flex-wrap">'; studentBadges.forEach(b => { const badgeInfo = ALL_BADGES[b.badgeId]; if (badgeInfo) { detailHTML += `<div class="text-center p-2"><i class="fas ${badgeInfo.icon} fa-2x" style="color:var(--legendary-color)"></i><br><small>${badgeInfo.name}</small></div>`; } }); detailHTML += '</div>'; } else { detailHTML += '<p class="text-muted">Belum ada lencana yang diraih.</p>'; } detailHTML += '<hr class="my-4">'; detailHTML += '<h4><i class="fas fa-bullseye me-2" style="color:var(--rare-color)"></i>Target Aktif</h4>'; const activeTargets = teacherData.allTargets.filter(t => t.email === studentEmail && t.status === 'Aktif'); if(activeTargets.length > 0) { detailHTML += '<div class="target-detail-list">'; activeTargets.forEach(target => { let currentProgress = target.type.toLowerCase() === 'halaman' ? totalPages : uniqueBooks.size; const goal = parseInt(target.targetValue) || 1; const progressPercent = Math.min(Math.round((currentProgress / goal) * 100), 100); detailHTML += `<div class="target-card-guru"><div><strong>${target.title || `Target: ${goal} ${target.type}`}</strong></div><small>Progress: ${currentProgress} / ${goal}</small><div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: ${progressPercent}%; background-color:var(--rare-color)" aria-valuenow="${progressPercent}">${progressPercent}%</div></div></div>`; }); detailHTML += '</div>'; } else { detailHTML += '<p class="text-muted">Tidak ada target aktif saat ini.</p>'; } detailHTML += '<hr class="my-4">'; detailHTML += '<h4><i class="fas fa-history me-2 text-secondary"></i>Riwayat Target Selesai</h4>'; const completedTargets = teacherData.allTargets.filter(t => t.email === studentEmail && t.status === 'Selesai'); if (completedTargets.length > 0) { detailHTML += '<ul class="list-group list-group-flush">'; completedTargets.forEach(target => { detailHTML += `<li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center"><div><strong>${target.title || `Target: ${target.targetValue} ${target.type}`}</strong><br><small class="text-muted">Status: Selesai</small></div><i class="fas fa-check-circle text-success fa-2x"></i></li>`; }); detailHTML += '</ul>'; } else { detailHTML += '<p class="text-muted">Belum ada target yang diselesaikan.</p>'; } document.getElementById('jurnalDetailTitle').textContent = `Progress Gamifikasi: ${student.nama}`; document.getElementById('jurnalDetailBody').innerHTML = detailHTML; myJurnalDetailModal.show(); }
     async function refreshDataAndRerender(successMessage = '') { paginationState = {}; document.querySelectorAll('.tab-pane').forEach(pane => { pane.innerHTML = ''; pane.removeAttribute('data-rendered'); }); const activeTabEl = document.querySelector('#pills-tab .nav-link.active'); const activePane = document.querySelector(activeTabEl.getAttribute('data-bs-target')); renderLoadingSkeleton(activePane, activeTabEl.id); await loadTeacherData(); const renderFunction = window[activeTabEl.getAttribute('data-render-function')]; if (typeof renderFunction === 'function') { renderFunction(); } activePane.setAttribute('data-rendered', 'true'); if(successMessage) { showToast(successMessage, 'Berhasil', 'success'); } }
     function showConfirmDeleteModal(type, id, name) { document.getElementById('confirmMessageText').textContent = `Apakah Anda yakin ingin menghapus ${name}? Tindakan ini tidak dapat diurungkan.`; deleteInfo = { type, id }; myConfirmDeleteModal.show(); }
     async function executeDelete() { myConfirmDeleteModal.hide(); let action = '', payload = {}; if (deleteInfo.type === 'journal') { action = 'deleteJournal'; payload = { idJurnal: deleteInfo.id }; } else if (deleteInfo.type === 'class') { action = 'deleteClass'; payload = { className: deleteInfo.id }; } else if (deleteInfo.type === 'student') { action = 'deleteStudent'; payload = { idSiswa: deleteInfo.id }; } if (action) { const result = await apiCall(action, payload); if (result !== null) { await refreshDataAndRerender('Data berhasil dihapus.'); } } }
-    async function addClass() { const classNameInput = document.getElementById('newClassName'); const className = classNameInput.value.trim(); if(className) { const result = await apiCall('addClass', { className }); if (result !== null) { classNameInput.value = ''; await refreshDataAndRerender('Kelas berhasil ditambahkan.'); } } else { showToast('Nama kelas tidak boleh kosong.', 'Peringatan', 'danger'); } }
-    async function handleStudentForm(e) { e.preventDefault(); const studentId = document.getElementById('studentId').value; const password = document.getElementById('studentPasswordInput').value.trim(); const action = studentId ? 'updateStudent' : 'addStudent'; if (!studentId && !password) { showToast('Password wajib diisi untuk siswa baru.', 'Peringatan', 'danger'); return; } let studentData = { idSiswa: studentId, nama: document.getElementById('studentNameInput').value, email: document.getElementById('studentEmailInput').value, kelas: document.getElementById('studentClassInput').value, }; if (password) { studentData.password = password; } const result = await apiCall(action, studentData); if (result !== null) { myStudentModal.hide(); const message = action === 'addStudent' ? 'Siswa berhasil ditambahkan.' : 'Data siswa berhasil diperbarui.'; await refreshDataAndRerender(message); } }
-    function showAddStudentModal() { document.getElementById('studentForm').reset(); document.getElementById('studentId').value = ''; document.getElementById('studentModalTitle').textContent = 'Tambah Siswa Baru'; document.getElementById('studentPasswordInput').setAttribute('required', 'true'); document.getElementById('studentPasswordInput').placeholder = "Password wajib diisi"; populateClassDropdown(); myStudentModal.show(); }
-    function editStudent(idSiswa) { const student = teacherData.students.find(s => s.idSiswa === idSiswa); if(student) { document.getElementById('studentForm').reset(); document.getElementById('studentModalTitle').textContent = 'Edit Data Siswa'; document.getElementById('studentId').value = student.idSiswa; document.getElementById('studentNameInput').value = student.nama; document.getElementById('studentEmailInput').value = student.email; document.getElementById('studentPasswordInput').removeAttribute('required'); document.getElementById('studentPasswordInput').placeholder = "Biarkan kosong jika tidak ingin mengubah"; populateClassDropdown(student.kelas); myStudentModal.show(); } }
-    function populateClassDropdown(selectedClass = '') { const select = document.getElementById('studentClassInput'); select.innerHTML = '<option value="">Pilih Kelas</option>'; if (teacherData && teacherData.classes) { teacherData.classes.sort().forEach(c => { const selected = (c === selectedClass) ? 'selected' : ''; select.innerHTML += `<option value="${c}" ${selected}>${c}</option>`; }); } }
+    async function addClass() { const classNameInput = document.getElementById('newClassName'); const className = classNameInput.value.trim(); if(className) { const result = await apiCall('addClass', { className }); if (result !== null) { classNameInput.value = ''; await refreshDataAndRerender('Unit berhasil ditambahkan.'); } } else { showToast('Nama unit tidak boleh kosong.', 'Peringatan', 'danger'); } }
+    async function handleStudentForm(e) { e.preventDefault(); const studentId = document.getElementById('studentId').value; const password = document.getElementById('studentPasswordInput').value.trim(); const action = studentId ? 'updateStudent' : 'addStudent'; if (!studentId && !password) { showToast('Kode Akses wajib diisi untuk agen baru.', 'Peringatan', 'danger'); return; } let studentData = { idSiswa: studentId, nama: document.getElementById('studentNameInput').value, email: document.getElementById('studentEmailInput').value, kelas: document.getElementById('studentClassInput').value, }; if (password) { studentData.password = password; } const result = await apiCall(action, studentData); if (result !== null) { myStudentModal.hide(); const message = action === 'addStudent' ? 'Agen berhasil direkrut.' : 'Data agen berhasil diperbarui.'; await refreshDataAndRerender(message); } }
+    function showAddStudentModal() { document.getElementById('studentForm').reset(); document.getElementById('studentId').value = ''; document.getElementById('studentModalTitle').textContent = 'Rekrut Agen Baru'; document.getElementById('studentPasswordInput').setAttribute('required', 'true'); document.getElementById('studentPasswordInput').placeholder = "Kode Akses wajib diisi"; populateClassDropdown(); myStudentModal.show(); }
+    function editStudent(idSiswa) { const student = teacherData.students.find(s => s.idSiswa === idSiswa); if(student) { document.getElementById('studentForm').reset(); document.getElementById('studentModalTitle').textContent = 'Edit Data Agen'; document.getElementById('studentId').value = student.idSiswa; document.getElementById('studentNameInput').value = student.nama; document.getElementById('studentEmailInput').value = student.email; document.getElementById('studentPasswordInput').removeAttribute('required'); document.getElementById('studentPasswordInput').placeholder = "Biarkan kosong jika tidak ingin mengubah"; populateClassDropdown(student.kelas); myStudentModal.show(); } }
+    function populateClassDropdown(selectedClass = '') { const select = document.getElementById('studentClassInput'); select.innerHTML = '<option value="">Pilih Unit</option>'; if (teacherData && teacherData.classes) { teacherData.classes.sort().forEach(c => { const selected = (c === selectedClass) ? 'selected' : ''; select.innerHTML += `<option value="${c}" ${selected}>${c}</option>`; }); } }
     function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
 </script>
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </html>
+</html>

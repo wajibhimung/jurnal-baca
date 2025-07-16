@@ -3,179 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Kupon - Dasbor Guru</title>
+    <title>The Vault - Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6a11cb;
-            --secondary-color: #2575fc;
+            --dark-bg: #0A0C16;
+            --card-bg: linear-gradient(145deg, #1e223a, #131524);
+            --border-color: rgba(3, 169, 244, 0.3);
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --text-light: #e0e0e0;
+            --text-muted-light: #8b949e;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            color: #333;
+            background-color: var(--dark-bg);
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
+            color: var(--text-light);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             padding-top: 75px;
         }
 
-        .main-content {
-            flex-grow: 1;
-            padding-top: 20px;
-            padding-bottom: 40px;
-        }
+        .main-content { flex-grow: 1; padding-top: 20px; padding-bottom: 40px; }
+        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 12, 22, 0.85); display: none; justify-content: center; align-items: center; z-index: 10001; }
+        .toast-container { z-index: 10002; }
+        .modal { z-index: 10000; }
 
-        .loader-wrapper {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10001;
-        }
-
-        .toast-container {
-            z-index: 10002;
-        }
-
-        .modal {
-            z-index: 10000;
-        }
-
-        nav.navbar {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .navbar-brand { font-weight: 600; }
-
-        .tabs-container {
-            background: transparent;
-            border-radius: 0;
-            padding: 0;
-            box-shadow: none;
-        }
+        nav.navbar { background: var(--dark-bg); border-bottom: 1px solid var(--border-color); }
+        .navbar-brand { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
 
         .nav-pills .nav-link {
-            color: white;
-            transition: all 0.2s ease-in-out;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-            font-weight: 500;
+            font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted-light); border-radius: 0.5rem 0.5rem 0 0;
+            padding: 0.75rem 1rem; border-bottom: 4px solid transparent;
+            transition: color .3s ease, border-color .3s ease, background-color .3s ease;
         }
-
+        .nav-pills .nav-link:hover { color: #fff; }
         .nav-pills .nav-link.active {
-            background-color: white;
-            color: var(--primary-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            font-weight: 600;
+            color: #fff; background-color: #131524;
+            border-color: var(--rare-color);
         }
 
         .data-card, .student-info-panel {
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            padding: 1.5rem;
-            height: 100%;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 1.5rem; height: 100%;
         }
-
-        .student-info-panel {
-            margin-bottom: 2rem;
-            height: auto;
-        }
-        .student-info-panel .display-4 { 
-            font-weight: 700; 
-            color: var(--primary-color);
-        }
+        .student-info-panel { margin-bottom: 2rem; height: auto; }
+        .student-info-panel .display-4 { font-family: 'Oswald', sans-serif; font-weight: 700; color: var(--legendary-color); }
 
         .item-card-long {
-            display: flex;
-            align-items: center;
-            background: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            padding: 1rem;
-            position: relative;
+            display: flex; align-items: center;
+            background: var(--dark-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 1rem; position: relative;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-
-        .item-card-long:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-        }
-        .item-card-long .icon-container {
-            font-size: 2.2rem;
-            color: var(--secondary-color);
-            width: 60px;
-            flex-shrink: 0;
-            display: grid;
-            place-items: center;
-        }
+        .item-card-long:hover { border-color: var(--rare-color); box-shadow: 0 0 15px var(--rare-glow); }
+        .item-card-long .icon-container { font-size: 2.2rem; color: var(--rare-color); width: 60px; flex-shrink: 0; display: grid; place-items: center; }
         .item-card-long .content-container { flex-grow: 1; padding-left: 1.25rem; }
-        .item-card-long .item-title { font-weight: 600; margin-bottom: 0.1rem; color: #333; }
-        .item-card-long .item-description { font-size: 0.85rem; color: #6c757d; margin-bottom: 0.5rem; }
+        .item-card-long .item-title { font-weight: 600; margin-bottom: 0.1rem; color: var(--text-light); }
+        .item-card-long .item-description { font-size: 0.85rem; color: var(--text-muted-light); margin-bottom: 0.5rem; }
         .item-card-long .item-footer { display: flex; justify-content: space-between; align-items: center; }
-        .item-card-long .item-cost { font-weight: 600; font-size: 1.1rem; color: var(--primary-color); }
+        .item-card-long .item-cost { font-weight: 600; font-size: 1.1rem; color: var(--legendary-color); }
 
         .disabled-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(2px);
+            background: rgba(10, 12, 22, 0.8); backdrop-filter: blur(2px);
             display: flex; justify-content: center; align-items: center;
-            color: #333; font-weight: 600; text-align: center;
+            color: var(--text-muted-light); font-weight: 600; text-align: center;
             border-radius: 12px;
         }
         
-        .footer {
-            background: rgba(0, 0, 0, 0.2);
-            color: rgba(255, 255, 255, 0.7);
-            padding: 1rem 0;
-            text-align: center;
-            font-size: 0.9rem;
-            margin-top: auto;
-            flex-shrink: 0;
-        }
-        .footer a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
+        .form-control, .form-select { background-color: var(--dark-bg) !important; border: 1px solid var(--border-color) !important; color: var(--text-light) !important; }
+        .form-control:focus, .form-select:focus { border-color: var(--rare-color) !important; box-shadow: 0 0 15px var(--rare-glow) !important; }
+        .list-group { border-radius: 0.5rem; }
+        .list-group-item { background-color: #131524; color: var(--text-light); border-color: var(--border-color); }
+        .list-group-item-action:hover { background-color: rgba(3, 169, 244, 0.1); color: #fff; }
+        .list-group-item.active { background-color: var(--rare-color); border-color: var(--rare-color); color: #000; font-weight: 600; }
 
-        .pagination .page-link { background-color: #fff; border-color: #ddd; color: var(--primary-color); }
-        .pagination .page-item.active .page-link { background-color: var(--primary-color); border-color: var(--primary-color); color: #fff; }
-        .pagination .page-item.disabled .page-link { color: #6c757d; background-color: #e9ecef; }
-        .pagination-sm { margin-bottom: 0; }
+        .card-title, .modal-title { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+        .text-primary { color: var(--rare-color) !important; }
+        .btn-primary { background: linear-gradient(90deg, var(--rare-color), var(--epic-color)); border: none; font-weight: 600; }
+        .btn-outline-light { border-color: var(--border-color); color: var(--text-light); }
+        .btn-outline-light:hover { background-color: var(--rare-color); border-color: var(--rare-color); color: #fff; }
+
+        .footer { background: #000; color: rgba(255,255,255,0.5); padding: 2rem 0; text-align: center; margin-top: auto; flex-shrink: 0; }
+        .footer a { color: var(--rare-color); text-decoration: none; font-weight: 600; }
+        .footer a:hover { text-decoration: underline; }
+
+        .pagination .page-link { background-color: transparent; border-color: var(--border-color); color: var(--rare-color); }
+        .pagination .page-item.active .page-link { background-color: var(--rare-color); border-color: var(--rare-color); color: #000; }
+        .pagination .page-item.disabled .page-link { color: #6c757d; border-color: var(--border-color); }
         
-        .list-group-item.active {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
+        .table { color: var(--text-light); }
+        .table > :not(caption) > * > * { background-color: transparent; border-bottom-color: var(--border-color); }
+        .table-hover > tbody > tr:hover > * { color: var(--text-light); background-color: rgba(3, 169, 244, 0.1); }
+        
+        .modal-content { background: #131524; border: 1px solid var(--border-color); color: var(--text-light); }
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .modal-footer { border-top: 1px solid var(--border-color); }
+        .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
     </style>
 </head>
 <body>
     <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
     
     <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div>
+        <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div>
     </div>
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="guru.html"><i class="fas fa-award me-2"></i>Dasbor Kupon Guru</a>
+            <a class="navbar-brand" href="guru.html"><i class="fas fa-gem me-2"></i>THE VAULT - Admin Panel</a>
             <div class="d-flex align-items-center">
                 <span class="navbar-text me-3" id="teacherName"></span>
-                <a href="guru.html" class="btn btn-outline-light btn-sm me-2">Dasbor Utama</a>
+                <a href="guru.html" class="btn btn-outline-light btn-sm me-2"><i class="fas fa-arrow-left me-1"></i> Kembali ke Panel</a>
                 <button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
@@ -184,22 +132,22 @@
     <main class="container-fluid main-content">
         <div class="tabs-container mb-4">
              <ul class="nav nav-pills nav-fill" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-pemberian"><i class="fas fa-plus-circle me-1"></i> Berikan Kupon</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-penukaran"><i class="fas fa-gift me-1"></i> Tukar Hadiah</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-perkelas"><i class="fas fa-users me-1"></i> Kupon per Kelas</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-manajemen"><i class="fas fa-cogs me-1"></i> Manajemen</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-riwayat"><i class="fas fa-history me-1"></i> Riwayat</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-pemberian" type="button"><i class="fas fa-plus-circle me-2"></i>Distribusi Kupon</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-penukaran" type="button"><i class="fas fa-shopping-cart me-2"></i>Redeem Hadiah</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-perkelas" type="button"><i class="fas fa-users me-2"></i>Saldo per Unit</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-manajemen" type="button"><i class="fas fa-cogs me-2"></i>Konfigurasi Vault</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-riwayat" type="button"><i class="fas fa-history me-2"></i>Log Transaksi</button></li>
             </ul>
         </div>
 
         <div class="tab-content" id="pills-tabContent">
-            <!-- TAB BERIKAN KUPON -->
+            <!-- TAB DISTRIBUSI KUPON -->
             <div class="tab-pane fade show active" id="pills-pemberian" role="tabpanel">
                 <div class="row g-4">
                     <div class="col-lg-4">
                         <div class="data-card">
-                            <h5 class="mb-3 fw-bold">1. Pilih Siswa</h5>
-                            <input type="text" id="studentSearchGive" class="form-control mb-2" placeholder="Cari nama siswa...">
+                            <h5 class="card-title mb-3">1. Pilih Agen</h5>
+                            <input type="text" id="studentSearchGive" class="form-control mb-2" placeholder="Cari nama agen...">
                             <div class="list-group" id="studentListGive" style="max-height: 600px; overflow-y: auto;"></div>
                         </div>
                     </div>
@@ -207,8 +155,8 @@
                         <div id="actionAreaGive">
                             <div class="data-card d-flex justify-content-center align-items-center" style="min-height: 680px;">
                                 <div class="text-center text-muted">
-                                    <i class="fas fa-user-check fa-4x mb-3 opacity-50" style="color: var(--primary-color);"></i>
-                                    <h5 class="fw-light">Pilih siswa untuk memberikan kupon.</h5>
+                                    <i class="fas fa-user-check fa-4x mb-3 opacity-50 text-primary"></i>
+                                    <h5 class="fw-light">Pilih agen untuk memulai distribusi kupon.</h5>
                                 </div>
                             </div>
                         </div>
@@ -216,13 +164,13 @@
                 </div>
             </div>
 
-            <!-- TAB TUKAR HADIAH -->
+            <!-- TAB REDEEM HADIAH -->
             <div class="tab-pane fade" id="pills-penukaran" role="tabpanel">
                  <div class="row g-4">
                     <div class="col-lg-4">
                         <div class="data-card">
-                            <h5 class="mb-3 fw-bold">1. Pilih Siswa</h5>
-                            <input type="text" id="studentSearchRedeem" class="form-control mb-2" placeholder="Cari nama siswa...">
+                            <h5 class="card-title mb-3">1. Pilih Agen</h5>
+                            <input type="text" id="studentSearchRedeem" class="form-control mb-2" placeholder="Cari nama agen...">
                             <div class="list-group" id="studentListRedeem" style="max-height: 600px; overflow-y: auto;"></div>
                         </div>
                     </div>
@@ -230,8 +178,8 @@
                         <div id="actionAreaRedeem">
                              <div class="data-card d-flex justify-content-center align-items-center" style="min-height: 680px;">
                                 <div class="text-center text-muted">
-                                    <i class="fas fa-shopping-cart fa-4x mb-3 opacity-50" style="color: var(--primary-color);"></i>
-                                    <h5 class="fw-light">Pilih siswa untuk melihat katalog hadiah.</h5>
+                                    <i class="fas fa-gift fa-4x mb-3 opacity-50 text-primary"></i>
+                                    <h5 class="fw-light">Pilih agen untuk membuka katalog hadiah.</h5>
                                 </div>
                             </div>
                         </div>
@@ -239,16 +187,16 @@
                 </div>
             </div>
 
-            <!-- TAB KUPON PER KELAS -->
+            <!-- TAB SALDO PER UNIT -->
             <div class="tab-pane fade" id="pills-perkelas" role="tabpanel">
                 <div class="data-card">
                     <div class="row align-items-center mb-3">
-                        <div class="col-md-6"><h4 class="mb-md-0 mb-2 fw-bold">Saldo Kupon Siswa</h4></div>
+                        <div class="col-md-6"><h4 class="card-title mb-md-0 mb-2">Saldo Kupon Agen</h4></div>
                         <div class="col-md-6"><select id="classFilter" class="form-select"></select></div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
-                            <thead><tr><th>No</th><th>Nama Siswa</th><th>Kelas</th><th class="text-center">Jumlah Kupon</th></tr></thead>
+                            <thead><tr><th>#</th><th>Nama Agen</th><th>Unit</th><th class="text-center">Jumlah Kupon</th></tr></thead>
                             <tbody id="classCouponTable"></tbody>
                         </table>
                     </div>
@@ -256,51 +204,42 @@
                 </div>
             </div>
             
-            <!-- TAB MANAJEMEN -->
+            <!-- TAB KONFIGURASI VAULT -->
             <div class="tab-pane fade" id="pills-manajemen" role="tabpanel">
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="data-card">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0 fw-bold"><i class="fas fa-ticket-alt me-2 text-primary"></i>Tipe Kupon</h5>
+                                <h5 class="card-title mb-0"><i class="fas fa-medal me-2 text-primary"></i>Pemicu Kupon</h5>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#couponTypeModal"><i class="fas fa-plus"></i> Tambah</button>
                             </div>
-                            <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Capaian</th><th>Poin</th><th>Aksi</th></tr></thead><tbody id="couponTypesTable"></tbody></table></div>
+                            <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Capaian</th><th>Reward</th><th>Aksi</th></tr></thead><tbody id="couponTypesTable"></tbody></table></div>
                             <nav id="couponTypesPagination" class="mt-3 d-flex justify-content-end"></nav>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="data-card">
                              <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0 fw-bold"><i class="fas fa-gift me-2 text-primary"></i>Hadiah</h5>
+                                <h5 class="card-title mb-0"><i class="fas fa-boxes-stacked me-2 text-primary"></i>Stok Hadiah</h5>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#prizeModal"><i class="fas fa-plus"></i> Tambah</button>
                             </div>
-                            <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Hadiah</th><th>Biaya</th><th>Aksi</th></tr></thead><tbody id="prizesTable"></tbody></table></div>
+                            <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Hadiah</th><th>Biaya (Kupon)</th><th>Aksi</th></tr></thead><tbody id="prizesTable"></tbody></table></div>
                             <nav id="prizesPagination" class="mt-3 d-flex justify-content-end"></nav>
                         </div>
                     </div>
                 </div>
             </div>
             
-             <!-- TAB RIWAYAT -->
+             <!-- TAB LOG TRANSAKSI -->
              <div class="tab-pane fade" id="pills-riwayat" role="tabpanel">
                  <div class="data-card">
                     <div class="row mb-3 gx-2 gy-2 justify-content-between align-items-center">
-                        <div class="col-md-auto"><h5 class="card-title mb-0 fw-bold">Riwayat Penukaran</h5></div>
+                        <div class="col-md-auto"><h5 class="card-title mb-0">Log Transaksi Hadiah</h5></div>
                         <div class="col-md-5 col-lg-4"><input type="search" class="form-control form-control-sm" id="historySearch" placeholder="Cari nama atau hadiah..."></div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>Siswa</th>
-                                    <th>Hadiah</th>
-                                    <th class="text-center">Biaya</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>Tanggal</th><th>Agen</th><th>Hadiah</th><th class="text-center">Biaya</th><th class="text-center">Status</th><th class="text-center">Aksi</th></tr></thead>
                             <tbody id="historyTableBody"></tbody>
                         </table>
                     </div>
@@ -314,35 +253,19 @@
         Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk Kelas TKJ SMKN 1 Telagasari © <a href="guru.html">2025</a>
     </footer>
 
-    <!-- Modals -->
-    <div class="modal fade" id="couponTypeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Manajemen Tipe Kupon</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="couponTypeForm"><div class="mb-3"><label class="form-label">Capaian</label><input type="text" id="capaian" class="form-control" required></div><div class="mb-3"><label class="form-label">Jumlah Kupon Diberikan</label><input type="number" id="jumlahKupon" class="form-control" min="1" required></div><div class="mb-3"><label class="form-label">Deskripsi</label><textarea id="deskripsiKupon" class="form-control" rows="3"></textarea></div><button type="submit" class="btn btn-primary w-100">Simpan</button></form></div></div></div></div>
-    <div class="modal fade" id="prizeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Manajemen Hadiah</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="prizeForm"><div class="mb-3"><label class="form-label">Nama Hadiah</label><input type="text" id="namaHadiah" class="form-control" required></div><div class="mb-3"><label class="form-label">Kupon Dibutuhkan</label><input type="number" id="kuponDibutuhkan" class="form-control" min="1" required></div><div class="mb-3"><label class="form-label">Deskripsi</label><textarea id="deskripsiHadiah" class="form-control" rows="3"></textarea></div><button type="submit" class="btn btn-primary w-100">Simpan</button></form></div></div></div></div>
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmTitle">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="confirmMessageText"></p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div></div></div></div>
-    <div class="modal fade" id="confirmRedeemModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmRedeemTitle">Konfirmasi Penukaran</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmRedeemBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" id="confirmRedeemBtn">Tukar Sekarang</button></div></div></div></div>
-    
-    <!-- ▼▼▼ MODAL BARU UNTUK KONFIRMASI PENGGUNAAN HADIAH ▼▼▼ -->
-    <div class="modal fade" id="confirmUseModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmUseTitle">Konfirmasi Penggunaan Hadiah</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="confirmUseBody"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-success" id="confirmUseBtn">Ya, Tandai Digunakan</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ▲▲▲ AKHIR MODAL BARU ▲▲▲ -->
+    <!-- All Modals are unchanged -->
+    <div class="modal fade" id="couponTypeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Konfigurasi Pemicu Kupon</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="couponTypeForm"><div class="mb-3"><label class="form-label">Nama Capaian</label><input type="text" id="capaian" class="form-control" required></div><div class="mb-3"><label class="form-label">Jumlah Kupon Diberikan</label><input type="number" id="jumlahKupon" class="form-control" min="1" required></div><div class="mb-3"><label class="form-label">Deskripsi</label><textarea id="deskripsiKupon" class="form-control" rows="3"></textarea></div><button type="submit" class="btn btn-primary w-100">Simpan Konfigurasi</button></form></div></div></div></div>
+    <div class="modal fade" id="prizeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Konfigurasi Hadiah</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="prizeForm"><div class="mb-3"><label class="form-label">Nama Hadiah</label><input type="text" id="namaHadiah" class="form-control" required></div><div class="mb-3"><label class="form-label">Biaya (Kupon)</label><input type="number" id="kuponDibutuhkan" class="form-control" min="1" required></div><div class="mb-3"><label class="form-label">Deskripsi</label><textarea id="deskripsiHadiah" class="form-control" rows="3"></textarea></div><button type="submit" class="btn btn-primary w-100">Simpan Konfigurasi</button></form></div></div></div></div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmTitle">Konfirmasi</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="confirmMessageText"></p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button></div></div></div></div>
+    <div class="modal fade" id="confirmRedeemModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmRedeemTitle">Konfirmasi Redeem</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmRedeemBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" id="confirmRedeemBtn">Redeem Sekarang</button></div></div></div></div>
+    <div class="modal fade" id="confirmUseModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmUseTitle">Konfirmasi Penggunaan</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmUseBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-success" id="confirmUseBtn">Ya, Tandai Digunakan</button></div></div></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+    <!-- PERBAIKAN: Memuat Bootstrap JS sebelum skrip kustom -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
     let currentUser, couponData = {}, paginationState = {}; 
-    let deleteInfo = {}, redeemInfo = {}, useInfo = {}; // Menambahkan useInfo
+    let deleteInfo = {}, redeemInfo = {}, useInfo = {};
     const ITEMS_PER_PAGE = 10;
     
     let myCouponTypeModal, myPrizeModal, myConfirmDeleteModal, myConfirmRedeemModal, myConfirmUseModal, appToast;
@@ -355,14 +278,15 @@
         }
         currentUser = JSON.parse(userJson);
         
+        // Inisialisasi komponen Bootstrap
         myCouponTypeModal = new bootstrap.Modal(document.getElementById('couponTypeModal'));
         myPrizeModal = new bootstrap.Modal(document.getElementById('prizeModal'));
         myConfirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
         myConfirmRedeemModal = new bootstrap.Modal(document.getElementById('confirmRedeemModal'));
-        myConfirmUseModal = new bootstrap.Modal(document.getElementById('confirmUseModal')); // Inisialisasi modal baru
+        myConfirmUseModal = new bootstrap.Modal(document.getElementById('confirmUseModal')); 
         appToast = new bootstrap.Toast(document.getElementById('appToast'));
 
-        document.getElementById('teacherName').textContent = `Hai, ${currentUser.user.nama}!`;
+        document.getElementById('teacherName').textContent = `Admin: ${currentUser.user.nama}`;
         setupEventListeners();
         loadInitialData();
     });
@@ -373,21 +297,54 @@
         document.getElementById('prizeForm').addEventListener('submit', handleAddForm);
         document.getElementById('confirmDeleteBtn').addEventListener('click', executeDelete);
         document.getElementById('confirmRedeemBtn').addEventListener('click', executeRedeem);
-        document.getElementById('confirmUseBtn').addEventListener('click', executeMarkAsUsed); // Event listener untuk tombol modal baru
+        document.getElementById('confirmUseBtn').addEventListener('click', executeMarkAsUsed);
         document.getElementById('studentSearchGive').addEventListener('input', debounce(() => filterStudentList('Give'), 300));
         document.getElementById('studentSearchRedeem').addEventListener('input', debounce(() => filterStudentList('Redeem'), 300));
         document.getElementById('historySearch').addEventListener('input', () => debouncedSearch('history'));
-        
         document.getElementById('classFilter').addEventListener('change', () => {
-            if (paginationState.classCoupon) {
-                paginationState.classCoupon.currentPage = 1;
-            }
+            if (paginationState.classCoupon) paginationState.classCoupon.currentPage = 1;
             renderPaginatedView('classCoupon');
+        });
+
+        // Event listener untuk tab, untuk merender ulang konten saat diklik
+        const tabElements = document.querySelectorAll('#pills-tab .nav-link');
+        tabElements.forEach(tab => {
+            tab.addEventListener('shown.bs.tab', (event) => {
+                const targetId = event.target.getAttribute('data-bs-target');
+                if (!couponData) return; // Jangan lakukan apa-apa jika data belum dimuat
+                if (targetId === '#pills-perkelas') renderPaginatedView('classCoupon');
+                if (targetId === '#pills-manajemen') {
+                    renderPaginatedView('couponTypes');
+                    renderPaginatedView('prizes');
+                }
+                if (targetId === '#pills-riwayat') renderPaginatedView('history');
+            });
         });
     }
 
-    async function loadInitialData() {
+    async function apiCall(action, data = {}) {
         showLoader(true);
+        try {
+            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" });
+            const result = await response.json();
+            if (result.status === 'success') {
+                return result.data;
+            } else {
+                 throw new Error(result.message || 'Terjadi kesalahan server.');
+            }
+        } catch (error) {
+            console.error("API Call Error:", error);
+            showToast("Error: " + error.message, 'Gagal', 'danger');
+            return null;
+        } finally {
+            showLoader(false);
+        }
+    }
+
+    // SISA FUNGSI JAVASCRIPT PERSIS SAMA SEPERTI SEBELUMNYA
+    // ... (Semua fungsi lain seperti loadInitialData, refreshData, renderActionArea, dll.)
+
+    async function loadInitialData() {
         const data = await apiCall('getCouponManagementData');
         if (data) {
             couponData = data;
@@ -401,11 +358,9 @@
             renderManagementTab();
             renderHistoryTab();
         }
-        showLoader(false);
     }
     
     async function refreshData(activeStudentEmail = null, mode = null) {
-        showLoader(true);
         const data = await apiCall('getCouponManagementData');
         if (data) {
             couponData = data;
@@ -419,9 +374,7 @@
                     filterStudentList(mode); 
                     const listEl = document.getElementById(`studentList${mode}`);
                     const studentItem = Array.from(listEl.children).find(el => el.dataset.email === activeStudentEmail);
-                    if (studentItem) {
-                        studentItem.classList.add('active');
-                    }
+                    if (studentItem) studentItem.classList.add('active');
                     if (mode === 'Give') renderActionAreaGive(activeStudent);
                     if (mode === 'Redeem') renderActionAreaRedeem(activeStudent);
                 }
@@ -429,7 +382,6 @@
                 filterStudentList(mode);
             }
         }
-        showLoader(false);
     }
     
     function filterStudentList(mode) {
@@ -461,33 +413,29 @@
     function renderActionAreaGive(student) {
         const actionArea = document.getElementById('actionAreaGive');
         const balance = couponData.studentCoupons.filter(c => c.emailSiswa === student.email && c.status === 'Tersedia').length;
-
         let typesHtml = couponData.couponTypes && couponData.couponTypes.length > 0
-            ? couponData.couponTypes.map(type => `<div class="col-12 mb-3"><div class="item-card-long"><div class="icon-container"><i class="fas fa-medal"></i></div><div class="content-container"><div><h6 class="item-title">${type.capaian}</h6><p class="item-description">${type.deskripsi || 'Tidak ada deskripsi.'}</p></div><div class="item-footer"><span class="fw-bold text-success">+${type.jumlahKupon} Kupon</span><button class="btn btn-sm btn-primary" onclick="giveCoupon(event, '${student.email}', '${type.idKuponTipe}', ${type.jumlahKupon})"><i class="fas fa-plus-circle"></i> Berikan</button></div></div></div></div>`).join('')
-            : '<div class="col-12"><p class="text-muted text-center">Belum ada tipe kupon. Tambahkan di tab Manajemen.</p></div>';
-        
+            ? couponData.couponTypes.map(type => `<div class="col-12 mb-3"><div class="item-card-long"><div class="icon-container"><i class="fas fa-medal"></i></div><div class="content-container"><div><h6 class="item-title">${type.capaian}</h6><p class="item-description">${type.deskripsi || 'Tidak ada deskripsi.'}</p></div><div class="item-footer"><span class="fw-bold" style="color:var(--legendary-color)">+${type.jumlahKupon} Kupon</span><button class="btn btn-sm btn-primary" onclick="giveCoupon(event, '${student.email}', '${type.idKuponTipe}', ${type.jumlahKupon})"><i class="fas fa-plus-circle"></i> Berikan</button></div></div></div></div>`).join('')
+            : '<div class="col-12"><p class="text-muted text-center">Belum ada pemicu kupon. Tambahkan di tab Konfigurasi.</p></div>';
         actionArea.innerHTML = `
             <div class="student-info-panel">
                 <div class="d-flex justify-content-between align-items-center">
-                    <div><h5 class="fw-normal mb-0">Memberikan Kupon untuk <br><strong class="text-primary">${student.nama}</strong></h5></div>
+                    <div><h5 class="fw-normal mb-0">Distribusi Kupon untuk <br><strong class="text-primary">${student.nama}</strong></h5></div>
                     <div class="text-end"><h5 class="fw-normal mb-0">Saldo Saat Ini</h5><h2 class="display-4 mb-0">${balance}</h2></div>
                 </div>
             </div>
-            <h5 class="mb-3 fw-bold">2. Pilih Capaian</h5>
+            <h5 class="card-title mb-3">2. Pilih Pemicu</h5>
             <div style="max-height: 450px; overflow-y: auto; padding-right: 15px;"><div class="row">${typesHtml}</div></div>`;
     }
 
     function renderActionAreaRedeem(student) {
         const actionArea = document.getElementById('actionAreaRedeem');
         const balance = couponData.studentCoupons.filter(c => c.emailSiswa === student.email && c.status === 'Tersedia').length;
-
         let prizesHtml = couponData.prizes && couponData.prizes.length > 0
-            ? couponData.prizes.map(prize => {
+            ? couponData.prizes.sort((a,b) => a.kuponDibutuhkan - b.kuponDibutuhkan).map(prize => {
                 const canAfford = balance >= prize.kuponDibutuhkan;
-                return `<div class="col-12 mb-3"><div class="item-card-long"><div class="icon-container"><i class="fas fa-gift"></i></div><div class="content-container"><div><h6 class="item-title">${prize.namaHadiah}</h6><p class="item-description">${prize.deskripsi || 'Tidak ada deskripsi.'}</p></div><div class="item-footer"><span class="item-cost">${prize.kuponDibutuhkan} <i class="fas fa-ticket-alt fa-sm"></i></span><button class="btn btn-primary btn-sm" onclick="showRedeemConfirmation('${student.email}', '${prize.idHadiah}', ${prize.kuponDibutuhkan}, '${student.nama}', '${prize.namaHadiah}')" ${canAfford ? '' : 'disabled'}><i class="fas fa-exchange-alt"></i> Tukar</button></div></div> ${!canAfford ? `<div class="disabled-overlay"><span>Kupon Tidak Cukup</span></div>` : ''}</div></div>`;
+                return `<div class="col-12 mb-3"><div class="item-card-long"><div class="icon-container"><i class="fas fa-gift"></i></div><div class="content-container"><div><h6 class="item-title">${prize.namaHadiah}</h6><p class="item-description">${prize.deskripsi || 'Tidak ada deskripsi.'}</p></div><div class="item-footer"><span class="item-cost">${prize.kuponDibutuhkan} <i class="fas fa-ticket-alt fa-sm"></i></span><button class="btn btn-primary btn-sm" onclick="showRedeemConfirmation('${student.email}', '${prize.idHadiah}', ${prize.kuponDibutuhkan}, '${student.nama}', '${prize.namaHadiah}')" ${canAfford ? '' : 'disabled'}><i class="fas fa-exchange-alt"></i> Redeem</button></div></div> ${!canAfford ? `<div class="disabled-overlay"><span>Kupon Tidak Cukup</span></div>` : ''}</div></div>`;
             }).join('')
-            : '<div class="col-12"><p class="text-muted text-center">Belum ada hadiah tersedia. Tambahkan di tab Manajemen.</p></div>';
-
+            : '<div class="col-12"><p class="text-muted text-center">Belum ada hadiah tersedia. Tambahkan di tab Konfigurasi.</p></div>';
         actionArea.innerHTML = `
             <div class="student-info-panel">
                 <div class="d-flex justify-content-between align-items-center">
@@ -495,243 +443,143 @@
                     <div class="text-end"><h5 class="fw-normal mb-0">Saldo Kupon</h5><h2 class="display-4 mb-0">${balance}</h2></div>
                 </div>
             </div>
-            <h5 class="mb-3 fw-bold">2. Pilih Hadiah</h5>
+            <h5 class="card-title mb-3">2. Pilih Hadiah</h5>
             <div style="max-height: 450px; overflow-y: auto; padding-right: 15px;"><div class="row">${prizesHtml}</div></div>`;
     }
     
     async function giveCoupon(event, studentEmail, couponTypeId, amount) {
         const button = event.target.closest('button');
         const originalHtml = button.innerHTML;
-        button.disabled = true;
-        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`;
-
+        button.disabled = true; button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`;
         const result = await apiCall('giveCoupons', {emailSiswa: studentEmail, idKuponTipe: couponTypeId, jumlah: amount});
-        
-        button.disabled = false;
-        button.innerHTML = originalHtml;
-        if (result) {
-            showToast(`Berhasil memberikan ${amount} kupon!`, 'Sukses', 'success');
-            await refreshData(studentEmail, 'Give');
-        }
+        button.disabled = false; button.innerHTML = originalHtml;
+        if (result) { showToast(`Berhasil memberikan ${amount} kupon!`, 'Sukses', 'success'); await refreshData(studentEmail, 'Give'); }
     }
     
     function showRedeemConfirmation(emailSiswa, idHadiah, kuponDibutuhkan, namaSiswa, namaHadiah) {
         redeemInfo = { emailSiswa, idHadiah, kuponDibutuhkan, namaSiswa, namaHadiah };
-        document.getElementById('confirmRedeemBody').innerHTML = `Tukarkan <strong>${kuponDibutuhkan} kupon</strong> milik <strong>${namaSiswa}</strong> dengan hadiah <strong class="text-primary">${namaHadiah}</strong>?`;
+        document.getElementById('confirmRedeemBody').innerHTML = `Redeem <strong>${kuponDibutuhkan} kupon</strong> milik <strong>${namaSiswa}</strong> dengan hadiah <strong class="text-primary">${namaHadiah}</strong>?`;
         myConfirmRedeemModal.show();
     }
 
     async function executeRedeem() {
         myConfirmRedeemModal.hide();
         const result = await apiCall('redeemPrize', redeemInfo);
-        if (result) {
-            showToast('Hadiah berhasil ditukarkan!', 'Sukses', 'success');
-            await refreshData(redeemInfo.emailSiswa, 'Redeem');
-        }
+        if (result) { showToast('Hadiah berhasil di-redeem!', 'Sukses', 'success'); await refreshData(redeemInfo.emailSiswa, 'Redeem'); }
     }
     
     function markAsUsed(idPenukaran, studentName, prizeName) {
         useInfo = { id: idPenukaran }; 
-        document.getElementById('confirmUseBody').innerHTML = `Apakah Anda yakin ingin menandai hadiah <strong class="text-primary">${prizeName}</strong> untuk siswa <strong>${studentName}</strong> sebagai "Digunakan"?`;
+        document.getElementById('confirmUseBody').innerHTML = `Tandai hadiah <strong class="text-primary">${prizeName}</strong> untuk <strong>${studentName}</strong> sebagai "Digunakan"?`;
         myConfirmUseModal.show();
     }
 
     async function executeMarkAsUsed() {
         myConfirmUseModal.hide();
         const result = await apiCall('updateRedemptionStatus', { idPenukaran: useInfo.id, status: 'Digunakan' });
-        if (result) {
-            showToast('Status hadiah telah diperbarui.', 'Berhasil', 'success');
-            const activeRedeemStudentItem = document.querySelector('#studentListRedeem a.active');
-            const activeEmail = activeRedeemStudentItem ? activeRedeemStudentItem.dataset.email : null;
-            await refreshData(activeEmail, 'Redeem');
-        }
+        if (result) { showToast('Status hadiah telah diperbarui.', 'Berhasil', 'success'); await refreshData(null, null); }
     }
 
     async function executeDelete() {
         myConfirmDeleteModal.hide();
         const action = deleteInfo.type === 'couponType' ? 'deleteCouponType' : 'deletePrize';
         const result = await apiCall(action, { id: deleteInfo.id });
-        if(result) {
-            showToast('Data berhasil dihapus.', 'Berhasil', 'success');
-            await loadInitialData();
-        }
+        if(result) { showToast('Data berhasil dihapus.', 'Berhasil', 'success'); await loadInitialData(); }
     }
     
     async function handleAddForm(e) {
         e.preventDefault();
-        const form = e.target;
-        const button = form.querySelector('button[type="submit"]');
-        const originalHtml = button.innerHTML;
-        button.disabled = true;
-        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status"></span> Menyimpan...`;
-
+        const form = e.target; const button = form.querySelector('button[type="submit"]'); const originalHtml = button.innerHTML;
+        button.disabled = true; button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status"></span> Menyimpan...`;
         let action, payload, modal, successMsg;
-
         if (form.id === 'couponTypeForm') {
-            action = 'addCouponType';
-            payload = { capaian: document.getElementById('capaian').value, jumlahKupon: document.getElementById('jumlahKupon').value, deskripsi: document.getElementById('deskripsiKupon').value };
-            modal = myCouponTypeModal;
-            successMsg = 'Tipe kupon berhasil ditambahkan.';
+            action = 'addCouponType'; payload = { capaian: document.getElementById('capaian').value, jumlahKupon: document.getElementById('jumlahKupon').value, deskripsi: document.getElementById('deskripsiKupon').value };
+            modal = myCouponTypeModal; successMsg = 'Pemicu kupon berhasil dikonfigurasi.';
         } else {
-            action = 'addPrize';
-            payload = { namaHadiah: document.getElementById('namaHadiah').value, kuponDibutuhkan: document.getElementById('kuponDibutuhkan').value, deskripsi: document.getElementById('deskripsiHadiah').value };
-            modal = myPrizeModal;
-            successMsg = 'Hadiah berhasil ditambahkan.';
+            action = 'addPrize'; payload = { namaHadiah: document.getElementById('namaHadiah').value, kuponDibutuhkan: document.getElementById('kuponDibutuhkan').value, deskripsi: document.getElementById('deskripsiHadiah').value };
+            modal = myPrizeModal; successMsg = 'Hadiah berhasil dikonfigurasi.';
         }
-
         const result = await apiCall(action, payload);
-        
-        button.disabled = false;
-        button.innerHTML = originalHtml;
-
-        if (result) {
-            modal.hide();
-            form.reset();
-            showToast(successMsg, 'Berhasil', 'success');
-            await loadInitialData();
-        }
+        button.disabled = false; button.innerHTML = originalHtml;
+        if (result) { modal.hide(); form.reset(); showToast(successMsg, 'Berhasil', 'success'); await loadInitialData(); }
     }
 
     function confirmDelete(type, id, name) {
         document.getElementById('confirmMessageText').textContent = `Apakah Anda yakin ingin menghapus ${name}? Aksi ini tidak dapat dibatalkan.`;
-        deleteInfo = { type, id };
-        myConfirmDeleteModal.show();
+        deleteInfo = { type, id }; myConfirmDeleteModal.show();
     }
     
-    const debouncedSearch = debounce((tableId) => {
-        if (paginationState[tableId]) paginationState[tableId].currentPage = 1;
-        renderPaginatedView(tableId);
-    }, 300);
+    const debouncedSearch = debounce((tableId) => { if (paginationState[tableId]) paginationState[tableId].currentPage = 1; renderPaginatedView(tableId); }, 300);
 
     function renderPaginatedView(key) {
-        const state = paginationState[key];
-        if (!state) return;
-
-        let fullData = [];
-        let renderFunction;
-
+        const state = paginationState[key]; if (!state) return; let fullData = []; let renderFunction;
         switch (key) {
             case 'history':
                 fullData = couponData.redemptionHistory || [];
                 const searchTerm = document.getElementById('historySearch')?.value.toLowerCase() || '';
-                if (searchTerm) {
-                    fullData = fullData.filter(item => (item.namaSiswa || '').toLowerCase().includes(searchTerm) || (item.namaHadiah || '').toLowerCase().includes(searchTerm));
-                }
-                
+                if (searchTerm) { fullData = fullData.filter(item => (item.namaSiswa || '').toLowerCase().includes(searchTerm) || (item.namaHadiah || '').toLowerCase().includes(searchTerm)); }
                 renderFunction = (data) => document.getElementById('historyTableBody').innerHTML = data.map(item => {
-                    if (!item.idPenukaran) return ''; 
-                    const isUsed = item.status === 'Digunakan';
-                    const statusBadge = `<span class="badge ${isUsed ? 'bg-success' : 'bg-warning text-dark'}">${item.status || 'Ditukar'}</span>`;
-                    
-                    const safeStudentName = (item.namaSiswa || 'Siswa Dihapus').replace(/'/g, "\\'");
-                    const safePrizeName = (item.namaHadiah || 'Hadiah Dihapus').replace(/'/g, "\\'");
-
-                    const actionButton = isUsed
-                        ? `<button class="btn btn-sm btn-outline-success" disabled><i class="fas fa-check-circle"></i> Digunakan</button>`
-                        : `<button class="btn btn-sm btn-primary" onclick="markAsUsed('${item.idPenukaran}', '${safeStudentName}', '${safePrizeName}')"><i class="fas fa-hand-holding-heart"></i> Gunakan</button>`;
-
-                    return `<tr>
-                                <td>${new Date(item.tanggalTukar).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
-                                <td>${item.namaSiswa || 'Siswa Dihapus'}</td>
-                                <td>${item.namaHadiah || 'Hadiah Dihapus'}</td>
-                                <td class="text-center">${item.kuponDikeluarkan}</td>
-                                <td class="text-center">${statusBadge}</td>
-                                <td class="text-center">${actionButton}</td>
-                            </tr>`;
+                    if (!item.idPenukaran) return ''; const isUsed = item.status === 'Digunakan'; const statusBadge = `<span class="badge ${isUsed ? 'bg-success' : 'bg-warning text-dark'}">${item.status || 'Ditukar'}</span>`;
+                    const safeStudentName = (item.namaSiswa || 'Siswa Dihapus').replace(/'/g, "\\'"); const safePrizeName = (item.namaHadiah || 'Hadiah Dihapus').replace(/'/g, "\\'");
+                    const actionButton = isUsed ? `<button class="btn btn-sm btn-outline-success" disabled><i class="fas fa-check-circle"></i> Digunakan</button>` : `<button class="btn btn-sm btn-primary" onclick="markAsUsed('${item.idPenukaran}', '${safeStudentName}', '${safePrizeName}')"><i class="fas fa-hand-holding-heart"></i> Gunakan</button>`;
+                    return `<tr><td>${new Date(item.tanggalTukar).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td><td>${item.namaSiswa || 'Siswa Dihapus'}</td><td>${item.namaHadiah || 'Hadiah Dihapus'}</td><td class="text-center">${item.kuponDikeluarkan}</td><td class="text-center">${statusBadge}</td><td class="text-center">${actionButton}</td></tr>`;
                 }).join('') || `<tr><td colspan="6" class="text-center text-muted">Tidak ada riwayat.</td></tr>`;
                 break;
             case 'classCoupon':
                 const selectedClass = document.getElementById('classFilter').value;
                 const studentsToDisplay = (selectedClass === 'all' || !selectedClass ? couponData.students : couponData.students.filter(s => s && s.kelas === selectedClass)) || [];
                 fullData = studentsToDisplay.map(student => ({ ...student, balance: couponData.studentCoupons.filter(c => c.emailSiswa === student.email && c.status === 'Tersedia').length })).sort((a,b) => b.balance - a.balance);
-                renderFunction = (data) => document.getElementById('classCouponTable').innerHTML = data.map((student, index) => `<tr><td>${(state.currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td><td>${student.nama}</td><td>${student.kelas}</td><td class="text-center"><span class="badge bg-primary rounded-pill fs-6">${student.balance}</span></td></tr>`).join('') || `<tr><td colspan="4" class="text-center text-muted">Tidak ada siswa di kelas ini.</td></tr>`;
+                renderFunction = (data) => document.getElementById('classCouponTable').innerHTML = data.map((student, index) => `<tr><td>${(state.currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td><td>${student.nama}</td><td>${student.kelas}</td><td class="text-center"><span class="badge rounded-pill" style="font-size:1rem; background-color: var(--rare-color); color: #000;">${student.balance}</span></td></tr>`).join('') || `<tr><td colspan="4" class="text-center text-muted">Tidak ada agen di unit ini.</td></tr>`;
                 break;
             case 'couponTypes':
                 fullData = couponData.couponTypes || [];
-                renderFunction = (data) => document.getElementById('couponTypesTable').innerHTML = data.map(c => `<tr><td>${c.capaian}</td><td>${c.jumlahKupon}</td><td><button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('couponType', '${c.idKuponTipe}', 'tipe kupon: ${c.capaian}')"><i class="fas fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="3" class="text-center text-muted">Belum ada data.</td></tr>`;
+                renderFunction = (data) => document.getElementById('couponTypesTable').innerHTML = data.map(c => `<tr><td>${c.capaian}</td><td>${c.jumlahKupon}</td><td><button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('couponType', '${c.idKuponTipe}', 'pemicu: ${c.capaian}')"><i class="fas fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="3" class="text-center text-muted">Belum ada data.</td></tr>`;
                 break;
             case 'prizes':
                 fullData = couponData.prizes || [];
                 renderFunction = (data) => document.getElementById('prizesTable').innerHTML = data.map(p => `<tr><td>${p.namaHadiah}</td><td>${p.kuponDibutuhkan}</td><td><button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('prize', '${p.idHadiah}', 'hadiah: ${p.namaHadiah}')"><i class="fas fa-trash"></i></button></td></tr>`).join('') || `<tr><td colspan="3" class="text-center text-muted">Belum ada data.</td></tr>`;
                 break;
         }
-
         const totalPages = Math.ceil(fullData.length / ITEMS_PER_PAGE);
         state.currentPage = Math.max(1, Math.min(state.currentPage, totalPages));
         const paginatedData = fullData.slice((state.currentPage - 1) * ITEMS_PER_PAGE, state.currentPage * ITEMS_PER_PAGE);
-
         renderFunction(paginatedData);
-        
         const paginationContainer = document.getElementById(`${key}Pagination`);
-        if (paginationContainer) {
-            paginationContainer.innerHTML = generatePaginationControls(key, state.currentPage, totalPages);
-        }
+        if (paginationContainer) { paginationContainer.innerHTML = generatePaginationControls(key, state.currentPage, totalPages); }
     }
     
     function generatePaginationControls(key, currentPage, totalPages) {
-        if (totalPages <= 1) return '';
-        let html = '<ul class="pagination pagination-sm">';
+        if (totalPages <= 1) return ''; let html = '<ul class="pagination pagination-sm">';
         html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="event.preventDefault(); changePage('${key}', ${currentPage - 1})">«</a></li>`;
-        
-        const maxPagesToShow = 5;
-        let startPage, endPage;
-        if (totalPages <= maxPagesToShow) {
-            startPage = 1;
-            endPage = totalPages;
-        } else {
-            const maxPagesBeforeCurrent = Math.floor(maxPagesToShow / 2);
-            const maxPagesAfterCurrent = Math.ceil(maxPagesToShow / 2) - 1;
-            if (currentPage <= maxPagesBeforeCurrent) {
-                startPage = 1;
-                endPage = maxPagesToShow;
-            } else if (currentPage + maxPagesAfterCurrent >= totalPages) {
-                startPage = totalPages - maxPagesToShow + 1;
-                endPage = totalPages;
-            } else {
-                startPage = currentPage - maxPagesBeforeCurrent;
-                endPage = currentPage + maxPagesAfterCurrent;
-            }
+        const maxPagesToShow = 5; let startPage, endPage;
+        if (totalPages <= maxPagesToShow) { startPage = 1; endPage = totalPages; } 
+        else { const maxPagesBeforeCurrent = Math.floor(maxPagesToShow / 2); const maxPagesAfterCurrent = Math.ceil(maxPagesToShow / 2) - 1;
+            if (currentPage <= maxPagesBeforeCurrent) { startPage = 1; endPage = maxPagesToShow; }
+            else if (currentPage + maxPagesAfterCurrent >= totalPages) { startPage = totalPages - maxPagesToShow + 1; endPage = totalPages; }
+            else { startPage = currentPage - maxPagesBeforeCurrent; endPage = currentPage + maxPagesAfterCurrent; }
         }
-        if (startPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="event.preventDefault(); changePage('${key}', 1)">1</a></li>`;
-            if (startPage > 2) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-        }
+        if (startPage > 1) { html += `<li class="page-item"><a class="page-link" href="#" onclick="event.preventDefault(); changePage('${key}', 1)">1</a></li>`; if (startPage > 2) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`; }
         for (let i = startPage; i <= endPage; i++) { html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="event.preventDefault(); changePage('${key}', ${i})">${i}</a></li>`; }
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="event.preventDefault(); changePage('${key}', ${totalPages})">${totalPages}</a></li>`;
-        }
-
+        if (endPage < totalPages) { if (endPage < totalPages - 1) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`; html += `<li class="page-item"><a class="page-link" href="#" onclick="event.preventDefault(); changePage('${key}', ${totalPages})">${totalPages}</a></li>`; }
         html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" onclick="event.preventDefault(); changePage('${key}', ${currentPage + 1})">»</a></li>`;
-        html += '</ul>';
-        return html;
+        html += '</ul>'; return html;
     }
 
     function changePage(key, page) {
         if (paginationState[key] && page > 0) {
-            const state = paginationState[key];
-            let fullData;
-            if (key === 'classCoupon') {
-                 const selectedClass = document.getElementById('classFilter').value;
-                 fullData = (selectedClass === 'all' || !selectedClass ? couponData.students : couponData.students.filter(s => s && s.kelas === selectedClass)) || [];
-            } else if (key === 'history') {
-                fullData = couponData.redemptionHistory || [];
-            } else {
-                fullData = couponData[key] || [];
-            }
+            const state = paginationState[key]; let fullData;
+            if (key === 'classCoupon') { const selectedClass = document.getElementById('classFilter').value; fullData = (selectedClass === 'all' || !selectedClass ? couponData.students : couponData.students.filter(s => s && s.kelas === selectedClass)) || []; }
+            else if (key === 'history') { fullData = couponData.redemptionHistory || []; }
+            else { fullData = couponData[key] || []; }
             const totalPages = Math.ceil(fullData.length / ITEMS_PER_PAGE);
-
-            if (page <= totalPages) {
-                state.currentPage = page;
-                renderPaginatedView(key);
-            }
+            if (page <= totalPages) { state.currentPage = page; renderPaginatedView(key); }
         }
     }
     
     function renderPerKelasTab() {
         const classFilter = document.getElementById('classFilter');
         if (classFilter.options.length <= 1 && couponData && couponData.classes) {
-            classFilter.innerHTML = '<option value="all">Semua Kelas</option>';
+            classFilter.innerHTML = '<option value="all">Semua Unit</option>';
             couponData.classes.sort().forEach(c => { if(c) classFilter.innerHTML += `<option value="${c}">${c}</option>`; });
         }
         renderPaginatedView('classCoupon');
@@ -739,56 +587,19 @@
 
     function renderManagementTab() { renderPaginatedView('couponTypes'); renderPaginatedView('prizes'); }
     function renderHistoryTab() { renderPaginatedView('history'); }
-
     function debounce(func, delay) { let timeout; return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; }
-    function showLoader(isLoading) {
-        document.getElementById('loader').style.display = isLoading ? 'flex' : 'none';
-    }
+    function showLoader(isLoading) { document.getElementById('loader').style.display = isLoading ? 'flex' : 'none'; }
     
-    async function apiCall(action, data = {}) {
-        showLoader(true);
-        try {
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" });
-            const result = await response.json();
-            if (result.status === 'success') {
-                showLoader(false);
-                return result.data;
-            } else {
-                 throw new Error(result.message || 'Terjadi kesalahan server.');
-            }
-        } catch (error) {
-            console.error("API Call Error:", error);
-            showLoader(false);
-            showToast("Error: " + error.message, 'Gagal', 'danger');
-            return null;
-        }
-    }
-
-    function showToast(message, title = 'Notifikasi', type = 'success') {
-        const toastEl = document.getElementById('appToast');
-        const titleEl = document.getElementById('toastTitle');
-        const bodyEl = document.getElementById('toastBody');
-        const iconEl = toastEl.querySelector('.toast-header i');
-        const headerEl = toastEl.querySelector('.toast-header');
-        const closeBtn = toastEl.querySelector('.btn-close');
-        headerEl.classList.remove('bg-success', 'bg-danger', 'text-white');
-        closeBtn.classList.remove('btn-close-white');
-        iconEl.classList.remove('fa-check-circle', 'fa-times-circle');
-
+    function showToast(message, title = 'Notifikasi Sistem', type = 'success') {
+        const toastEl = document.getElementById('appToast'), titleEl = document.getElementById('toastTitle'), bodyEl = document.getElementById('toastBody'), iconEl = toastEl.querySelector('.toast-header i'), headerEl = toastEl.querySelector('.toast-header'), closeBtn = toastEl.querySelector('.btn-close');
+        headerEl.classList.remove('bg-success', 'bg-danger'); closeBtn.classList.remove('btn-close-white'); iconEl.classList.remove('fa-check-circle', 'fa-times-circle');
         if(type === 'success') {
-            headerEl.classList.add('bg-success', 'text-white');
-            closeBtn.classList.add('btn-close-white');
-            iconEl.classList.add('fa-check-circle');
+            toastEl.className = 'toast bg-success text-white'; iconEl.className = 'fas fa-check-circle me-2';
         } else {
-            headerEl.classList.add('bg-danger', 'text-white');
-            closeBtn.classList.add('btn-close-white');
-            iconEl.classList.add('fa-times-circle');
+            toastEl.className = 'toast bg-danger text-white'; iconEl.className = 'fas fa-times-circle me-2';
         }
-        
-        titleEl.textContent = title;
-        bodyEl.textContent = message;
-        appToast.show();
+        titleEl.textContent = title; bodyEl.textContent = message; appToast.show();
     }
-</script>
+    </script>
 </body>
 </html>

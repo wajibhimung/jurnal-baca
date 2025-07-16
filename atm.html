@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Kupon - Project NEXUS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #0A0C16;
+            --card-bg: linear-gradient(145deg, #1e223a, #131524);
+            --border-color: rgba(3, 169, 244, 0.3);
+            
+            --common-color: #9e9e9e;
+            --rare-color: #03a9f4;
+            --epic-color: #9c27b0;
+            --legendary-color: #ff9800;
+
+            --common-glow: rgba(158, 158, 158, 0.3);
+            --rare-glow: rgba(3, 169, 244, 0.4);
+            --epic-glow: rgba(156, 39, 176, 0.5);
+            --legendary-glow: rgba(255, 152, 0, 0.6);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
+            color: #e0e0e0;
+            padding-top: 75px;
+        }
+
+        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 12, 22, 0.85); display: flex; justify-content: center; align-items: center; z-index: 10001; }
+        nav.navbar { background: var(--dark-bg); border-bottom: 1px solid var(--border-color); }
+        .navbar-brand { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+
+        .balance-display {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            position: sticky;
+            top: 90px;
+        }
+        .balance-display .display-1 {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            color: var(--legendary-color);
+            text-shadow: 0 0 20px var(--legendary-glow);
+        }
+        .balance-display .balance-label {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+        
+        /* Tabs Styling */
+        .nav-pills .nav-link {
+            font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted-light); border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            transition: color .3s ease, background-color .3s ease;
+        }
+        .nav-pills .nav-link:hover { color: #fff; }
+        .nav-pills .nav-link.active {
+            color: #fff; background-color: var(--rare-color);
+            box-shadow: 0 0 20px var(--rare-glow);
+        }
+        .tab-pane { animation: fadeInUp 0.5s ease-out; }
+
+        /* Kartu Hadiah (diambil dari game-hub.html) */
+        .promo-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 1.5rem; height: 100%;
+            display: flex; flex-direction: column; text-align: center;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .promo-card:hover { transform: translateY(-5px); box-shadow: 0 5px 25px rgba(0,0,0,0.3); }
+        .promo-card::before {
+            content: attr(data-rarity); position: absolute; top: 15px; right: -40px;
+            background-color: var(--common-color); color: #000;
+            padding: 5px 40px; font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; transform: rotate(45deg);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .rarity-common{border-color:var(--common-color)}.rarity-common::before{background-color:var(--common-color)}
+        .rarity-rare{border-color:var(--rare-color)}.rarity-rare::before{background-color:var(--rare-color)}
+        .rarity-epic{border-color:var(--epic-color)}.rarity-epic::before{background-color:var(--epic-color)}
+        .rarity-legendary{border-color:var(--legendary-color)}.rarity-legendary::before{background-color:var(--legendary-color)}
+        
+        .promo-card-icon{font-size:4rem;margin-bottom:1.5rem;}.rarity-legendary .promo-card-icon{color:var(--legendary-color);text-shadow:0 0 20px var(--legendary-glow)}.rarity-epic .promo-card-icon{color:var(--epic-color);text-shadow:0 0 20px var(--epic-glow)}.rarity-rare .promo-card-icon{color:var(--rare-color);text-shadow:0 0 20px var(--rare-glow)}.rarity-common .promo-card-icon{color:var(--common-color)}
+        .promo-card-title{font-weight:700;font-size:1.4rem;margin-bottom:1rem; color:#fff;}.promo-card-description{font-size:.9rem;opacity:.6;flex-grow:1;margin-bottom:1.5rem}.promo-card-value{font-family:'Oswald',sans-serif;font-size:2.5rem;line-height:1}.promo-card-label{font-size:1rem;opacity:.8;margin-top:.25rem}
+        .btn-redeem { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(90deg, var(--rare-color), var(--epic-color)); border:none; }
+        .btn-redeem:disabled { background: #343a40; border-color: #6c757d; }
+
+        /* Riwayat Transaksi */
+        .table { color: var(--text-light); }
+        .table > :not(caption) > * > * { background-color: transparent; border-bottom-color: var(--border-color); }
+
+        /* Modal & Toast */
+        .modal-content { background: #131524; border: 1px solid var(--border-color); color: var(--text-light); }
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .modal-footer { border-top: 1px solid var(--border-color); }
+        .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+        .toast-container { z-index: 10002; }
+        .toast { background-color: #1e223a; color: var(--text-light); border: 1px solid var(--border-color); }
+        .toast-header { background-color: transparent; border-bottom: 1px solid var(--border-color); }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
+    
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><i class="fas rounded me-2"></i><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-cash-register me-2"></i>ATM KUPON</a>
+            <div class="d-flex align-items-center">
+                <span class="navbar-text me-3" id="studentName"></span>
+                <a href="siswa.html" class="btn btn-outline-light btn-sm me-2"><i class="fas fa-arrow-left me-1"></i> Dasbor</a>
+                <button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </nav>
+        
+    <main class="container mt-4">
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <div id="balance-display" class="balance-display">
+                    <p class="balance-label">Saldo Saat Ini</p>
+                    <div class="d-flex justify-content-center align-items-center">
+                         <h1 id="couponBalance" class="display-1">0</h1>
+                         <i class="fas fa-ticket-alt fa-3x ms-3 opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <ul class="nav nav-pills nav-fill mb-4" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-redeem"><i class="fas fa-gift me-2"></i>Redeem Hadiah</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-history"><i class="fas fa-history me-2"></i>Riwayat Transaksi</button></li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-redeem" role="tabpanel">
+                        <div id="prizes-list" class="row g-4">
+                            <!-- Kartu Hadiah akan dimuat di sini oleh JavaScript -->
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-history" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead><tr><th>Tanggal</th><th>Hadiah</th><th class="text-center">Biaya</th><th class="text-center">Status</th></tr></thead>
+                                <tbody id="historyTableBody">
+                                    <!-- Riwayat akan dimuat di sini oleh JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Konfirmasi Redeem -->
+    <div class="modal fade" id="confirmRedeemModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="confirmRedeemTitle">Konfirmasi Redeem</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="confirmRedeemBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" id="confirmRedeemBtn">Redeem Sekarang</button></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
+    let currentUser, couponData = {};
+    let redeemInfo = {};
+    
+    let myConfirmRedeemModal, appToast;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const userJson = sessionStorage.getItem('currentUser');
+        if (!userJson || JSON.parse(userJson).role !== 'siswa') {
+            window.location.href = 'index.html'; 
+            return;
+        }
+        currentUser = JSON.parse(userJson);
+        
+        myConfirmRedeemModal = new bootstrap.Modal(document.getElementById('confirmRedeemModal'));
+        appToast = new bootstrap.Toast(document.getElementById('appToast'));
+
+        document.getElementById('studentName').textContent = `Agen: ${currentUser.user.nama}`;
+        document.getElementById('logoutBtn').addEventListener('click', () => { sessionStorage.removeItem('currentUser'); window.location.href = 'index.html'; });
+        document.getElementById('confirmRedeemBtn').addEventListener('click', executeRedeem);
+        
+        loadPageData();
+    });
+
+    // Fungsi utama untuk memuat semua data yang dibutuhkan halaman
+    async function loadPageData() {
+        showLoader(true);
+        const data = await apiCall('getCouponManagementData');
+        if (data) {
+            couponData = data;
+            
+            // 1. Hitung dan tampilkan saldo kupon
+            const myBalance = couponData.studentCoupons.filter(c => c.emailSiswa === currentUser.user.email && c.status === 'Tersedia').length;
+            renderBalance(myBalance);
+
+            // 2. Tampilkan daftar hadiah
+            renderPrizes(couponData.prizes || [], myBalance);
+
+            // 3. Tampilkan riwayat transaksi
+            renderHistory(couponData.redemptionHistory || []);
+        }
+        showLoader(false);
+    }
+
+    // Fungsi untuk merender saldo kupon
+    function renderBalance(balance) {
+        document.getElementById('couponBalance').textContent = balance;
+    }
+
+    // Fungsi untuk merender daftar hadiah
+    function renderPrizes(prizes, balance) {
+        const container = document.getElementById('prizes-list');
+        if(prizes.length === 0) {
+            container.innerHTML = '<div class="col-12"><p class="text-center opacity-50">The Vault sedang kosong. Cek kembali nanti!</p></div>';
+            return;
+        }
+        
+        let prizesHtml = "";
+        prizes.sort((a,b) => a.kuponDibutuhkan - b.kuponDibutuhkan).forEach(prize => {
+            const rarity = getRarity(prize.kuponDibutuhkan);
+            const canAfford = balance >= prize.kuponDibutuhkan;
+            
+            prizesHtml += `
+                <div class="col-md-6">
+                    <div class="promo-card ${rarity.class}" data-rarity="${rarity.name}">
+                        <i class="fas fa-gift promo-card-icon"></i>
+                        <h4 class="promo-card-title">${prize.namaHadiah}</h4>
+                        <p class="promo-card-description">${prize.deskripsi || "Hadiah eksklusif dari The Vault."}</p>
+                        <div class="mb-3">
+                            <div class="promo-card-value">${prize.kuponDibutuhkan}</div>
+                            <div class="promo-card-label"><i class="fas fa-ticket-alt"></i> Kupon</div>
+                        </div>
+                        <button class="btn btn-redeem w-100" onclick="showRedeemConfirmation('${prize.idHadiah}', ${prize.kuponDibutuhkan}, '${prize.namaHadiah}')" ${!canAfford ? 'disabled' : ''}>
+                            ${canAfford ? 'Tukar' : 'Kupon Kurang'}
+                        </button>
+                    </div>
+                </div>`;
+        });
+        container.innerHTML = prizesHtml;
+    }
+
+    // Fungsi untuk merender riwayat transaksi
+    function renderHistory(allTransactions) {
+        const container = document.getElementById('historyTableBody');
+        const myTransactions = allTransactions.filter(t => t.emailSiswa === currentUser.user.email);
+
+        if (myTransactions.length === 0) {
+            container.innerHTML = '<tr><td colspan="4" class="text-center opacity-50">Anda belum pernah melakukan transaksi.</td></tr>';
+            return;
+        }
+
+        let historyHtml = "";
+        myTransactions.sort((a,b) => new Date(b.tanggalTukar) - new Date(a.tanggalTukar)).forEach(trx => {
+            const isUsed = trx.status === 'Digunakan';
+            const statusBadge = `<span class="badge ${isUsed ? 'bg-success' : 'bg-warning text-dark'}">${trx.status || 'Ditukar'}</span>`;
+            historyHtml += `
+                <tr>
+                    <td>${new Date(trx.tanggalTukar).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                    <td>${trx.namaHadiah}</td>
+                    <td class="text-center">${trx.kuponDikeluarkan}</td>
+                    <td class="text-center">${statusBadge}</td>
+                </tr>
+            `;
+        });
+        container.innerHTML = historyHtml;
+    }
+
+    // Fungsi untuk menentukan kelangkaan/rarity hadiah berdasarkan biaya
+    function getRarity(cost) {
+        const thresholds = { legendary: 50, epic: 25, rare: 10 };
+        if (cost >= thresholds.legendary) return { name: "Legendary", class: "rarity-legendary" };
+        if (cost >= thresholds.epic) return { name: "Epic", class: "rarity-epic" };
+        if (cost >= thresholds.rare) return { name: "Rare", class: "rarity-rare" };
+        return { name: "Common", class: "rarity-common" };
+    }
+
+    // Menampilkan modal konfirmasi
+    function showRedeemConfirmation(idHadiah, kuponDibutuhkan, namaHadiah) {
+        redeemInfo = { 
+            emailSiswa: currentUser.user.email,
+            namaSiswa: currentUser.user.nama,
+            idHadiah, 
+            kuponDibutuhkan,
+            namaHadiah
+        };
+        document.getElementById('confirmRedeemBody').innerHTML = `Tukarkan <strong>${kuponDibutuhkan} kupon</strong> Anda dengan hadiah <strong style="color:var(--rare-color)">${namaHadiah}</strong>?`;
+        myConfirmRedeemModal.show();
+    }
+
+    // Mengeksekusi penukaran
+    async function executeRedeem() {
+        myConfirmRedeemModal.hide();
+        const result = await apiCall('redeemPrize', redeemInfo);
+        if (result) {
+            showToast('Hadiah berhasil di-redeem!', 'Sukses', 'success');
+            await loadPageData(); // Muat ulang semua data di halaman
+        }
+    }
+
+    // --- Helper Functions (API Call, Loader, Toast) ---
+    async function apiCall(action, data = {}) {
+        showLoader(true);
+        try {
+            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" });
+            const result = await response.json();
+            if (result.status === 'success') return result.data;
+            else throw new Error(result.message || 'Terjadi kesalahan server.');
+        } catch (error) {
+            console.error("API Call Error:", error);
+            showToast("Error: " + error.message, 'Gagal', 'danger');
+            return null;
+        } finally {
+            showLoader(false);
+        }
+    }
+
+    function showLoader(isLoading) {
+        document.getElementById('loader').style.display = isLoading ? 'flex' : 'none';
+    }
+
+    function showToast(message, title = 'Notifikasi Sistem', type = 'success') {
+        const toastEl = document.getElementById('appToast'), titleEl = document.getElementById('toastTitle'), bodyEl = document.getElementById('toastBody'), iconEl = toastEl.querySelector('.toast-header i');
+        iconEl.className = 'fas rounded me-2';
+        if(type === 'success') {
+            toastEl.className = 'toast bg-success text-white'; iconEl.classList.add('fa-check-circle');
+        } else {
+            toastEl.className = 'toast bg-danger text-white'; iconEl.classList.add('fa-times-circle');
+        }
+        titleEl.textContent = title; bodyEl.textContent = message; appToast.show();
+    }
+    </script>
+</body>
+</html>

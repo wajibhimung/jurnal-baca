@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Meta SEO Tags -->
     <title>Project NEXUS - Terminal Akses</title>
     <meta name="description" content="Akses terminal Project NEXUS. Platform gamifikasi literasi untuk siswa TKJ SMKN 1 Telagasari. Masuk untuk memulai misimu.">
     <meta name="keywords" content="project nexus, jurnal baca, literasi digital, tkj, smkn 1 telagasari, gamifikasi, aplikasi pendidikan">
@@ -25,7 +24,6 @@
             --text-light: #e0e0e0;
             --text-muted-light: #8b949e;
         }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes text-glow {
             0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px var(--rare-color), 0 0 15px var(--rare-color); }
@@ -35,7 +33,6 @@
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-
         body { 
             font-family: 'Poppins', sans-serif; 
             background-color: var(--dark-bg);
@@ -47,7 +44,6 @@
             opacity: 0;
             animation: fadeIn 1s ease-out forwards;
         }
-
         .navbar {
             background: rgba(10, 12, 22, 0.8);
             backdrop-filter: blur(10px);
@@ -69,16 +65,12 @@
             color: #fff !important;
             text-shadow: 0 0 10px var(--rare-glow);
         }
-
         main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 0; }
         .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--dark-bg); display: none; justify-content: center; align-items: center; z-index: 1080; }
-        
         .login-container { width: 100%; max-width: 900px; }
-        
         .login-hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-right: 2rem; }
         .login-hero .hero-icon { font-size: 6rem; color: var(--rare-color); margin-bottom: 1.5rem; animation: text-glow 2.5s ease-in-out infinite alternate; }
         .login-hero h1 { font-family: 'Oswald', sans-serif; letter-spacing: 5px; text-transform: uppercase; }
-
         .login-card { 
             background: var(--card-bg); 
             border: 1px solid var(--border-color); 
@@ -87,13 +79,10 @@
             opacity: 0;
             animation: slideUpFadeIn 0.8s ease-out 0.5s forwards;
         }
-        
         .card-title { font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
-        
         .input-group { position: relative; }
         .form-icon { position: absolute; top: 50%; left: 15px; transform: translateY(-50%); color: var(--text-muted-light); pointer-events: none; z-index: 3; }
         .password-toggle-icon { position: absolute; top: 50%; right: 0; transform: translateY(-50%); color: var(--text-muted-light); cursor: pointer; z-index: 3; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; }
-        
         .form-control, .form-select { 
             background-color: var(--dark-bg) !important; 
             border: 1px solid var(--border-color) !important; 
@@ -109,7 +98,6 @@
             box-shadow: 0 0 15px var(--rare-glow) !important;
         }
         .form-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238b949e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); }
-        
         .btn-login { 
             font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1.5px;
             background: linear-gradient(90deg, var(--rare-color), var(--epic-color));
@@ -119,13 +107,11 @@
             transition: all 0.3s ease; 
         }
         .btn-login:hover { transform: translateY(-3px); box-shadow: 0 5px 20px var(--epic-glow); }
-        
         .footer { background: #000; color: rgba(255, 255, 255, 0.5); padding: 2rem 0; text-align: center; flex-shrink: 0; margin-top: auto; }
         .toast-container { z-index: 1090; }
         .toast { background-color: #131524; color: var(--text-light); border: 1px solid var(--border-color); }
         .toast-header { background-color: transparent; border-bottom: 1px solid var(--border-color); }
         .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
-
         @media (max-width: 767.98px) { .login-hero { display: none; } .login-container { padding: 0 15px; } }
     </style>
 </head>
@@ -147,7 +133,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="game-hub.html"><i class="fas fa-trophy me-2"></i>Hub</a>
                         </li>
-                        <!-- PERUBAHAN: Penambahan Menu Panduan -->
                         <li class="nav-item">
                             <a class="nav-link" href="panduan.html"><i class="fas fa-book-atlas me-2"></i>Panduan</a>
                         </li>
@@ -160,7 +145,6 @@
         </nav>
     </header>
 
-    <!-- Konten halaman lainnya tidak berubah -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
         <div id="appToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -217,8 +201,10 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // TIDAK ADA PERUBAHAN PADA LOGIKA JAVASCRIPT
+        //const API_URL = "https://lokal.kelastkj.online/nexus/api/"; 
         const API_URL = "https://script.google.com/macros/s/AKfycbxHVip9ojPg5rHfua-rql-L3fGoEvKW5slm8QKkbCof3llSolsYUvBO_h0jTohBFG-unA/exec";
+    
+
         const loginForm = document.getElementById('loginForm');
         const loader = document.getElementById('loader');
         const appToast = new bootstrap.Toast(document.getElementById('appToast'));
@@ -261,23 +247,42 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            if (!email || !password) { showToast('ID Agen dan Kode Akses tidak boleh kosong.'); return; }
+            if (!email || !password) {
+                showToast('ID Agen dan Kode Akses tidak boleh kosong.');
+                return;
+            }
             loader.style.display = 'flex';
-            const payload = { action: "login", data: { email, password, role: document.getElementById('role').value } };
+            const payload = {
+                action: "login",
+                data: {
+                    email,
+                    password,
+                    role: document.getElementById('role').value
+                }
+            };
             try {
-                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), redirect: "follow" });
-                if (!response.ok) { throw new Error(`Error Jaringan: ${response.status}`); }
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    redirect: "follow",
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+
                 const result = await response.json();
-                if (result.status === 'success' && result.data.status === 'success') {
+
+                if (!response.ok || result.status === 'error') {
+                    throw new Error(result.message || `Terjadi error tak terduga. Status: ${response.status}`);
+                }
+
+                if (result.data && result.data.status === 'success') {
                     sessionStorage.setItem('currentUser', JSON.stringify(result.data));
                     window.location.href = result.data.role === 'siswa' ? 'siswa.html' : 'guru.html';
                 } else {
-                    const message = result.data?.message || result.message || 'Terjadi kesalahan saat otentikasi.';
-                    showToast(message);
+                    throw new Error(result.data.message || 'Otentikasi gagal, respons tidak dikenali.');
                 }
             } catch (error) {
                 console.error("Login Error:", error);
-                showToast("Gagal terhubung ke server. Periksa koneksi internet Anda.");
+                showToast(error.message, 'Akses Gagal');
             } finally {
                 loader.style.display = 'none';
             }

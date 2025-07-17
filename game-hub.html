@@ -260,7 +260,9 @@
                         </div>
                     </div>
                 </div>`}),e.innerHTML=n}
-    async function apiCall(t,e={}){try{const n=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:t,data:e}),redirect:"follow"});if(!n.ok)throw new Error("Network response was not ok");const o=await n.json();if("success"===o.status)return o.data;throw new Error(o.message||"Terjadi kesalahan server.")}catch(t){return console.error("API Call Error:",t),null}}
+    async function apiCall(t,e={}){try{const n=await fetch(API_URL,{method:"POST",
+    credentials: 'include', //beri komen disini saat menggunakan API Google Appscript
+    body:JSON.stringify({action:t,data:e}),redirect:"follow"});if(!n.ok)throw new Error("Network response was not ok");const o=await n.json();if("success"===o.status)return o.data;throw new Error(o.message||"Terjadi kesalahan server.")}catch(t){return console.error("API Call Error:",t),null}}
 </script>
 </body>
 </html>

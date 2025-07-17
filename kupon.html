@@ -326,7 +326,9 @@
     async function apiCall(action, data = {}) {
         showLoader(true);
         try {
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }), redirect: "follow" });
+            const response = await fetch(API_URL, { method: 'POST', 
+            credentials: 'include', //beri komen disini saat menggunakan API Google Appscript
+            body: JSON.stringify({ action, data }), redirect: "follow" });
             const result = await response.json();
             if (result.status === 'success') {
                 return result.data;

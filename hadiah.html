@@ -32,7 +32,6 @@
         .section-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-size: 2.5rem; text-align: center; margin-bottom: 1rem; color: #fff; text-shadow: 0 0 15px var(--rare-glow); }
         .section-subtitle { text-align: center; color: rgba(255,255,255,0.6); max-width: 600px; margin: 0 auto 2.5rem auto; }
 
-        /* --- [BARU] Search Bar --- */
         .search-container {
             position: relative;
             max-width: 500px;
@@ -63,20 +62,25 @@
             font-size: 1.2rem;
         }
 
-        /* --- [DIUBAH] Kartu Produk E-commerce --- */
+        /* --- [DISEMPURNAKAN] Kartu Produk --- */
+        .prize-card-wrapper {
+             animation: fadeInUp 0.5s ease-out both;
+        }
+
         .prize-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            height: 100%;
-            display: flex; flex-direction: column;
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: fadeInUp 0.5s ease-out both;
+            /* Flexbox untuk mengatur layout internal agar footer selalu di bawah */
+            display: flex;
+            flex-direction: column;
         }
         .prize-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            border-color: var(--rare-color);
         }
 
         .prize-card-header {
@@ -91,19 +95,25 @@
         .rarity-epic .prize-card-icon{color:var(--epic-color);}
         .rarity-rare .prize-card-icon{color:var(--rare-color);}
         .rarity-common .prize-card-icon{color: #9e9e9e;}
-
+        
+        /* Bagian ini akan 'tumbuh' untuk mendorong footer ke bawah */
         .prize-card-body {
             padding: 0 1.5rem 1.5rem;
-            flex-grow: 1;
+            text-align: center;
+            flex-grow: 1; /* <-- KUNCI untuk mendorong footer */
             display: flex;
             flex-direction: column;
-            text-align: center;
+            justify-content: center; /* Membuat judul di tengah vertikal */
         }
         .prize-card-title {
             font-weight: 600;
             font-size: 1.1rem;
             color: #fff;
             margin-bottom: 0.5rem;
+            min-height: 48px; /* <-- KUNCI untuk konsistensi judul (2 baris) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .prize-card-rarity {
             font-size: 0.8rem;
@@ -120,9 +130,8 @@
         .rarity-common .prize-card-rarity{color:#fff; background:#6c757d;}
 
         .prize-card-footer {
-            padding: 1rem 1.5rem;
+            padding: 1.25rem 1.5rem;
             background-color: rgba(0,0,0,0.2);
-            margin-top: auto;
             text-align: center;
         }
         .prize-cost {
@@ -150,19 +159,16 @@
         <h1 class="section-title"><i class="fas fa-store me-3"></i>Katalog Hadiah</h1>
         <p class="section-subtitle">Tukarkan Kupon yang kamu miliki dengan hadiah-hadiah eksklusif di bawah ini. Gunakan pencarian untuk menemukan hadiah lebih cepat!</p>
         
-        <!-- Search Bar -->
         <div class="search-container">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="search-prize" class="search-input" placeholder="Cari nama hadiah...">
         </div>
 
-        <!-- Grid Katalog -->
         <div id="prizes-list" class="row g-4">
-            <!-- Kartu Hadiah akan dimuat di sini oleh JavaScript -->
+            <!-- Kartu Hadiah akan dimuat di sini -->
         </div>
 
-        <!-- Pesan jika tidak ada hasil -->
-        <div id="no-results-message" class="text-center mt-5 d-none">
+        <div id="no-results-message" class="text-center mt-5 d-none no-results">
             <i class="fas fa-box-open fa-3x mb-3"></i>
             <h4>Hadiah Tidak Ditemukan</h4>
             <p>Tidak ada hadiah yang cocok dengan pencarianmu.</p>
@@ -180,7 +186,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         loadPrizeData();
         
-        // Event listener untuk search bar
         const searchInput = document.getElementById('search-prize');
         searchInput.addEventListener('input', filterPrizes);
     });
@@ -220,9 +225,10 @@
         let prizeHTML = "";
         prizes.sort((a, b) => b.kuponDibutuhkan - a.kuponDibutuhkan).forEach((prize, index) => {
             const rarity = getRarity(prize.kuponDibutuhkan);
+            // --- [DISEMPURNAKAN] Menambahkan class h-100 ke kartu ---
             prizeHTML += `
-                <div class="col-lg-3 col-md-4 col-sm-6 prize-card-wrapper" data-title="${prize.namaHadiah.toLowerCase()}" style="animation-delay: ${index * 50}ms;">
-                    <div class="prize-card ${rarity.class}">
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 prize-card-wrapper" data-title="${prize.namaHadiah.toLowerCase()}" style="animation-delay: ${index * 50}ms;">
+                    <div class="prize-card ${rarity.class} h-100">
                         <div class="prize-card-header">
                             <i class="fas fa-gift prize-card-icon"></i>
                             <span class="prize-card-rarity">${rarity.name}</span>
@@ -250,17 +256,14 @@
         prizeCards.forEach(card => {
             const title = card.dataset.title;
             if (title.includes(searchTerm)) {
-                card.classList.remove('d-none');
-                card.classList.add('d-flex'); // d-flex is needed for column layout
+                card.style.display = '';
                 visibleCount++;
             } else {
-                card.classList.add('d-none');
-                card.classList.remove('d-flex');
+                card.style.display = 'none';
             }
         });
 
-        // Tampilkan pesan jika tidak ada hasil
-        if (visibleCount === 0) {
+        if (visibleCount === 0 && prizeCards.length > 0) {
             noResultsMessage.classList.remove('d-none');
         } else {
             noResultsMessage.classList.add('d-none');

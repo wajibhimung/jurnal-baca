@@ -22,6 +22,9 @@
             --rare-glow: rgba(3, 169, 244, 0.3);
             --epic-glow: rgba(156, 39, 176, 0.4);
             --legendary-glow: rgba(255, 152, 0, 0.5);
+            
+            --text-light: #e0e0e0;
+            --text-muted-light: #8b949e;
         }
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -30,23 +33,49 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--dark-bg);
             background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill="%23131524" fill-opacity="0.4"%3E%3Crect x="0" y="0" width="1" height="100"/%3E%3Crect x="0" y="0" width="100" height="1"/%3E%3C/g%3E%3C/svg%3E');
-            color: #e0e0e0;
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--dark-bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
         
+        /* --- [BARU] Style untuk Navbar --- */
+        .navbar {
+            background: rgba(10, 12, 22, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .navbar-brand {
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 2px;
+            color: var(--text-light);
+        }
+        .nav-link {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted-light) !important;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #fff !important;
+            text-shadow: 0 0 10px var(--rare-glow);
+        }
+        
+        main { flex: 1; }
         .main-content { padding-top: 4rem; padding-bottom: 4rem; }
         .section-title { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-size: 2.5rem; text-align: center; margin-bottom: 1rem; color: #fff; text-shadow: 0 0 15px var(--rare-glow); }
         .section-subtitle { text-align: center; color: rgba(255,255,255,0.6); max-width: 600px; margin: 0 auto 3rem auto; }
 
-        /* --- [BARU] Desain Kartu Misi --- */
         .mission-card-wrapper {
              animation: fadeInUp 0.5s ease-out both;
         }
         .mission-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-top-width: 4px; /* Border atas lebih tebal */
+            border-top-width: 4px;
             border-radius: 8px;
             height: 100%;
             display: flex;
@@ -57,12 +86,10 @@
             transform: translateY(-8px);
         }
         
-        /* Rarity Border dan Glow */
         .rarity-common  { border-top-color: var(--common-color); }
         .rarity-rare    { border-top-color: var(--rare-color); }
         .rarity-epic    { border-top-color: var(--epic-color); }
         .rarity-legendary { border-top-color: var(--legendary-color); }
-
         .mission-card:hover.rarity-common { box-shadow: 0 8px 30px -10px var(--common-glow); }
         .mission-card:hover.rarity-rare { box-shadow: 0 8px 30px -10px var(--rare-glow); }
         .mission-card:hover.rarity-epic { box-shadow: 0 8px 30px -10px var(--epic-glow); }
@@ -85,34 +112,20 @@
         .rarity-rare .mission-rarity { color: var(--rare-color); }
         .rarity-epic .mission-rarity { color: var(--epic-color); }
         .rarity-legendary .mission-rarity { color: var(--legendary-color); }
-
         .mission-status {
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.9rem;
-            color: #28a745; /* Warna hijau untuk status 'AKTIF' */
+            color: #28a745;
             text-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
         }
-
-        .mission-card-body {
-            padding: 1.5rem;
-            flex-grow: 1; /* Mendorong footer ke bawah */
-        }
-        .mission-title {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 1rem;
-        }
-        .mission-description {
-            font-size: 0.95rem;
-            color: rgba(255,255,255,0.7);
-            line-height: 1.6;
-        }
-
+        .mission-card-body { padding: 1.5rem; flex-grow: 1; }
+        .mission-title { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: #fff; margin-bottom: 1rem; }
+        .mission-description { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.6; }
         .mission-card-footer {
             padding: 1.25rem 1.5rem;
             background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
             text-align: center;
+            margin-top: auto;
         }
         .mission-reward-value {
             font-family: 'Oswald', sans-serif;
@@ -121,128 +134,141 @@
             line-height: 1;
             text-shadow: 0 0 10px var(--rare-glow);
         }
-        .mission-reward-label {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.8);
-            margin-top: 0.25rem;
-        }
-        .footer { margin-top: 5rem; padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
+        .mission-reward-label { font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-top: 0.25rem; }
+        .footer { margin-top: auto; flex-shrink: 0; padding: 2rem 0; background: #000; text-align: center; color: rgba(255,255,255,0.5); }
     </style>
 </head>
 <body>
     <div id="loader" class="loader-wrapper"><div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div></div>
 
-    <main class="container main-content">
-        <h1 class="section-title"><i class="fas fa-clipboard-list me-3"></i>Mission Board</h1>
-        <p class="section-subtitle">Pilih misimu, Agen. Selesaikan objektif untuk mendapatkan Kupon dan perkuat jaringan NEXUS. Imbalan menanti bagi mereka yang berdedikasi.</p>
+    <!-- === [BARU] NAVBAR DITAMBAHKAN DI SINI === -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#"><i class="fas fa-network-wired me-2"></i>PROJECT NEXUS</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="misi.html"><i class="fas fa-clipboard-list me-2"></i>Misi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="hadiah.html"><i class="fas fa-gem me-2"></i>Hadiah</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.php"><i class="fas fa-right-to-bracket me-2"></i>Terminal</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-        <div id="missions-list" class="row g-4">
-            <!-- Kartu Misi akan dimuat di sini oleh JavaScript -->
+    <main>
+        <div class="container main-content">
+            <h1 class="section-title"><i class="fas fa-clipboard-list me-3"></i>Mission Board</h1>
+            <p class="section-subtitle">Pilih misimu, Agen. Selesaikan objektif untuk mendapatkan Kupon dan perkuat jaringan NEXUS. Imbalan menanti bagi mereka yang berdedikasi.</p>
+
+            <div id="missions-list" class="row g-4">
+                <!-- Kartu Misi akan dimuat di sini oleh JavaScript -->
+            </div>
         </div>
     </main>
 
     <footer class="footer">
         © 2025 Project NEXUS - Jurnal Baca - Kelas TKJ SMKN 1 Telagasari
     </footer>
-
-<script>
-    const API_URL = "https://kelastkj.smkn1telagasari.sch.id/api-jurnal-baca/";
-    const loader = document.getElementById('loader');
-
-    document.addEventListener('DOMContentLoaded', () => {
-        loadMissionData();
-    });
     
-    async function loadMissionData() {
-        loader.style.display = "flex";
-        // Data misi dan hadiah ada di endpoint yang sama
-        const responseData = await apiCall("getPublicCouponAndPrizeData");
-        loader.style.display = "none";
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = "https://kelastkj.smkn1telagasari.sch.id/api-jurnal-baca/";
+        const loader = document.getElementById('loader');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMissionData();
+        });
         
-        // Data misi ada di dalam properti 'couponTypes'
-        if (responseData && responseData.couponTypes) {
-            renderMissions(responseData.couponTypes);
-        } else {
-            document.getElementById("missions-list").innerHTML = `
-                <div class="col-12 text-center p-5">
-                    <h3><i class="fas fa-satellite-dish fa-3x mb-3"></i></h3>
-                    <h4>Transmisi Misi Gagal</h4>
-                    <p class="text-white-50">Tidak ada misi yang tersedia saat ini. Cek kembali nanti.</p>
-                </div>`;
-        }
-    }
-
-    /**
-     * Menentukan Rarity berdasarkan jumlah imbalan kupon.
-     * Menggunakan tipe 'reward' untuk menyesuaikan ambang batas.
-     */
-    function getRarity(value, type = 'reward') {
-        const tiers = {
-            cost: { legendary: 50, epic: 25, rare: 10 },
-            reward: { legendary: 15, epic: 8, rare: 4 }
-        };
-        const currentTier = tiers[type];
-        if (value >= currentTier.legendary) return { name: "Legendary", class: "rarity-legendary" };
-        if (value >= currentTier.epic) return { name: "Epic", class: "rarity-epic" };
-        if (value >= currentTier.rare) return { name: "Rare", class: "rarity-rare" };
-        return { name: "Common", class: "rarity-common" };
-    }
-
-    /**
-     * Merender daftar misi ke dalam DOM
-     */
-    function renderMissions(missions) {
-        const container = document.getElementById("missions-list");
-        if (missions.length === 0) {
-            container.innerHTML = '<div class="col-12"><p class="text-center opacity-50">Tidak ada transmisi misi baru. Tetap bersiaga!</p></div>';
-            return;
+        async function loadMissionData() {
+            loader.style.display = "flex";
+            const responseData = await apiCall("getPublicCouponAndPrizeData");
+            loader.style.display = "none";
+            
+            if (responseData && responseData.couponTypes) {
+                renderMissions(responseData.couponTypes);
+            } else {
+                document.getElementById("missions-list").innerHTML = `
+                    <div class="col-12 text-center p-5">
+                        <h3><i class="fas fa-satellite-dish fa-3x mb-3"></i></h3>
+                        <h4>Transmisi Misi Gagal</h4>
+                        <p class="text-white-50">Tidak ada misi yang tersedia saat ini. Cek kembali nanti.</p>
+                    </div>`;
+            }
         }
 
-        let missionHTML = "";
-        // Urutkan misi dari imbalan terbesar ke terkecil
-        missions.sort((a, b) => b.jumlahKupon - a.jumlahKupon).forEach((mission, index) => {
-            // Gunakan tipe 'reward' untuk getRarity
-            const rarity = getRarity(mission.jumlahKupon, 'reward');
-            missionHTML += `
-                <div class="col-lg-4 col-md-6 mission-card-wrapper" style="animation-delay: ${index * 70}ms;">
-                    <div class="mission-card ${rarity.class} h-100">
-                        <div class="mission-card-header">
-                            <div class="mission-rarity">${rarity.name}</div>
-                            <div class="mission-status">
-                                <i class="fas fa-rss"></i> AKTIF
+        function getRarity(value, type = 'reward') {
+            const tiers = {
+                cost: { legendary: 50, epic: 25, rare: 10 },
+                reward: { legendary: 15, epic: 8, rare: 4 }
+            };
+            const currentTier = tiers[type];
+            if (value >= currentTier.legendary) return { name: "Legendary", class: "rarity-legendary" };
+            if (value >= currentTier.epic) return { name: "Epic", class: "rarity-epic" };
+            if (value >= currentTier.rare) return { name: "Rare", class: "rarity-rare" };
+            return { name: "Common", class: "rarity-common" };
+        }
+
+        function renderMissions(missions) {
+            const container = document.getElementById("missions-list");
+            if (missions.length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-center opacity-50">Tidak ada transmisi misi baru. Tetap bersiaga!</p></div>';
+                return;
+            }
+
+            let missionHTML = "";
+            missions.sort((a, b) => b.jumlahKupon - a.jumlahKupon).forEach((mission, index) => {
+                const rarity = getRarity(mission.jumlahKupon, 'reward');
+                missionHTML += `
+                    <div class="col-lg-4 col-md-6 mission-card-wrapper" style="animation-delay: ${index * 70}ms;">
+                        <div class="mission-card ${rarity.class} h-100">
+                            <div class="mission-card-header">
+                                <div class="mission-rarity">${rarity.name}</div>
+                                <div class="mission-status">
+                                    <i class="fas fa-rss"></i> AKTIF
+                                </div>
+                            </div>
+                            <div class="mission-card-body">
+                                 <h3 class="mission-title">${mission.capaian}</h3>
+                                 <p class="mission-description">${mission.deskripsi || 'Selesaikan objektif ini untuk mengklaim imbalan berharga.'}</p>
+                            </div>
+                            <div class="mission-card-footer">
+                                <div class="mission-reward-value">+${mission.jumlahKupon}</div>
+                                <div class="mission-reward-label"><i class="fas fa-ticket-alt"></i> Imbalan Kupon</div>
                             </div>
                         </div>
-                        <div class="mission-card-body">
-                             <h3 class="mission-title">${mission.capaian}</h3>
-                             <p class="mission-description">${mission.deskripsi || 'Selesaikan objektif ini untuk mengklaim imbalan berharga.'}</p>
-                        </div>
-                        <div class="mission-card-footer">
-                            <div class="mission-reward-value">+${mission.jumlahKupon}</div>
-                            <div class="mission-reward-label"><i class="fas fa-ticket-alt"></i> Imbalan Kupon</div>
-                        </div>
-                    </div>
-                </div>`;
-        });
-        container.innerHTML = missionHTML;
-    }
-
-    async function apiCall(action, data = {}) {
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                credentials: 'include',
-                body: JSON.stringify({ action: action, data: data }),
-                redirect: "follow"
+                    </div>`;
             });
-            if (!response.ok) throw new Error("Network response was not ok");
-            const result = await response.json();
-            if (result.status === "success") return result.data;
-            throw new Error(result.message || "Terjadi kesalahan server.");
-        } catch (error) {
-            console.error("API Call Error:", error);
-            return null;
+            container.innerHTML = missionHTML;
         }
-    }
-</script>
+
+        async function apiCall(action, data = {}) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    credentials: 'include',
+                    body: JSON.stringify({ action: action, data: data }),
+                    redirect: "follow"
+                });
+                if (!response.ok) throw new Error("Network response was not ok");
+                const result = await response.json();
+                if (result.status === "success") return result.data;
+                throw new Error(result.message || "Terjadi kesalahan server.");
+            } catch (error) {
+                console.error("API Call Error:", error);
+                return null;
+            }
+        }
+    </script>
 </body>
 </html>
